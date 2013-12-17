@@ -25,6 +25,7 @@ include_directories(../db)
 add_definitions(-Wall -ansi -Wno-deprecated -pthread --std=c++0x)
 
 add_executable(gtest_db
+			   BatchTest.cpp
                Runner.cpp
                JsonTest.cpp
                DumpLoadTest.cpp
