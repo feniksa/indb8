@@ -56,7 +56,7 @@ const MojUInt32 MojDb::TmpVersionFileLength = 32;
 MojLogger MojDb::s_log(_T("db.mojodb"));
 static volatile bool DefaultLocaleAlreadyInited = false;
 
-MojDb::MojDb() :  
+MojDb::MojDb() :
   m_purgeWindow(PurgeNumDaysDefault),
   m_loadStepSize(LoadStepSizeDefault),
   m_isOpen(false)
@@ -189,7 +189,7 @@ MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
     MojLogDebug(s_log, _T("Open Quota engine"));
 	err = m_quotaEngine.open(m_conf, this, req);
 	MojErrCheck(err);
-	
+
 	// idgen
 	err = m_idGenerator.init();
 	MojErrCheck(err);// idgen
@@ -415,6 +415,31 @@ MojErr MojDb::get(const MojObject* idsBegin, const MojObject* idsEnd, MojObjectV
 	return MojErrNone;
 }
 
+MojErr MojDb::getKind(const MojString& kindName, MojObject& out, MojDbReqRef req)
+{
+	return MojErrNotImplemented;
+}
+
+MojErr MojDb::getKindList(MojObjectVisitor& visitor, MojDbReqRef req)
+{
+	MojErr err = beginReq(req);
+	MojErrCheck(err);
+
+	MojVector<MojObject> list;
+	err = m_kindEngine.getKinds(list);
+
+	for (MojVector<MojObject>::ConstIterator iter = list.begin(); iter != list.end(); ++iter) {
+		err = iter->visit(visitor);
+		MojErrCheck(err);
+	}
+
+	// commit txn
+	err = req->end();
+	MojErrCheck(err);
+
+	return MojErrNone;
+}
+
 MojErr MojDb::merge(const MojDbQuery& query, const MojObject& props, MojUInt32& countOut, MojUInt32 flags, MojDbReqRef req)
 {
 	MojLogTrace(s_log);
@@ -484,7 +509,7 @@ MojErr MojDb::put(MojObject* begin, const MojObject* end, MojUInt32 flags, MojDb
 	MojLogTrace(s_log);
     MojString kindId;
     bool foundOut;
-    MojErr err;    
+    MojErr err;
 
     err = beginReq(req);
     MojErrCheck(err);
@@ -493,7 +518,7 @@ MojErr MojDb::put(MojObject* begin, const MojObject* end, MojUInt32 flags, MojDb
 		err = putImpl(*i, flags, req, true);
 		MojErrCheck(err);
         err = (*i).get(MojDb::KindKey, kindId, foundOut);
-        MojErrCheck(err);        
+        MojErrCheck(err);
 	}
 	err = req->end();
 	MojErrCheck(err);
@@ -577,13 +602,13 @@ MojErr MojDb::find(const MojDbQuery& query, MojDbCursor& cursor, MojDbReqRef req
 MojErr MojDb::reserveId(MojObject& idOut)
 {
 	MojLogTrace(s_log);
-	
+
 	MojErr err = requireOpen();
 	MojErrCheck(err);
-	
+
 	err = m_idGenerator.id(idOut);
 	MojErrCheck(err);
-	
+
 	return MojErrNone;
 }
 
@@ -956,7 +981,7 @@ MojErr MojDb::putImpl(MojObject& obj, MojUInt32 flags, MojDbReq& req, bool check
 
 	MojRefCountedPtr<MojDbStorageItem> prevItem;
 	MojObject id;
-	if (obj.get(IdKey, id)) {        
+	if (obj.get(IdKey, id)) {
 		// get previous revision if we have an id
 		MojErr err = m_objDb->get(id, req.txn(), true, prevItem);
 		MojErrCheck(err);
@@ -1267,31 +1292,3 @@ MojErr MojDb::assignIds(MojObject& obj)
 	}
 	return MojErrNone;
 }
-
-/**
- * verify _kind
- */
-bool MojDb::isValidKind (MojString& i_kindStr)
-{
-    bool foundOut = false;
-    MojErr err;
-    // make query
-    MojDbQuery query;
-    err = query.from(MojDbKindEngine::KindKindId);
-    MojErrCheck(err);
-    MojObject idObj(i_kindStr);
-    err = query.where(IdKey, MojDbQuery::OpEq, idObj);
-    MojErrCheck(err);
-    // find cursor using query
-    MojDbCursor cursor;
-    err = find(query, cursor);
-    MojErrCheck(err);
-    // get item from cursor
-    MojDbStorageItem* p_item = NULL;
-    err = cursor.get(p_item, foundOut);
-    MojErrCheck(err);
-    cursor.close();
-
-    return foundOut;
-}
-

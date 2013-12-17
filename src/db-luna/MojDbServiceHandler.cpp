@@ -39,7 +39,7 @@ const MojDbServiceHandler::SchemaMethod MojDbServiceHandler::s_pubMethods[] = {
 	{MojDbServiceDefs::PutPermissionsMethod, (Callback) &MojDbServiceHandler::handlePutPermissions, MojDbServiceHandler::PutPermissionsSchema},
 	{MojDbServiceDefs::ReserveIdsMethod, (Callback) &MojDbServiceHandler::handleReserveIds, MojDbServiceHandler::ReserveIdsSchema},
 	{MojDbServiceDefs::SearchMethod, (Callback) &MojDbServiceHandler::handleSearch, MojDbServiceHandler::SearchSchema},
-	{MojDbServiceDefs::WatchMethod, (Callback) &MojDbServiceHandler::handleWatch, MojDbServiceHandler::WatchSchema},    
+	{MojDbServiceDefs::WatchMethod, (Callback) &MojDbServiceHandler::handleWatch, MojDbServiceHandler::WatchSchema},
 	{NULL, NULL, NULL} };
 
 const MojDbServiceHandler::SchemaMethod MojDbServiceHandler::s_privMethods[] = {
@@ -50,6 +50,7 @@ const MojDbServiceHandler::SchemaMethod MojDbServiceHandler::s_privMethods[] = {
 	{MojDbServiceDefs::PutQuotasMethod, (Callback) &MojDbServiceHandler::handlePutQuotas, MojDbServiceHandler::PutQuotasSchema},
 	{MojDbServiceDefs::QuotaStatsMethod, (Callback) &MojDbServiceHandler::handleQuotaStats, MojDbServiceHandler::QuotaStatsSchema},
 	{MojDbServiceDefs::StatsMethod, (Callback) &MojDbServiceHandler::handleStats, MojDbServiceHandler::StatsSchema},
+	{MojDbServiceDefs::KindsMethod, (Callback) &MojDbServiceHandler::handleKinds, MojDbServiceHandler::KindsSchema},
 	{NULL, NULL, NULL} };
 
 const MojDbServiceHandler::Method MojDbServiceHandler::s_batchMethods[] = {
@@ -272,6 +273,32 @@ MojErr MojDbServiceHandler::handleGet(MojServiceMessage* msg, MojObject& payload
 	err = writer.beginArray();
 	MojErrCheck(err);
 	err = m_db.get(ids.arrayBegin(), ids.arrayEnd(), writer, req);
+	MojErrCheck(err);
+	err = writer.endArray();
+	MojErrCheck(err);
+	err = writer.endObject();
+	MojErrCheck(err);
+
+	return MojErrNone;
+}
+
+MojErr MojDbServiceHandler::handleKinds(MojServiceMessage* msg, MojObject& payload, MojDbReq& req)
+{
+	MojAssert(msg);
+	MojLogTrace(s_log);
+
+	MojErr err;
+
+	MojObjectVisitor& writer = msg->writer();
+	err = writer.beginObject();
+	MojErrCheck(err);
+	err = writer.boolProp(MojServiceMessage::ReturnValueKey, true);
+	MojErrCheck(err);
+	err = writer.propName(MojDbServiceDefs::ResultsKey);
+	MojErrCheck(err);
+	err = writer.beginArray();
+	MojErrCheck(err);
+	err = m_db.getKindList(writer, req);
 	MojErrCheck(err);
 	err = writer.endArray();
 	MojErrCheck(err);

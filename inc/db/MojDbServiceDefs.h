@@ -1,6 +1,7 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2014 LG Electronics, Inc.
+*      Copyright (c) 2015 Maksym Sditanov
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -99,6 +100,7 @@ public:
 	static const MojChar* const FindMethod;
 	static const MojChar* const GetMethod;
 	static const MojChar* const GetPermissionsMethod;
+	static const MojChar* const KindsMethod;
 	static const MojChar* const LoadMethod;
 	static const MojChar* const MergeMethod;
 	static const MojChar* const PostBackupMethod;
@@ -119,10 +121,10 @@ public:
 	static const MojChar* const ScheduledSpaceCheckMethod;
 	static const MojChar* const StatsMethod;
 	static const MojChar* const WatchMethod;
-	static const MojChar* const ListActiveMediaMethod;		
+	static const MojChar* const ListActiveMediaMethod;
 	// service names
 	static const MojChar* const Category;
-	static const MojChar* const InternalCategory;    
+	static const MojChar* const InternalCategory;
     // other
     static const MojChar* const DefaultMediaLinkPath;
 };

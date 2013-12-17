@@ -1,6 +1,7 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2009-2015 LG Electronics, Inc.
+* Copyright (c) 2015 Maksym Sditanov
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -95,6 +96,7 @@ const MojChar* const MojDbServiceDefs::FindMethod = _T("find");
 const MojChar* const MojDbServiceDefs::GetMethod = _T("get");
 const MojChar* const MojDbServiceDefs::GetPermissionsMethod = _T("getPermissions");
 const MojChar* const MojDbServiceDefs::LoadMethod = _T("load");
+const MojChar* const MojDbServiceDefs::KindsMethod = _T("kinds");
 const MojChar* const MojDbServiceDefs::MergeMethod = _T("merge");
 const MojChar* const MojDbServiceDefs::PostBackupMethod = _T("postBackup");
 const MojChar* const MojDbServiceDefs::PostRestoreMethod = _T("postRestore");

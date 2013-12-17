@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public:
 	static const MojChar* const IgnoreIdKey;
 	static const MojChar* const KindKey;
 	static const MojChar* const RevKey;
-	static const MojChar* const SyncKey;    
+	static const MojChar* const SyncKey;
 	static const MojUInt32 AutoBatchSize;
 	static const MojUInt32 AutoCompactSize;
     static const MojUInt32 TmpVersionFileLength;
@@ -83,13 +83,15 @@ public:
 	MojErr delKind(const MojObject& id, bool& foundOut, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq());
 	MojErr get(const MojObject& id, MojObject& objOut, bool& foundOut, MojDbReqRef req = MojDbReq());
 	MojErr get(const MojObject* idsBegin, const MojObject* idsEnd, MojObjectVisitor& visitor, MojDbReqRef req = MojDbReq());
+	MojErr getKind(const MojString& kindName, MojObject& out, MojDbReqRef req = MojDbReq());
+	MojErr getKindList(MojObjectVisitor& visitor, MojDbReqRef req = MojDbReq());
 	MojErr find(const MojDbQuery& query, MojDbCursor& cursor, MojDbReqRef req = MojDbReq());
 	MojErr find(const MojDbQuery& query, MojDbCursor& cursor, WatchSignal::SlotRef watchHandler, MojDbReqRef req = MojDbReq());
 	MojErr merge(MojObject& obj, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq()) { return put(obj, flags | FlagMerge, req); }
 	MojErr merge(MojObject* begin, const MojObject* end, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq()) { return put(begin, end, flags | FlagMerge, req); }
 	MojErr merge(const MojDbQuery& query, const MojObject& props, MojUInt32& countOut, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq());
-    MojErr put(MojObject& obj, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq());
-    MojErr put(MojObject* begin, const MojObject* end, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq());
+	MojErr put(MojObject& obj, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq());
+	MojErr put(MojObject* begin, const MojObject* end, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq());
 	MojErr putKind(MojObject& obj, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq());
 	MojErr putPermissions(MojObject* begin, const MojObject* end, MojDbReqRef req = MojDbReq()) { return putConfig(begin, end, req, m_permissionEngine); }
 	MojErr putQuotas(MojObject* begin, const MojObject* end, MojDbReqRef req = MojDbReq()) { return putConfig(begin, end, req, m_quotaEngine); }
@@ -101,13 +103,10 @@ public:
 	MojDbPermissionEngine* permissionEngine() { return &m_permissionEngine; }
 	MojDbQuotaEngine* quotaEngine() { return &m_quotaEngine; }
 	MojDbStorageEngine* storageEngine() { return m_storageEngine.get(); }
-	MojDbStorageDatabase* storageDatabase() { return m_objDb.get(); }    
+	MojDbStorageDatabase* storageDatabase() { return m_objDb.get(); }
 	MojInt64 version() { return DatabaseVersion; }
 	MojErr commitBatch(MojDbReq& req);
     MojInt64 purgeWindow() {return m_purgeWindow;}
-
-    //verify _kind
-    bool isValidKind (MojString& i_kindStr);
 private:
 	friend class MojDbKindEngine;
 	friend class MojDbReq;
@@ -174,7 +173,7 @@ private:
 	MojDbIdGenerator m_idGenerator;
 	MojDbKindEngine m_kindEngine;
 	MojDbPermissionEngine m_permissionEngine;
-    MojDbQuotaEngine m_quotaEngine;	
+    MojDbQuotaEngine m_quotaEngine;
 	MojThreadRwLock m_schemaLock;
 	MojString m_engineName;
 	MojObject m_conf;

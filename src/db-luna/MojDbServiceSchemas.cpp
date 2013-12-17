@@ -226,25 +226,6 @@ const MojChar* const MojDbServiceHandler::WatchSchema =
   		 _T("\"subscribe\":{\"type\":\"boolean\",\"optional\":true}},")
 	 _T("\"additionalProperties\":false}");
 
-const MojChar* const MojDbServiceHandler::ListActiveMediaSchema = MojDbServiceHandler::PurgeStatusSchema;
-
-const MojChar* const MojDbServiceHandler::ShardInfoSchema =
-    _T("{\"type\":\"object\",")
-     _T("\"properties\":{")
-         _T("\"shardId\":{\"type\":\"string\"}},")
-     _T("\"additionalProperties\":false}");
-
-const MojChar* const MojDbServiceHandler::ShardKindSchema =
-    _T("{\"type\":\"object\",")
-     _T("\"properties\":{")
-         _T("\"shardId\":{\"type\":\"string\"},")
-         _T("\"kind\":{\"type\":\"string\"}},")
-     _T("\"additionalProperties\":false}");
-
-const MojChar* const MojDbServiceHandler::SetShardModeSchema =
-    _T("{\"type\":\"object\",")
-     _T("\"properties\":{")
-         _T("\"shardId\":{\"type\":\"string\"},")
-         _T("\"transient\":{\"type\":\"boolean\"}},")
-     _T("\"additionalProperties\":false}");
-
+const MojChar* const MojDbServiceHandler::KindsSchema =
+	_T("{\"type\":\"object\",")
+	_T("\"additionalProperties\":false}");

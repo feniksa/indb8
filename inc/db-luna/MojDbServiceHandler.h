@@ -41,6 +41,7 @@ private:
 	static const MojChar* const DumpSchema;
 	static const MojChar* const FindSchema;
 	static const MojChar* const GetSchema;
+	static const MojChar* const KindsSchema;
 	static const MojChar* const LoadSchema;
 	static const MojChar* const MergeSchema;
 	static const MojChar* const PurgeSchema;
@@ -54,10 +55,6 @@ private:
 	static const MojChar* const SearchSchema;
 	static const MojChar* const StatsSchema;
 	static const MojChar* const WatchSchema;
-	static const MojChar* const ListActiveMediaSchema;
-	static const MojChar* const ShardInfoSchema;
-	static const MojChar* const ShardKindSchema;
-	static const MojChar* const SetShardModeSchema;
 
 	typedef MojMap<MojString, DbCallback, const MojChar*, MojComp<const MojChar*>, MojCompAddr<DbCallback> > BatchMap;
 
@@ -81,6 +78,7 @@ private:
 	MojErr handleDump(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
 	MojErr handleFind(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
 	MojErr handleGet(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
+	MojErr handleKinds(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
 	MojErr handleLoad(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
 	MojErr handleMerge(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
 	MojErr handlePurge(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
