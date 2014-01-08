@@ -20,7 +20,6 @@
 #include "db/MojDbTextUtils.h"
 #include "core/MojString.h"
 #include "unicode/ustring.h"
-#include "core/MojLogDb8.h"
 
 MojErr MojDbTextUtils::strToUnicode(const MojString& src, UnicodeVec& destOut)
 {

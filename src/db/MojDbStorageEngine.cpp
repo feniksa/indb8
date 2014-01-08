@@ -20,7 +20,6 @@
 #include "db/MojDbStorageEngine.h"
 #include "core/MojObjectBuilder.h"
 #include "core/MojJson.h"
-#include "core/MojLogDb8.h"
 
 MojRefCountedPtr<MojDbStorageEngineFactory> MojDbStorageEngine::m_factory;
 

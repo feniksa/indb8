@@ -20,7 +20,6 @@
 #include "db/MojDbQueryFilter.h"
 #include "db/MojDbTextUtils.h"
 #include "unicode/ustring.h"
-#include "core/MojLogDb8.h"
 
 MojDbQueryFilter::MojDbQueryFilter()
 {

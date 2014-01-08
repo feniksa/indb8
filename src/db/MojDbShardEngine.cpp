@@ -22,6 +22,7 @@
 #include "db/MojDbServiceDefs.h"
 #include "db/MojDbMediaLinkManager.h"
 #include "core/MojDataSerialization.h"
+#include "core/MojLog.h"
 #include <boost/crc.hpp>
 #include <string>
 

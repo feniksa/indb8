@@ -20,7 +20,6 @@
 #include "core/MojObject.h"
 #include "core/MojDataSerialization.h"
 #include "core/MojTime.h"
-#include "core/MojLogDb8.h"
 
 namespace {
     const size_t LongIdBytes = (32 + 64) / 8 /* bytes/bits */;
