@@ -35,11 +35,14 @@ pkg_check_modules(GTHREAD2 REQUIRED gthread-2.0)
 include_directories(${GTHREAD2_INCLUDE_DIRS})
 add_definitions(${GTHREAD2_CFLAGS_OTHER})
 
-# -- check for LS2 (internally depends on pmloglib)
-#pkg_check_modules(LS2 REQUIRED luna-service2)
-#include_directories(${LS2_INCLUDE_DIRS})
-#webos_add_compiler_flags(ALL ${LS2_CFLAGS_OTHER})
-#add_definitions(ALL ${LS2_CFLAGS_OTHER})
+option(BUILD_LS2 "Build Mojo Luna interface" ON)
+
+if (BUILD_LS2)
+    # -- check for LS2 (internally depends on pmloglib)
+    pkg_check_modules(LS2 REQUIRED luna-service2)
+    include_directories(${LS2_INCLUDE_DIRS})
+    add_definitions(${LS2_CFLAGS_OTHER})
+endif(BUILD_LS2)
 
 # -- check for ICU
 find_library(ICU NAMES icuuc)
@@ -68,6 +71,7 @@ add_definitions(-Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-str
 include_directories(inc)
 add_subdirectory(src/core)
 add_subdirectory(src/db)
+add_subdirectory(src/luna)
 
 # -- source for generating libmojoluna.so
 #set(LUNA_LIB_SOURCES
