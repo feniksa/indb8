@@ -64,7 +64,7 @@ MojErr MojDbLunaServiceDb::open(MojGmainReactor& reactor, MojDbEnv* env,
             PMLOGKS("baseDir", baseDir),
             PMLOGKS("subDir", subDir),
             PMLOGKS("data", msg.data()),
-            PMLOGKFV("error", "%d", err),
+            PMLOGFV("error", "%d", err),
             "Error opening 'baseDir'/'subDir' - 'data' ('error')");
     }
     MojErrCheck(err);

@@ -52,7 +52,7 @@ void MojDbShardIdCache::put (const MojUInt32 id, const MojObject& obj)
     else
     {
         LOG_WARNING(MSGID_DB_SHARDENGINE_WARNING, 1,
-        		PMLOGKFV("id", "%x", id),
+        		PMLOGFV("id", "%x", id),
         		"element already exist");
     }
 }
@@ -102,7 +102,7 @@ void MojDbShardIdCache::del (const MojUInt32 id)
     else
     {
         LOG_WARNING(MSGID_DB_SHARDENGINE_WARNING, 1,
-        		PMLOGKFV("id", "%d", id), "id was not erased");
+        		PMLOGFV("id", "%d", id), "id was not erased");
     }
 }
 

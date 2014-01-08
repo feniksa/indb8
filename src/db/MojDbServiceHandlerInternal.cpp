@@ -430,7 +430,7 @@ MojErr MojDbServiceHandlerInternal::PurgeHandler::handleComplete(MojObject& payl
 	m_subscription.reset();
 	if (errCode != MojErrNone) {
         LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-        		PMLOGKFV("error", "%d", errCode),
+        		PMLOGFV("error", "%d", errCode),
         		"error completing activity: 'error'");
 		MojErrThrow(errCode);
 	}
@@ -459,7 +459,7 @@ MojErr MojDbServiceHandlerInternal::LocaleHandler::handleResponse(MojObject& pay
 
 	if (errCode != MojErrNone) {
         LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-        		PMLOGKFV("error", "%d", errCode),
+        		PMLOGFV("error", "%d", errCode),
         		"error from system service, locale query: 'error'");
 		MojErrThrow(errCode);
 	}
@@ -524,7 +524,7 @@ MojErr MojDbServiceHandlerInternal::AlertHandler::handleBootStatusResponse(MojOb
 
 	if (errCode != MojErrNone) {
         LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-            PMLOGKFV("error", "%d", errCode),
+            PMLOGFV("error", "%d", errCode),
             "error attempting to get sysmgr boot status 'error'");
 		MojErrThrow(errCode);
 	}
@@ -549,7 +549,7 @@ MojErr MojDbServiceHandlerInternal::AlertHandler::handleAlertResponse(MojObject&
 
 	if (errCode != MojErrNone) {
         LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-            PMLOGKFV("error", "%d", errCode),
+            PMLOGFV("error", "%d", errCode),
             "error attempting to display alert: 'error'");
 		MojErrThrow(errCode);
 	}

@@ -471,8 +471,8 @@ MojErr MojDbKindEngine::loadKinds(MojDbReq& req)
 			MojString errStr;
 			MojErrToString(loadErr, errStr);
             LOG_ERROR(MSGID_DB_KIND_ENGINE_ERROR, 2,
-            		PMLOGKS("data", id.data()),
-            		PMLOGKS("error", errStr.data()),
+            		PMLOGKS("data", path),
+            		PMLOGKS("error", path),
             		"error loading kind 'data' - 'error'");
 		}
 	}
