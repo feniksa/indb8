@@ -41,13 +41,6 @@ add_definitions(${GTHREAD2_CFLAGS_OTHER})
 #webos_add_compiler_flags(ALL ${LS2_CFLAGS_OTHER})
 #add_definitions(ALL ${LS2_CFLAGS_OTHER})
 
-#if (NOT DEFINED USE_PMLOG OR USE_PMLOG)
-#    # -- check for pmLogLib
-#    pkg_check_modules(PMLOG REQUIRED PmLogLib>=3)
-#    include_directories(${PMLOG_INCLUDE_DIRS})
-#    webos_add_compiler_flags(ALL ${PMLOG_CFLAGS_OTHER} -DUSE_PMLOG)
-#endif()
-
 # -- check for ICU
 find_library(ICU NAMES icuuc)
 if(ICU STREQUAL "ICU-NOTFOUND")
@@ -66,7 +59,7 @@ include(${CMAKE_SOURCE_DIR}/src/db-luna/BackendBuildRules.cmake)
 #webos_build_pkgconfig(files/pkgconfig/mojodb)
 #webos_build_pkgconfig(files/pkgconfig/db8)
 
-add_definitions( -Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
+add_definitions(-Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
 
 # Note: no-psabi will disable notice for gcc: the mangling of 'va_list' has changed in GCC 4.4
 
@@ -76,53 +69,7 @@ add_definitions( -Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-st
 
 # -- add local include paths
 include_directories(inc)
-
-# -- source for generating libmojocore.so
-set(CORE_LIB_SOURCES
-    src/core/MojApp.cpp
-    src/core/MojBuffer.cpp
-    src/core/MojDataSerialization.cpp
-    src/core/MojDecimal.cpp
-    src/core/MojEpollReactor.cpp
-    src/core/MojErr.cpp
-    src/core/MojFile.cpp
-    src/core/MojGmainReactor.cpp
-    src/core/MojHashBase.cpp
-    src/core/MojJson.cpp
-    src/core/MojList.cpp
-    src/core/MojLog.cpp
-    src/core/MojLogEngine.cpp
-    src/core/MojMessageDispatcher.cpp
-    src/core/MojObject.cpp
-    src/core/MojObjectBuilder.cpp
-    src/core/MojObjectFilter.cpp
-    src/core/MojObjectSerialization.cpp
-    src/core/MojOs.cpp
-    src/core/MojPmLogAppender.cpp
-    src/core/MojRbTreeBase.cpp
-    src/core/MojRefCount.cpp
-    src/core/MojSchema.cpp
-    src/core/MojService.cpp
-    src/core/MojServiceApp.cpp
-    src/core/MojServiceMessage.cpp
-    src/core/MojServiceRequest.cpp
-    src/core/MojSignal.cpp
-    src/core/MojSock.cpp
-    src/core/MojString.cpp
-    src/core/MojTestRunner.cpp
-    src/core/MojThread.cpp
-    src/core/MojTokenSet.cpp
-    src/core/MojUtil.cpp
-    )
-
-add_library(mojocore SHARED ${CORE_LIB_SOURCES})
-target_link_libraries(mojocore
-                      ${GLIB2_LDFLAGS}
-                      ${GTHREAD2_LDFLAGS}
-                      ${LS2_LDFLAGS}
-                      ${PMLOG_LDFLAGS}
-                      )
-#webos_build_library(TARGET mojocore NOHEADERS)
+add_subdirectory(src/core)
 
 # -- source for generating libmojodb.so
 set(DB_LIB_SOURCES
