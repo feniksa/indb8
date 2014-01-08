@@ -59,10 +59,6 @@ protected:
 	virtual MojErr handleCommandLine(int argc, MojChar** argv);
 	virtual MojErr handleArgs(const StringVec& args);
 
-protected:
-	//this line is required for compatibility with mojomail-pop
-	static MojLogger s_log;
-
 private:
 	enum RunMode {
 		ModeDefault,
