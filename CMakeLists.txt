@@ -52,9 +52,6 @@ if(ICUI18N STREQUAL "ICUI18N-NOTFOUND")
 	MESSAGE(FATAL_ERROR "Failed to find ICU-I18N libaries. Please install.")
 endif()
 
-# configure database backend.
-include(${CMAKE_SOURCE_DIR}/src/db-luna/BackendBuildRules.cmake)
-
 # provide both db8 and mojodb pkgconfigs
 #webos_build_pkgconfig(files/pkgconfig/mojodb)
 #webos_build_pkgconfig(files/pkgconfig/db8)
@@ -70,58 +67,7 @@ add_definitions(-Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-str
 # -- add local include paths
 include_directories(inc)
 add_subdirectory(src/core)
-
-# -- source for generating libmojodb.so
-set(DB_LIB_SOURCES
-    src/db/MojDb.cpp
-    src/db/MojDbAdmin.cpp
-    src/db/MojDbClient.cpp
-    src/db/MojDbCursor.cpp
-    src/db/MojDbExtractor.cpp
-    src/db/MojDbIdGenerator.cpp
-    src/db/MojDbIndex.cpp
-    src/db/MojDbIsamQuery.cpp
-    src/db/MojDbKey.cpp
-    src/db/MojDbKind.cpp
-    src/db/MojDbKindEngine.cpp
-    src/db/MojDbShardIdCache.cpp
-    src/db/MojDbShardEngine.cpp
-    src/db/MojDbKindState.cpp
-    src/db/MojDbKindIdList.cpp
-    src/db/MojDbObjectHeader.cpp
-    src/db/MojDbObjectItem.cpp
-    src/db/MojDbPermissionEngine.cpp
-    src/db/MojDbPutHandler.cpp
-    src/db/MojDbQuery.cpp
-    src/db/MojDbQueryFilter.cpp
-    src/db/MojDbQueryPlan.cpp
-    src/db/MojDbQuotaEngine.cpp
-    src/db/MojDbReq.cpp
-    src/db/MojDbRevisionSet.cpp
-    src/db/MojDbSearchCursor.cpp
-    src/db/MojDbServiceClient.cpp
-    src/db/MojDbServiceDefs.cpp
-    src/db/MojDbStorageEngine.cpp
-    src/db/MojDbShardIdCache.cpp
-    src/db/MojDbShardEngine.cpp
-    src/db/MojDbShardInfo.cpp
-    src/db/MojDbTextCollator.cpp
-    src/db/MojDbTextTokenizer.cpp
-    src/db/MojDbTextUtils.cpp
-    src/db/MojDbUtils.cpp
-    src/db/MojDbWatcher.cpp
-    )
-
-add_library(mojodb SHARED ${DB_LIB_SOURCES})
-target_link_libraries(mojodb
-                      ${GLIB2_LDFLAGS}
-                      ${GTHREAD2_LDFLAGS}
-                      mojocore
-                      ${LS2_LDFLAGS}
-                      ${ICU}
-                      ${ICUI18N}
-                      )
-#webos_build_library(TARGET mojodb NOHEADERS)
+add_subdirectory(src/db)
 
 # -- source for generating libmojoluna.so
 #set(LUNA_LIB_SOURCES
@@ -140,6 +86,9 @@ target_link_libraries(mojodb
 #                      ${ICU}
 #                      ${ICUI18N}
 #                      )
+
+# configure database backend.
+include(${CMAKE_SOURCE_DIR}/src/db-luna/BackendBuildRules.cmake)
 
 # -- source for generating mojodb-luna
 #set(LUNA_BIN_SOURCES
