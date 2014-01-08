@@ -134,9 +134,7 @@ int main(int argc, char**argv)
         if (err != MojErrNone) {
             MojString str;
             MojErrToString(err, str);
-            LOG_ERROR(MSGID_DB_ERROR, 1,
-            		PMLOGKS("data", str.data()),
-            		"error occured during generating DB image");
+            LOG_ERROR(MSGID_DB_ERROR, 0, "(%s) error occured during generating DB image", str.data());
             db.drop(argv[2]);
             break;
         }

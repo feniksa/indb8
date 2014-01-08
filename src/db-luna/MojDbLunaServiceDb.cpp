@@ -60,12 +60,10 @@ MojErr MojDbLunaServiceDb::open(MojGmainReactor& reactor, MojDbEnv* env,
     if (err != MojErrNone) {
         MojString msg;
         MojErrToString(err, msg);
-        LOG_ERROR(MSGID_LUNA_SERVICE_DB_OPEN, 4,
+        LOG_ERROR(MSGID_LUNA_SERVICE_DB_OPEN, 2,
             PMLOGKS("baseDir", baseDir),
             PMLOGKS("subDir", subDir),
-            PMLOGKS("data", msg.data()),
-            PMLOGFV("error", "%d", err),
-            "Error opening 'baseDir'/'subDir' - 'data' ('error')");
+            "Error opening %s/%s - %s (%d)", baseDir, subDir, msg.data(), (int) err);
     }
     MojErrCheck(err);
 

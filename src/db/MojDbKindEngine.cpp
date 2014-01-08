@@ -470,10 +470,7 @@ MojErr MojDbKindEngine::loadKinds(MojDbReq& req)
 			MojErrCheck(err);
 			MojString errStr;
 			MojErrToString(loadErr, errStr);
-            LOG_ERROR(MSGID_DB_KIND_ENGINE_ERROR, 2,
-            		PMLOGKS("data", path),
-            		PMLOGKS("error", path),
-            		"error loading kind 'data' - 'error'");
+            LOG_ERROR(MSGID_DB_KIND_ENGINE_ERROR, 0, "error loading kind '%s' - %s", id.data(), errStr.data());
 		}
 	}
 	err = cursor.close();

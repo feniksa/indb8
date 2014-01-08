@@ -429,9 +429,7 @@ MojErr MojDbServiceHandlerInternal::PurgeHandler::handleComplete(MojObject& payl
 	m_adoptSlot.cancel();
 	m_subscription.reset();
 	if (errCode != MojErrNone) {
-        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-        		PMLOGFV("error", "%d", errCode),
-        		"error completing activity: 'error'");
+        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 0, "error completing activity: %d", errCode);
 		MojErrThrow(errCode);
 	}
 	return MojErrNone;
@@ -458,9 +456,7 @@ MojErr MojDbServiceHandlerInternal::LocaleHandler::handleResponse(MojObject& pay
     LOG_TRACE("Entering function %s", __FUNCTION__);
 
 	if (errCode != MojErrNone) {
-        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-        		PMLOGFV("error", "%d", errCode),
-        		"error from system service, locale query: 'error'");
+        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 0, "error from system service, locale query: %d", errCode);
 		MojErrThrow(errCode);
 	}
 
@@ -489,7 +485,7 @@ MojErr MojDbServiceHandlerInternal::LocaleHandler::handleResponse(MojObject& pay
         if (U_FAILURE(errorU)) {
             LOG_WARNING(MSGID_MOJ_DB_SERVICE_WARNING, 1,
                         PMLOGKS("locale", str.data()),
-                        "MojDbServiceHandlerInternal::LocaleHandler::handleResponse. Can't set locale to 'locale'");
+                        "MojDbServiceHandlerInternal::LocaleHandler::handleResponse. Can't set locale to %s", str.data());
         }
 	}
 	return MojErrNone;
@@ -524,8 +520,8 @@ MojErr MojDbServiceHandlerInternal::AlertHandler::handleBootStatusResponse(MojOb
 
 	if (errCode != MojErrNone) {
         LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-            PMLOGFV("error", "%d", errCode),
-            "error attempting to get sysmgr boot status 'error'");
+            PMLOGKS("error", errCode),
+            "error attempting to get sysmgr boot status %d", errCode);
 		MojErrThrow(errCode);
 	}
 
@@ -549,8 +545,8 @@ MojErr MojDbServiceHandlerInternal::AlertHandler::handleAlertResponse(MojObject&
 
 	if (errCode != MojErrNone) {
         LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-            PMLOGFV("error", "%d", errCode),
-            "error attempting to display alert: 'error'");
+            PMLOGKS("error", errCode),
+            "error attempting to display alert: %d", errCode);
 		MojErrThrow(errCode);
 	}
 	return MojErrNone;

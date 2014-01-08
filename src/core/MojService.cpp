@@ -170,13 +170,11 @@ MojErr MojService::dispatchRequest(MojServiceMessage* msg)
 		(void) payload.toJson(payloadStr);
 		MojString errStr;
 		(void) MojErrToString(reqErr, errStr);
-        LOG_WARNING(MSGID_MOJ_SERVICE_WARNING, 5,
+        LOG_WARNING(MSGID_MOJ_SERVICE_WARNING, 3,
                     PMLOGKS("sender", msg->senderName()),
                     PMLOGKS("method", msg->method()),
                     PMLOGKS("payload", payloadStr.data()),
-                    PMLOGKS("error", errStr.data()),
-                    PMLOGFV("reqErr", "%d", (int)reqErr),
-                    "");
+                    "%s (%d)", errStr.data(), (int) reqErr);
 
 		if (msg->numReplies() == 0) {
 			return msg->replyError(reqErr);

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2013 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,12 +16,21 @@
 *
 * LICENSE@@@ */
 
+#include "db/MojDbSpaceInformer.h"
+#include "db/MojDb.h"
 
-#include "core/MojLogEngine.h"
-#include "core/MojObject.h"
-#include "core/MojTime.h"
+using namespace std;
 
-#ifdef MOJ_HAVE_SYSLOG_H
-#	include "syslog.h"
-#endif
+MojDbSpaceInformer::MojDbSpaceInformer()
+{
+}
+
+MojDbSpaceInformer::~MojDbSpaceInformer()
+{
+}
+
+MojErr MojDbSpaceInformer::init (const MojObject& conf, MojDb* ip_db, MojDbReqRef req)
+{
+    return MojErrNone;
+}
 

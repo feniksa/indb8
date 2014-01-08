@@ -50,9 +50,7 @@ MojErr MojDbServiceHandlerBase::invoke(Callback method, MojServiceMessage* msg, 
 				MojErrThrow(MojErrDbMaxRetriesExceeded);
 			}
 
-			LOG_WARNING(MSGID_MOJ_DB_SERVICE_WARNING, 1,
-					PMLOGFV("retries", "%d", retries),
-					"db: deadlock detected; attempting retry");
+			LOG_WARNING(MSGID_MOJ_DB_SERVICE_WARNING, 0, "db: deadlock detected; attempting retry %d", retries);
 			err = msg->writer().reset();
 			MojErrCheck(err);
 			err = MojSleep(DeadlockSleepMillis * 1000);
@@ -65,9 +63,7 @@ MojErr MojDbServiceHandlerBase::invoke(Callback method, MojServiceMessage* msg, 
 				MojErrThrow(MojErrDbInconsistentIndex);
 			}
 
-			LOG_WARNING(MSGID_MOJ_DB_SERVICE_WARNING, 1,
-					PMLOGFV("retries", "%d", retries),
-					"db: indexlock_conflict; attempting retry");
+			LOG_WARNING(MSGID_MOJ_DB_SERVICE_WARNING, 0, "db: indexlock_conflict; attempting retry %d", retries);
 			err = msg->writer().reset();
 			MojErrCheck(err);
 			err = MojSleep(DeadlockSleepMillis * 1000);
