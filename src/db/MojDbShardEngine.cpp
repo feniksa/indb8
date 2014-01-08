@@ -28,6 +28,8 @@
 
 using namespace std;
 
+
+
 static const MojChar* const ShardInfoKind1Str =
     _T("{\"id\":\"ShardInfo1:1\",")
     _T("\"owner\":\"mojodb.admin\",")
@@ -40,15 +42,17 @@ static const MojChar* const ShardInfoKind1Str =
                       {\"name\":\"KindIds\", \"props\":[ {\"name\":\"kindIds\"} ]}\
                     ]}");
 
-//db.shardEngine
+MojLogger MojDbShardEngine::s_log(_T("db.shardEngine"));
 
 MojDbShardEngine::MojDbShardEngine(MojDb& db)
   : m_db(db)
 {
+    MojLogTrace(s_log);
 }
 
 MojDbShardEngine::~MojDbShardEngine(void)
 {
+    MojLogTrace(s_log);
 }
 
 /**
@@ -64,7 +68,7 @@ MojDbShardEngine::~MojDbShardEngine(void)
  */
 MojErr MojDbShardEngine::init (const MojObject& conf, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(s_log);
     MojErr err;
     MojObject obj;
 
@@ -89,7 +93,7 @@ MojErr MojDbShardEngine::init (const MojObject& conf, MojDbReqRef req)
 
 MojErr MojDbShardEngine::configure(const MojObject& conf)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(s_log);
 
     MojErr err;
 
@@ -99,9 +103,9 @@ MojErr MojDbShardEngine::configure(const MojObject& conf)
     if (conf.get(_T("mediaMountpointDirectory"), mediaConf)) {
         err = mediaConf.stringValue(mediaLinkDirectory);
         MojErrCheck(err);
-        LOG_DEBUG("[db_shardEngine] Use mediaMountpointDirectory as \"%s\"", mediaLinkDirectory.data());
+        MojLogDebug(s_log, "Use mediaMountpointDirectory as \"%s\"", mediaLinkDirectory.data());
     } else {
-        LOG_DEBUG("[db_shardEngine] Configuration section \"mediaMountpointDirectory\" doesn't found, use default value for mediaMountpointDirectory");
+        MojLogDebug(s_log, "Configuration section \"mediaMountpointDirectory\" doesn't found, use default value for mediaMountpointDirectory");
     }
 
     err = m_mediaLinkManager.setLinkDirectory(mediaLinkDirectory);
@@ -122,8 +126,6 @@ MojErr MojDbShardEngine::configure(const MojObject& conf)
  */
 MojErr MojDbShardEngine::resetShards (MojDbReq& io_req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojDbQuery query;
     MojDbCursor cursor;
     MojObject props;
@@ -153,7 +155,7 @@ MojErr MojDbShardEngine::resetShards (MojDbReq& io_req)
  */
 MojErr MojDbShardEngine::put (const MojDbShardInfo& shardInfo, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(s_log);
     MojAssert(shardInfo.id);
 
     MojObject obj;
@@ -197,9 +199,8 @@ MojErr MojDbShardEngine::put (const MojDbShardInfo& shardInfo, MojDbReqRef req)
  */
 MojErr MojDbShardEngine::get (MojUInt32 shardId, MojDbShardInfo& shardInfo, bool& found)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojErr err;
+    MojAssert(mp_db);
     MojObject dbObj;
 
     found = m_cache.get(shardId, dbObj);
@@ -226,7 +227,8 @@ MojErr MojDbShardEngine::get (MojUInt32 shardId, MojDbShardInfo& shardInfo, bool
  */
 MojErr MojDbShardEngine::getAllActive (std::list<MojDbShardInfo>& shardInfoList, MojUInt32& count, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(s_log);
+    MojAssert(mp_db);
 
     MojErr err;
 
@@ -276,7 +278,7 @@ MojErr MojDbShardEngine::getAllActive (std::list<MojDbShardInfo>& shardInfoList,
  */
 MojErr MojDbShardEngine::update (const MojDbShardInfo& i_shardInfo, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(s_log);
     MojErr err;
 
     MojDbQuery query;
@@ -324,7 +326,7 @@ MojErr MojDbShardEngine::update (const MojDbShardInfo& i_shardInfo, MojDbReqRef 
  */
 MojErr MojDbShardEngine::getByDeviceUuid (const MojString& deviceUuid, MojDbShardInfo& shardInfo, bool& found)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(s_log);
     MojErr err;
 
     //get record from db, extract id
@@ -367,7 +369,7 @@ MojErr MojDbShardEngine::getByDeviceUuid (const MojString& deviceUuid, MojDbShar
  */
 MojErr MojDbShardEngine::getShardId (const MojString& deviceUuid, MojUInt32& shardId)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(s_log);
     MojErr err;
     MojDbShardInfo shardInfo;
     bool found;
@@ -376,9 +378,9 @@ MojErr MojDbShardEngine::getShardId (const MojString& deviceUuid, MojUInt32& sha
     MojErrCheck(err);
     if (found)  {
         shardId = shardInfo.id;
-        LOG_DEBUG("[db_shardEngine] Shard id for device %s is %d", deviceUuid.data(), shardId);
+        MojLogDebug(s_log, _T("Shard id for device %s is %d"), deviceUuid.data(), shardId);
     } else {
-        LOG_DEBUG("[db_shardEngine] Shard id for device %s not found, generating it", deviceUuid.data());
+        MojLogDebug(s_log, _T("Shard id for device %s not found, generating it"), deviceUuid.data());
         err = allocateId(deviceUuid, shardId);
         MojErrCheck(err);
     }
@@ -399,7 +401,7 @@ MojErr MojDbShardEngine::getShardId (const MojString& deviceUuid, MojUInt32& sha
  */
 MojErr MojDbShardEngine::allocateId (const MojString& deviceUuid, MojUInt32& shardId)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(s_log);
 
     MojErr err;
     MojUInt32 id;
@@ -420,10 +422,7 @@ MojErr MojDbShardEngine::allocateId (const MojString& deviceUuid, MojUInt32& sha
         MojErrCheck(err);
 
         if (found) {
-            LOG_WARNING(MSGID_DB_SHARDENGINE_WARNING, 2,
-                PMLOGKS("id", id),
-                PMLOGKS("prefix", prefix),
-                "id generation -> [%x] exist already, prefix = %u", id, prefix);
+            MojLogWarning(MojDbShardEngine::s_log, _T("id generation -> [%x] exist already, prefix = %u\n"), id, prefix);
             prefix++;
         } else {
             MojAssert(id);
@@ -434,9 +433,7 @@ MojErr MojDbShardEngine::allocateId (const MojString& deviceUuid, MojUInt32& sha
 
         if (prefix == 128)
         {
-            LOG_WARNING(MSGID_DB_SHARDENGINE_WARNING, 1,
-                        PMLOGKS("prefix", prefix),
-                        "id generation -> next iteration");
+            MojLogWarning(MojDbShardEngine::s_log, _T("id generation -> next iteration\n"));
             prefix = 1;
             MojString modified_uuid;
             modified_uuid.format("%s%x", deviceUuid.data(), ++suffix);
@@ -461,7 +458,6 @@ MojErr MojDbShardEngine::allocateId (const MojString& deviceUuid, MojUInt32& sha
  */
 MojErr MojDbShardEngine::isIdExist (MojUInt32 shardId, bool& found)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     found = m_cache.isExist(shardId);
     return MojErrNone;
 }
@@ -479,7 +475,6 @@ MojErr MojDbShardEngine::isIdExist (MojUInt32 shardId, bool& found)
  */
 MojErr MojDbShardEngine::computeId (const MojString& mediaUuid, MojUInt32& sharId)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(!mediaUuid.empty());
 
     std::string str = mediaUuid.data();
@@ -509,8 +504,6 @@ MojErr MojDbShardEngine::computeId (const MojString& mediaUuid, MojUInt32& sharI
  */
 MojErr MojDbShardEngine::convertId (const MojUInt32 i_id, MojString& o_id_base64)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojErr err;
     MojBuffer buf;
     MojDataWriter writer(buf);
@@ -541,8 +534,6 @@ MojErr MojDbShardEngine::convertId (const MojUInt32 i_id, MojString& o_id_base64
  */
 MojErr MojDbShardEngine::convertId (const MojString& i_id_base64, MojUInt32& o_id)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojErr err;
     MojVector<MojByte> idVec;
     err = i_id_base64.base64Decode(idVec);
@@ -570,8 +561,6 @@ MojErr MojDbShardEngine::convertId (const MojString& i_id_base64, MojUInt32& o_i
  */
 MojErr MojDbShardEngine::convert (const MojDbShardInfo& i_shardInfo, MojObject& o_obj)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojObject obj1(i_shardInfo.id);
     MojErr err = o_obj.put(_T("shardId"), obj1);
     MojErrCheck(err);
@@ -631,8 +620,6 @@ MojErr MojDbShardEngine::convert (const MojDbShardInfo& i_shardInfo, MojObject& 
  */
 MojErr MojDbShardEngine::convert (const MojObject& i_obj, MojDbShardInfo& o_shardInfo)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojErr err = i_obj.getRequired(_T("shardId"), o_shardInfo.id);
     MojErrCheck(err);
 
@@ -683,8 +670,6 @@ MojErr MojDbShardEngine::convert (const MojObject& i_obj, MojDbShardInfo& o_shar
  */
 MojErr MojDbShardEngine::purgeShardObjects (MojInt64 numDays, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojDbQuery query1, query2;
     MojDbCursor cursor;
     MojInt32 value_id = 0;
@@ -700,7 +685,7 @@ MojErr MojDbShardEngine::purgeShardObjects (MojInt64 numDays, MojDbReqRef req)
     MojTime time;
     MojErrCheck( MojGetCurrentTime(time) );
     MojInt64 purgeTime = time.microsecs() - (MojTime::UnitsPerDay * numDays);
-    LOG_DEBUG("[db_shardEngine] purging objects for shards inactive for more than %lld days...", numDays);
+    MojLogDebug(s_log, _T("purging objects for shards inactive for more than %lld days..."), numDays);
 
     //collect 'old' shards
     //--------------------
@@ -731,9 +716,9 @@ MojErr MojDbShardEngine::purgeShardObjects (MojInt64 numDays, MojDbReqRef req)
         {
             err = arrShardIds.pushUnique(value_id);
             MojErrCheck(err);
-            LOG_DEBUG("[db_shardEngine] Need to purge records for old shard: [%s]", shardIdStr.data());
+            MojLogDebug(s_log, _T("Need to purge records for old shard: [%s]"), shardIdStr.data());
         } else { // TODO: Remove
-            LOG_DEBUG("[db_shardEngine] Ignore active shard: [%s]", shardIdStr.data());
+            MojLogDebug(s_log, _T("Ignore active shard: [%s]"), shardIdStr.data());
         }
 
     }
@@ -741,7 +726,7 @@ MojErr MojDbShardEngine::purgeShardObjects (MojInt64 numDays, MojDbReqRef req)
     MojErrCheck(cursor.close());
 
     removeShardObjects(arrShardIds, req);
-    LOG_DEBUG("[db_shardEngine] Ended");
+    MojLogDebug(s_log, _T("Ended"));
 
     return MojErrNone;
 }
@@ -759,8 +744,6 @@ MojErr MojDbShardEngine::purgeShardObjects (MojInt64 numDays, MojDbReqRef req)
  */
 MojErr MojDbShardEngine::removeShardObjects (const MojString& strShardIdToRemove, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojUInt32 shardId;
 
     MojVector<MojUInt32> shardIds;
@@ -768,7 +751,8 @@ MojErr MojDbShardEngine::removeShardObjects (const MojString& strShardIdToRemove
     MojErrCheck(err);
     err = shardIds.push(shardId);
     MojErrCheck(err);
-    LOG_DEBUG("[db_shardEngine] purging objects for shard: %s", strShardIdToRemove.data());
+    MojLogDebug(s_log, _T("purging objects for shard: %s"), strShardIdToRemove.data());
+
 
     return(removeShardObjects(shardIds, req));
 }
@@ -786,8 +770,6 @@ MojErr MojDbShardEngine::removeShardObjects (const MojString& strShardIdToRemove
  */
 MojErr MojDbShardEngine::removeShardObjects (const MojVector<MojUInt32>& arrShardIds, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojVector<MojObject> objList;
     MojDbShardInfo info;
     bool foundOut;
@@ -816,14 +798,14 @@ MojErr MojDbShardEngine::removeShardObjects (const MojVector<MojUInt32>& arrShar
                         if(pKind->isBuiltin())
                             continue;
 
-                        LOG_DEBUG("[db_shardEngine] Get next shard for %s", (*itKindId).data()); // TODO: to debug
+                        MojLogDebug(s_log, _T("Get next shard for %s"), (*itKindId).data()); // TODO: to debug
                         err = removeShardKindObjects(*itShardId, *itKindId, req);
                         MojErrCheck(err);
                     }
                 }
             }
 
-            LOG_DEBUG("[db_shardEngine] Returned from removeShardObjects"); // TODO: to debug
+            MojLogDebug(s_log, _T("Returned from removeShardObjects")); // TODO: to debug
     }
 
     return MojErrNone;
@@ -845,7 +827,6 @@ MojErr MojDbShardEngine::removeShardObjects (const MojVector<MojUInt32>& arrShar
  */
 MojErr MojDbShardEngine::removeShardKindObjects (const MojUInt32 shardId, const MojString& kindId, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     // make query
     bool found;
     uint32_t countDeleted = 0;
@@ -863,7 +844,7 @@ MojErr MojDbShardEngine::removeShardKindObjects (const MojUInt32 shardId, const 
     err = MojDbShardEngine::convertId(shardId, shardIdStr);
     MojErrCheck(err);
 
-    LOG_DEBUG("[db_shardEngine] purging objects for shard: [%s], Kind: [%s]", shardIdStr.data(), kindId.data());// todo: convert to Info
+    MojLogDebug(s_log, _T("purging objects for shard: [%s], Kind: [%s]"), shardIdStr.data(), kindId.data());// todo: convert to Info
 
     MojObject record;
     MojObject recordId;
@@ -893,9 +874,9 @@ MojErr MojDbShardEngine::removeShardKindObjects (const MojUInt32 shardId, const 
     }
 
     if (countDeleted) {
-        LOG_DEBUG("[db_shardEngine] purged %d of %d objects for shard: [%s] from Kind: [%s]", countDeleted, countRead, shardIdStr.data(), kindId.data());
+        MojLogDebug(s_log, _T("purged %d of %d objects for shard: [%s] from Kind: [%s]"), countDeleted, countRead, shardIdStr.data(), kindId.data());
     } else {
-        LOG_DEBUG("[db_shardEngine] none purged out of %d objects", countRead); // todo: convert to Info
+        MojLogDebug(s_log, _T("none purged out of %d objects"), countRead); // todo: convert to Info
     }
 
     return MojErrNone;
@@ -906,7 +887,6 @@ MojErr MojDbShardEngine::removeShardKindObjects (const MojUInt32 shardId, const 
  */
 MojErr MojDbShardEngine::updateTimestamp (MojDbShardInfo& shardInfo)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojTime time;
     MojErrCheck( MojGetCurrentTime(time) );
     shardInfo.timestamp = time.microsecs();
@@ -923,8 +903,6 @@ MojErr MojDbShardEngine::updateTimestamp (MojDbShardInfo& shardInfo)
  */
 MojErr MojDbShardEngine::initCache (MojDbReq& io_req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojDbQuery query;
     MojDbCursor cursor;
     MojInt32 value_id = 0;
@@ -957,11 +935,9 @@ MojErr MojDbShardEngine::initCache (MojDbReq& io_req)
 
 MojErr MojDbShardEngine::linkShardAndKindId (const MojString& shardIdBase64, const MojString& kindId, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     if(shardIdBase64.empty())
     {
-        LOG_DEBUG("[db_shardEngine] link shard and kind: empty shardId");
+        MojLogDebug(s_log, _T("link shard and kind: empty shardId"));
         return MojErrNone;
     }
 
@@ -977,11 +953,9 @@ MojErr MojDbShardEngine::linkShardAndKindId (const MojString& shardIdBase64, con
 
 MojErr MojDbShardEngine::linkShardAndKindId (const MojUInt32 shardId, const MojString& kindId, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     if(kindId.empty())
     {
-        LOG_DEBUG("[db_shardEngine] link shard and kind: empty kindId");
+        MojLogDebug(s_log, _T("link shard and kind: empty kindId"));
         return MojErrNone;
     }
 
@@ -1010,11 +984,9 @@ MojErr MojDbShardEngine::linkShardAndKindId (const MojUInt32 shardId, const MojS
 
 MojErr MojDbShardEngine::unlinkShardAndKindId (const MojString& shardIdBase64, const MojString& kindId, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     if(shardIdBase64.empty())
     {
-        LOG_DEBUG("[db_shardEngine] link shard and kind: empty shardId");
+        MojLogDebug(s_log, _T("link shard and kind: empty shardId"));
         return MojErrNone;
     }
 
@@ -1030,11 +1002,9 @@ MojErr MojDbShardEngine::unlinkShardAndKindId (const MojString& shardIdBase64, c
 
 MojErr MojDbShardEngine::unlinkShardAndKindId (const MojUInt32 shardId, const MojString& kindId, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     if(kindId.empty())
     {
-        LOG_DEBUG("[db_shardEngine] link shard and kind: empty kindId");
+        MojLogDebug(s_log, _T("link shard and kind: empty kindId"));
         return MojErrNone;
     }
 
@@ -1077,8 +1047,6 @@ MojErr MojDbShardEngine::unlinkShardAndKindId (const MojUInt32 shardId, const Mo
  */
 MojErr MojDbShardEngine::removeShardInfo (const MojUInt32 shardId)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojUInt32 count;
     MojDbQuery query;
     MojObject obj_id(shardId);
@@ -1150,8 +1118,6 @@ MojErr MojDbShardEngine::copyRequiredFields(const MojDbShardInfo& from, MojDbSha
 
 MojErr MojDbShardEngine::removeTransientShard(const MojDbShardInfo& shardInfo)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojErr err;
     if (!shardInfo.active && shardInfo.transient) {
         bool found;

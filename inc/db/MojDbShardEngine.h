@@ -183,6 +183,7 @@ private:
     MojDbMediaLinkManager m_mediaLinkManager;
     MojDb& m_db;
     MojDbShardIdCache m_cache;
+    static MojLogger s_log;
 };
 
 #endif /* MOJDBSHARDENGINE_H_ */

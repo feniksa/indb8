@@ -139,7 +139,6 @@ set(DB_LIB_SOURCES
     src/db/MojDbKindEngine.cpp
     src/db/MojDbShardIdCache.cpp
     src/db/MojDbShardEngine.cpp
-    src/db/MojDbSpaceInformer.cpp
     src/db/MojDbKindState.cpp
     src/db/MojDbKindIdList.cpp
     src/db/MojDbMediaLinkManager.cpp

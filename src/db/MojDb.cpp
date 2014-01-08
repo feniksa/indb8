@@ -57,7 +57,7 @@ const MojUInt32 MojDb::AutoBatchSize = 1000;
 const MojUInt32 MojDb::AutoCompactSize = 5000;
 const MojUInt32 MojDb::TmpVersionFileLength = 32;
 
-//db.mojodb
+MojLogger MojDb::s_log(_T("db.mojodb"));
 static volatile bool DefaultLocaleAlreadyInited = false;
 
 MojDb::MojDb()
@@ -67,12 +67,14 @@ MojDb::MojDb()
   m_loadStepSize(LoadStepSizeDefault),
   m_isOpen(false)
 {
+	MojLogTrace(s_log);
+
     if (!DefaultLocaleAlreadyInited) {
         UErrorCode error = U_ZERO_ERROR;
         uloc_setDefault("en_US", &error);
 
         if (U_FAILURE(error)) {
-            LOG_WARNING(MSGID_MOJ_DB_WARNING, 0, "Can't set default locale to en_US");
+            MojLogWarning(s_log, "Can't set default locale to en_US");
         }
         DefaultLocaleAlreadyInited = true;
     }
@@ -80,14 +82,15 @@ MojDb::MojDb()
 
 MojDb::~MojDb()
 {
+	MojLogTrace(s_log);
+
 	MojErr err = close();
 	MojErrCatchAll(err);
 }
 
 MojErr MojDb::configure(const MojObject& conf)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
+	MojLogTrace(s_log);
 	MojThreadWriteGuard guard(m_schemaLock);
 
 	MojErr err = requireNotOpen();
@@ -112,8 +115,8 @@ MojErr MojDb::configure(const MojObject& conf)
 
 MojErr MojDb::drop(const MojChar* path)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(path);
+	MojLogTrace(s_log);
 
 	MojErr err = requireOpen();
 	MojErrCheck(err);
@@ -133,13 +136,13 @@ MojErr MojDb::drop(const MojChar* path)
 
 MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(path);
+	MojLogTrace(s_log);
 
 	MojErr err = requireNotOpen();
 	MojErrCheck(err);
 
-    LOG_DEBUG("[db_mojodb] [opening: '%s'...]:", path);
+    MojLogDebug(s_log, _T("opening: '%s'..."), path);
 
 	MojAutoCloser<MojDb> closer(this);
 	m_isOpen = true;
@@ -172,36 +175,35 @@ MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
 	MojErrCheck(err);
 
 	// db
-    LOG_DEBUG("[db_mojodb] [Open Database: '%s'...]:", ObjDbName);
-
+    MojLogDebug(s_log, _T("Open Database: '%s'"), ObjDbName);
 	err = m_storageEngine->openDatabase(ObjDbName, req.txn(), m_objDb);
 	MojErrCheck(err);
 	MojAssert(m_objDb.get());
 
 	// seq
-    LOG_DEBUG("[db_mojodb] [Open Database: '%s'...]:", IdSeqName);
+    MojLogDebug(s_log, _T("Open Database: '%s'"), IdSeqName);
 	err = m_storageEngine->openSequence(IdSeqName, req.txn(), m_idSeq);
 	MojErrCheck(err);
 	MojAssert(m_idSeq.get());
 
 	// kinds
-    LOG_DEBUG("[db_mojodb] Open Kind Engine");
+    MojLogDebug(s_log, _T("Open Kind Engine"));
 	err = m_kindEngine.open(this, req);
-    LOG_DEBUG("[db_mojodb] Kind Opened...");
+    MojLogDebug(s_log, _T("Kind Opened..."));
 	MojErrCheck(err);
 
 	// perms
-    LOG_DEBUG("[db_mojodb] Open Permissions");
+    MojLogDebug(s_log, _T("Open Permissions"));
 	err = m_permissionEngine.open(m_conf, this, req);
 	MojErrCheck(err);
 
 	// quota
-    LOG_DEBUG("[db_mojodb] Open Quota engine");
+    MojLogDebug(s_log, _T("Open Quota engine"));
 	err = m_quotaEngine.open(m_conf, this, req);
 	MojErrCheck(err);
 
     // shard's
-    LOG_DEBUG("[db_mojodb] Init shard engine");
+    MojLogDebug(s_log, _T("Init shard engine"));
     err = m_shardEngine.init(m_conf, req);
     MojErrCheck(err);
 
@@ -214,21 +216,21 @@ MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
 	MojErrCheck(err);
 
 	closer.release();
-    LOG_DEBUG("[db_mojodb] open completed");
+    MojLogDebug(s_log, _T("open completed"));
 
 	return MojErrNone;
 }
 
 MojErr MojDb::close()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 	MojThreadWriteGuard guard(m_schemaLock);
 
 	MojErr err = MojErrNone;
 	MojErr errClose = MojErrNone;
 
 	if (m_isOpen) {
-        LOG_DEBUG("[db_mojodb] closing...");
+        MojLogDebug(s_log, _T("closing..."));
 
 		errClose = m_quotaEngine.close();
 		MojErrAccumulate(err, errClose);
@@ -252,14 +254,14 @@ MojErr MojDb::close()
 			m_storageEngine.reset();
 		}
 		m_isOpen = false;
-        LOG_DEBUG("[db_mojodb] close completed");
+        MojLogDebug(s_log, _T("close completed"));
 	}
 	return err;
 }
 
 MojErr MojDb::del(const MojObject& id, bool& foundOut, MojUInt32 flags, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	foundOut = false;
 	MojUInt32 count = 0;
@@ -273,9 +275,9 @@ MojErr MojDb::del(const MojObject& id, bool& foundOut, MojUInt32 flags, MojDbReq
 
 MojErr MojDb::del(const MojObject* idsBegin, const MojObject* idsEnd, MojUInt32& countOut, MojObject& arrOut, MojUInt32 flags, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(idsBegin || idsBegin == idsEnd);
 	MojAssert(idsEnd >= idsBegin);
+	MojLogTrace(s_log);
 
 	countOut = 0;
 	MojErr err = beginReq(req);
@@ -304,7 +306,7 @@ MojErr MojDb::del(const MojObject* idsBegin, const MojObject* idsEnd, MojUInt32&
 
 MojErr MojDb::del(const MojDbQuery& query, MojUInt32& countOut, MojUInt32 flags, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 	countOut = 0;
 
 	MojErr err = beginReq(req);
@@ -321,7 +323,7 @@ MojErr MojDb::del(const MojDbQuery& query, MojUInt32& countOut, MojUInt32 flags,
 
 MojErr MojDb::delKind(const MojObject& id, bool& foundOut, MojUInt32 flags, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 	foundOut = false;
 
 	MojErr err = beginReq(req, true);
@@ -339,14 +341,11 @@ MojErr MojDb::delKind(const MojObject& id, bool& foundOut, MojUInt32 flags, MojD
 	MojErrCheck(err);
 
 	if (pk->nsubkinds() > 0) {
-        LOG_WARNING(MSGID_MOJ_DB_WARNING, 2,
-            PMLOGKS("kind", idStr.data()),
-            PMLOGKS("subkinds", pk->nsubkinds()),
-            "delKind_error: %s has %d subkinds \n", idStr.data(), pk->nsubkinds());
+		MojLogWarning(s_log, _T("delKind_error: %s has %d subkinds \n"), idStr.data(), pk->nsubkinds());
 		MojErrThrow(MojErrDbKindHasSubKinds);
 	}
     else
-        LOG_DEBUG("[db_mojodb] delKind: %s", idStr.data());
+        MojLogDebug(s_log, _T("delKind: %s \n"), idStr.data());
 
 	err = m_kindEngine.checkOwnerPermission(idStr, req);
 	MojErrCheck(err);
@@ -395,7 +394,7 @@ MojErr MojDb::delKind(const MojObject& id, bool& foundOut, MojUInt32 flags, MojD
 
 MojErr MojDb::get(const MojObject& id, MojObject& objOut, bool& foundOut, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	objOut.clear();
 	foundOut = false;
@@ -412,9 +411,9 @@ MojErr MojDb::get(const MojObject& id, MojObject& objOut, bool& foundOut, MojDbR
 
 MojErr MojDb::get(const MojObject* idsBegin, const MojObject* idsEnd, MojObjectVisitor& visitor, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(idsBegin || idsBegin == idsEnd);
 	MojAssert(idsEnd >= idsBegin);
+	MojLogTrace(s_log);
 
 	MojErr err = beginReq(req);
 	MojErrCheck(err);
@@ -433,7 +432,7 @@ MojErr MojDb::get(const MojObject* idsBegin, const MojObject* idsEnd, MojObjectV
 
 MojErr MojDb::merge(const MojDbQuery& query, const MojObject& props, MojUInt32& countOut, MojUInt32 flags, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	countOut = 0;
 	MojErr err = beginReq(req);
@@ -472,10 +471,7 @@ MojErr MojDb::merge(const MojDbQuery& query, const MojObject& props, MojUInt32& 
 		++count;
 	}
 	if (warns > 0)
-        LOG_WARNING(MSGID_MOJ_DB_WARNING, 2,
-            PMLOGKS("from", query.from().data()),
-            PMLOGKS("warn", warns),
-            "Merge index_warnings: %s; count: %d\n", query.from().data(), warns);
+		MojLogWarning(s_log, _T("Merge index_warnings: %s; count: %d\n"), query.from().data(), warns);
 	err = cursor.close();
 	MojErrCheck(err);
 	err = req->end();
@@ -488,7 +484,7 @@ MojErr MojDb::merge(const MojDbQuery& query, const MojObject& props, MojUInt32& 
 
 MojErr MojDb::put(MojObject& obj, MojUInt32 flags, MojDbReqRef req, MojString shardId)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
     MojErr err = put(&obj, &obj + 1, flags, req, shardId);
 	MojErrCheck(err);
@@ -498,11 +494,9 @@ MojErr MojDb::put(MojObject& obj, MojUInt32 flags, MojDbReqRef req, MojString sh
 
 MojErr MojDb::put(MojObject* begin, const MojObject* end, MojUInt32 flags, MojDbReqRef req, MojString shardId)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	MojAssert(begin || begin == end);
 	MojAssert(end >= begin);
-
+	MojLogTrace(s_log);
     MojString kindId;
     bool foundOut;
     MojErr err;
@@ -519,7 +513,7 @@ MojErr MojDb::put(MojObject* begin, const MojObject* end, MojUInt32 flags, MojDb
         bool found = false;
         err = shardEngine()->isIdExist(id, found);
         if(!found) {
-            LOG_WARNING(MSGID_MOJ_DB_WARNING, 0, "Invalid shard ID\n");
+            MojLogWarning(s_log, _T("Invalid shard ID\n"));
             MojErrThrowMsg(MojErrDbMalformedId, _T("db: Invalid shard ID"));
         }
     }
@@ -543,8 +537,6 @@ MojErr MojDb::put(MojObject* begin, const MojObject* end, MojUInt32 flags, MojDb
 
 MojErr MojDb::putKind(MojObject& obj, MojUInt32 flags, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	MojErr err = beginReq(req, true);
 	MojErrCheck(err);
 
@@ -553,7 +545,7 @@ MojErr MojDb::putKind(MojObject& obj, MojUInt32 flags, MojDbReqRef req)
     err = obj.getRequired(MojDbServiceDefs::IdKey, id);
     MojErrCheck(err);
 
-    LOG_DEBUG("[db_mojodb] putKind: %s \n", id.data());
+	MojLogDebug(s_log, _T("putKind: %s \n"), id.data());
 
 	// set _kind and _id
 	err = obj.putString(KindKey, MojDbKindEngine::KindKindId);
@@ -582,10 +574,9 @@ MojErr MojDb::putKind(MojObject& obj, MojUInt32 flags, MojDbReqRef req)
 
 MojErr MojDb::putConfig(MojObject* begin, const MojObject* end, MojDbReq& req, MojDbPutHandler& handler)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	MojAssert(begin || begin == end);
 	MojAssert(end >= begin);
+	MojLogTrace(s_log);
 
 	MojErr err = beginReq(req, true);
 	MojErrCheck(err);
@@ -603,7 +594,7 @@ MojErr MojDb::putConfig(MojObject* begin, const MojObject* end, MojDbReq& req, M
 
 MojErr MojDb::find(const MojDbQuery& query, MojDbCursor& cursor, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojErr err = beginReq(req);
 	MojErrCheck(err);
@@ -619,7 +610,7 @@ MojErr MojDb::find(const MojDbQuery& query, MojDbCursor& cursor, MojDbReqRef req
 
 MojErr MojDb::find(const MojDbQuery& query, MojDbCursor& cursor, WatchSignal::SlotRef watchHandler, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojErr err = beginReq(req);
 	MojErrCheck(err);
@@ -637,7 +628,7 @@ MojErr MojDb::find(const MojDbQuery& query, MojDbCursor& cursor, WatchSignal::Sl
 
 MojErr MojDb::reserveId(MojObject& idOut)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojErr err = requireOpen();
 	MojErrCheck(err);
@@ -650,7 +641,7 @@ MojErr MojDb::reserveId(MojObject& idOut)
 
 MojErr MojDb::watch(const MojDbQuery& query, MojDbCursor& cursor, WatchSignal::SlotRef watchHandler, bool& firedOut, MojDbReqRef req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	firedOut = false;
 
@@ -686,8 +677,6 @@ MojErr MojDb::watch(const MojDbQuery& query, MojDbCursor& cursor, WatchSignal::S
 
 MojErr MojDb::createEngine()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	if (m_engineName.empty()) {
 		MojErr err = MojDbStorageEngine::createDefaultEngine(m_storageEngine);
 		MojErrCheck(err);
@@ -700,8 +689,6 @@ MojErr MojDb::createEngine()
 
 MojErr MojDb::requireOpen()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     if (!m_isOpen) {
 		MojErrThrowMsg(MojErrNotOpen, _T("db not open"));
     }
@@ -710,8 +697,6 @@ MojErr MojDb::requireOpen()
 
 MojErr MojDb::requireNotOpen()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	if (m_isOpen)
 		MojErrThrowMsg(MojErrAlreadyOpen, _T("db already open"));
 	return MojErrNone;
@@ -719,7 +704,7 @@ MojErr MojDb::requireNotOpen()
 
 MojErr MojDb::mergeInto(MojObject& dest, const MojObject& obj, const MojObject& prev)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	// TODO: support field deletion
 	// TODO: move merge fn out of db
@@ -768,7 +753,7 @@ MojErr MojDb::mergeInto(MojObject& dest, const MojObject& obj, const MojObject& 
 MojErr MojDb::putObj(const MojObject& id, MojObject& obj, const MojObject* oldObj,
                      MojDbStorageItem* oldItem, MojDbReq& req, MojDbOp op, bool checkSchema, MojString shardId)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	// if nothing changed, don't do the update
 	if (oldObj != NULL && obj == *oldObj)
@@ -836,8 +821,8 @@ MojErr MojDb::putObj(const MojObject& id, MojObject& obj, const MojObject* oldOb
 
 MojErr MojDb::delObj(const MojObject& id, const MojObject& obj, MojDbStorageItem* item, MojObject& foundObjOut, MojDbReq& req, MojUInt32 flags)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(item);
+	MojLogTrace(s_log);
 
 	if (MojFlagGet(flags, FlagPurge)) {
 		// update indexes
@@ -871,7 +856,7 @@ MojErr MojDb::delObj(const MojObject& id, const MojObject& obj, MojDbStorageItem
 
 MojErr MojDb::delImpl(const MojObject& id, bool& foundOut, MojObject& foundObjOut, MojDbReq& req, MojUInt32 flags)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	foundObjOut.clear();
 	// get object, so we can find the type
@@ -892,7 +877,7 @@ MojErr MojDb::delImpl(const MojObject& id, bool& foundOut, MojObject& foundObjOu
 
 MojErr MojDb::delImpl(const MojDbQuery& quer, MojUInt32& countOut, MojDbReq& req, MojUInt32 flags)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	countOut = 0;
 	MojInt32 warns = 0;
@@ -939,8 +924,7 @@ MojErr MojDb::delImpl(const MojDbQuery& quer, MojUInt32& countOut, MojDbReq& req
         }
 
         if (warns > 0)
-            LOG_DEBUG("[db_mojodb] delquery index_warnings: %s, count: %d\n", newQuery.from().data(), warns);
-
+            MojLogDebug(s_log, _T("delquery index_warnings: %s, count: %d\n"), newQuery.from().data(), warns);
         countOut += count;
 
         err = cursor.close();
@@ -969,7 +953,7 @@ MojErr MojDb::delImpl(const MojDbQuery& quer, MojUInt32& countOut, MojDbReq& req
 
 MojErr MojDb::findImpl(const MojDbQuery& query, MojDbCursor& cursor, MojDbWatcher* watcher, MojDbReq& req, MojDbOp op)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	if (cursor.isOpen())
 		MojErrThrow(MojErrDbCursorAlreadyOpen);
@@ -1001,7 +985,7 @@ MojErr MojDb::getImpl(const MojObject& id, MojObjectVisitor& visitor, MojDbOp op
 
 MojErr MojDb::putImpl(MojObject& obj, MojUInt32 flags, MojDbReq& req, bool checkSchema, MojString shardId)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojRefCountedPtr<MojDbStorageItem> prevItem;
 	MojObject id;
@@ -1083,8 +1067,6 @@ MojErr MojDb::putImpl(MojObject& obj, MojUInt32 flags, MojDbReq& req, bool check
  ***********************************************************************/
 MojErr MojDb::attachShardId(MojString shardId, MojObject& id)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojString idStr;
     MojErr err = id.stringValue(idStr);
     MojErrCheck(err);
@@ -1121,8 +1103,6 @@ MojErr MojDb::attachShardId(MojString shardId, MojObject& id)
 
 MojErr MojDb::nextId(MojInt64& idOut)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	MojErr err = m_idSeq->get(idOut);
 	MojErrCheck(err);
 
@@ -1131,8 +1111,6 @@ MojErr MojDb::nextId(MojInt64& idOut)
 
 MojErr MojDb::getLocale(MojString& valOut, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	MojObject curLocale;
 	MojErr err = getState(LocaleKey, curLocale, req);
 	MojErrCheck(err);
@@ -1144,7 +1122,7 @@ MojErr MojDb::getLocale(MojString& valOut, MojDbReq& req)
 
 MojErr MojDb::getState(const MojChar* key, MojObject& valOut, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojString idStr;
 	MojErr err = idStr.assign(DbStateObjId);
@@ -1168,7 +1146,7 @@ MojErr MojDb::getState(const MojChar* key, MojObject& valOut, MojDbReq& req)
 
 MojErr MojDb::updateState(const MojChar* key, const MojObject& val, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojObject obj;
 	MojErr err = obj.putString(IdKey, DbStateObjId);
@@ -1185,8 +1163,8 @@ MojErr MojDb::updateState(const MojChar* key, const MojObject& val, MojDbReq& re
 
 MojErr MojDb::checkDbVersion(const MojChar* path)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-    MojAssert(path);
+	MojAssert(path);
+	MojLogTrace(s_log);
 
     MojString version;
     MojString versionFileName;
@@ -1243,8 +1221,6 @@ MojErr MojDb::createVersionFile(const MojChar* path, const MojString versionFile
 
 MojErr MojDb::beginReq(MojDbReq& req, bool lockSchema)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	MojErr err = requireOpen();
 	MojErrCheck(err);
 
@@ -1259,8 +1235,6 @@ MojErr MojDb::beginReq(MojDbReq& req, bool lockSchema)
 
 MojErr MojDb::commitBatch(MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	// commit current batch and get things reset for next batch
 	// Can NOT have db cursor open at this stage and new queries have to be started
 	// Use with Caution otherwise you get db fatal errors
@@ -1270,22 +1244,19 @@ MojErr MojDb::commitBatch(MojDbReq& req)
 
 	err = req.end();
 	if (err != MojErrNone)
-        LOG_DEBUG("[db_mojodb] CommitBatch req.end: err= %d\n", (int)err);
-
+        MojLogDebug(s_log, _T("CommitBatch req.end: err= %d\n"), (int)err);
 	MojErrCheck(err);
 
 	err = req.endBatch();
 	if (err != MojErrNone)
-        LOG_DEBUG("[db_mojodb] CommitBatch req.endbatch: err= %d\n", (int)err);
-
+        MojLogDebug(s_log, _T("CommitBatch req.endbatch: err= %d\n"), (int)err);
 	MojErrCheck(err);
 
 	req.beginBatch();
 
 	err = beginReq(req, false);
 	if (err != MojErrNone)
-        LOG_DEBUG("[db_mojodb] CommitBatch ended: err= %d\n", (int)err);
-
+        MojLogDebug(s_log, _T("CommitBatch ended: err= %d\n"), (int)err);
 	MojErrCheck(err);
 
 	return MojErrNone;
@@ -1293,8 +1264,6 @@ MojErr MojDb::commitBatch(MojDbReq& req)
 
 MojErr MojDb::commitKind(const MojString& id, MojDbReq& req, MojErr err)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	// if put failed, abort the txn
 	MojErr errAcc = err;
 	if (err == MojErrNone) {
@@ -1317,8 +1286,6 @@ MojErr MojDb::commitKind(const MojString& id, MojDbReq& req, MojErr err)
 
 MojErr MojDb::reloadKind(const MojString& id)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	MojString dbId;
 	MojErr err = MojDbKindEngine::formatKindId(id, dbId);
 	MojErrCheck(err);
@@ -1348,8 +1315,6 @@ MojErr MojDb::reloadKind(const MojString& id)
 
 MojErr MojDb::assignIds(MojObject& obj)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	MojObject::Iterator objIter;
 	MojErr err = obj.begin(objIter);
 	MojErrCheck(err);
@@ -1392,8 +1357,6 @@ MojErr MojDb::assignIds(MojObject& obj)
  */
 bool MojDb::isValidKind (MojString& i_kindStr)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     bool foundOut = false;
     MojErr err;
     // make query
@@ -1421,8 +1384,6 @@ bool MojDb::isValidKind (MojString& i_kindStr)
  */
 bool MojDb::isSupported (MojString& i_shardId, MojString& i_kindStr)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     bool foundOut = false;
     bool isExist = false;
     MojErr err;

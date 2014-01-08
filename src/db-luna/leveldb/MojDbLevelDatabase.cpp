@@ -30,19 +30,22 @@
 MojDbLevelDatabase::MojDbLevelDatabase()
 : m_db(NULL)
 {
+    MojLogTrace(MojDbLevelEngine::s_log);
 }
 
 MojDbLevelDatabase::~MojDbLevelDatabase()
 {
+    MojLogTrace(MojDbLevelEngine::s_log);
+
     MojErr err =  close();
     MojErrCatchAll(err);
 }
 
 MojErr MojDbLevelDatabase::open(const MojChar* dbName, MojDbLevelEngine* eng, bool& createdOut, MojDbStorageTxn* txn)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(dbName && eng);
     MojAssert(!txn || txn->isValid());
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     // save eng, name and file
     createdOut = false;
@@ -88,7 +91,7 @@ MojErr MojDbLevelDatabase::open(const MojChar* dbName, MojDbLevelEngine* eng, bo
 
 MojErr MojDbLevelDatabase::close()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     MojErr err = MojErrNone;
     if (m_db) {
@@ -109,8 +112,8 @@ MojErr MojDbLevelDatabase::drop(MojDbStorageTxn* txn)
 MojErr MojDbLevelDatabase::mutexStats(int * total_mutexes, int * mutexes_free, int * mutexes_used,
      int * mutexes_used_highwater, int * mutexes_regionsize)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(m_engine);
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     if (total_mutexes)
         *total_mutexes = 0;
@@ -129,7 +132,7 @@ MojErr MojDbLevelDatabase::mutexStats(int * total_mutexes, int * mutexes_free, i
 
 MojErr MojDbLevelDatabase::stats(MojDbStorageTxn* txn, MojSize& countOut, MojSize& sizeOut)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     MojDbLevelCursor cursor;
     MojErr err = cursor.open(this, txn, 0);
@@ -144,7 +147,6 @@ MojErr MojDbLevelDatabase::stats(MojDbStorageTxn* txn, MojSize& countOut, MojSiz
 
 MojErr MojDbLevelDatabase::insert(const MojObject& id, MojBuffer& val, MojDbStorageTxn* txn)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(txn);
 
     MojErr err = put(id, val, txn, true);
@@ -155,7 +157,6 @@ MojErr MojDbLevelDatabase::insert(const MojObject& id, MojBuffer& val, MojDbStor
 
 MojErr MojDbLevelDatabase::update(const MojObject& id, MojBuffer& val, MojDbStorageItem* oldVal, MojDbStorageTxn* txn)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(oldVal && txn);
 
     MojErr err = txn->offsetQuota(-(MojInt64) oldVal->size());
@@ -170,7 +171,7 @@ MojErr MojDbLevelDatabase::update(const MojObject& id, MojBuffer& val, MojDbStor
 
 MojErr MojDbLevelDatabase::del(const MojObject& id, MojDbStorageTxn* txn, bool& foundOut)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     MojDbLevelItem idItem;
     MojErr err = idItem.fromObject(id);
@@ -183,7 +184,7 @@ MojErr MojDbLevelDatabase::del(const MojObject& id, MojDbStorageTxn* txn, bool& 
 
 MojErr MojDbLevelDatabase::get(const MojObject& id, MojDbStorageTxn* txn, bool forUpdate, MojRefCountedPtr<MojDbStorageItem>& itemOut)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(MojDbLevelEngine::s_log);
     // stop here
     itemOut.reset();
     MojDbLevelItem idItem;
@@ -203,8 +204,8 @@ MojErr MojDbLevelDatabase::get(const MojObject& id, MojDbStorageTxn* txn, bool f
 
 MojErr MojDbLevelDatabase::find(MojAutoPtr<MojDbQueryPlan> plan, MojDbStorageTxn* txn, MojRefCountedPtr<MojDbStorageQuery>& queryOut)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(m_db);
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     MojRefCountedPtr<MojDbLevelQuery> storageQuery(new MojDbLevelQuery);
     MojAllocCheck(storageQuery.get());
@@ -217,7 +218,7 @@ MojErr MojDbLevelDatabase::find(MojAutoPtr<MojDbQueryPlan> plan, MojDbStorageTxn
 
 MojErr MojDbLevelDatabase::put(const MojObject& id, MojBuffer& val, MojDbStorageTxn* txn, bool updateIdQuota)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     MojDbLevelItem idItem;
     MojErr err = idItem.fromObject(id);
@@ -233,9 +234,9 @@ MojErr MojDbLevelDatabase::put(const MojObject& id, MojBuffer& val, MojDbStorage
 
 MojErr MojDbLevelDatabase::put(MojDbLevelItem& key, MojDbLevelItem& val, MojDbStorageTxn* txn, bool updateIdQuota)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(m_db );
     MojAssert( !txn || dynamic_cast<MojDbLevelAbstractTxn *> (txn) );
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     MojErr err;
     if (txn)
@@ -266,8 +267,8 @@ MojErr MojDbLevelDatabase::put(MojDbLevelItem& key, MojDbLevelItem& val, MojDbSt
     MojErrCheck(err2);
     if (size1 > 16) // if the object-id is in key
         strncat(str_buf, (char *)(key.data()) + (size1 - 17), 16);
-    LOG_DEBUG("[db_ldb] ldb put: %s; keylen: %zu, key: %s ; vallen = %zu; err = %d\n",
-        this->m_name.data(), size1, str_buf, size2, err);
+    MojLogDebug(MojDbLevelEngine::s_log, _T("ldb put: %s; keylen: %zu, key: %s ; vallen = %zu; err = %d\n"),
+                    this->m_name.data(), size1, str_buf, size2, err);
 #endif
 
     if(leveldb_txn)
@@ -284,9 +285,9 @@ MojErr MojDbLevelDatabase::put(MojDbLevelItem& key, MojDbLevelItem& val, MojDbSt
 MojErr MojDbLevelDatabase::get(MojDbLevelItem& key, MojDbStorageTxn* txn, bool forUpdate,
                                MojDbLevelItem& valOut, bool& foundOut)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(m_db);
     MojAssert( !txn || dynamic_cast<MojDbLevelAbstractTxn *> (txn) );
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     foundOut = false;
     std::string str;
@@ -312,7 +313,6 @@ MojErr MojDbLevelDatabase::get(MojDbLevelItem& key, MojDbStorageTxn* txn, bool f
 
 MojErr MojDbLevelDatabase::beginTxn(MojRefCountedPtr<MojDbStorageTxn>& txnOut)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
    MojRefCountedPtr<MojDbLevelEnvTxn> txn(new MojDbLevelEnvTxn());
    MojAllocCheck(txn.get());
 
@@ -326,8 +326,8 @@ MojErr MojDbLevelDatabase::beginTxn(MojRefCountedPtr<MojDbStorageTxn>& txnOut)
 
 MojErr MojDbLevelDatabase::openIndex(const MojObject& id, MojDbStorageTxn* txn, MojRefCountedPtr<MojDbStorageIndex>& indexOut)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(!indexOut.get());
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     MojRefCountedPtr<MojDbLevelIndex> index(new MojDbLevelIndex());
     MojAllocCheck(index.get());
@@ -340,9 +340,10 @@ MojErr MojDbLevelDatabase::openIndex(const MojObject& id, MojDbStorageTxn* txn, 
 
 MojErr MojDbLevelDatabase::del(MojDbLevelItem& key, bool& foundOut, MojDbStorageTxn* txn)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+
     MojAssert(m_db);
     MojAssert( !txn || dynamic_cast<MojDbLevelAbstractTxn *> (txn) );
+    MojLogTrace(MojDbLevelEngine::s_log);
 
     foundOut = false;
     MojErr err = txn->offsetQuota(-(MojInt64) key.size());
@@ -366,7 +367,7 @@ MojErr MojDbLevelDatabase::del(MojDbLevelItem& key, bool& foundOut, MojDbStorage
     MojErrCheck(err2);
     if (size > 16)  // if the object-id is in key
         strncat(str_buf, (char *)(key.data()) + (size - 17), 16);
-    LOG_DEBUG("[db_ldb] ldbdel: %s; keylen: %zu, key= %s; err = %d \n", this->m_name.data(), size, str_buf, !st.ok());
+    MojLogDebug(MojDbLevelEngine::s_log, _T("ldbdel: %s; keylen: %zu, key= %s; err = %d \n"), this->m_name.data(), size, str_buf, !st.ok());
 #endif
 
     if (st.IsNotFound() == false) {

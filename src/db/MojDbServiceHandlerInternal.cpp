@@ -51,7 +51,7 @@ MojDbServiceHandlerInternal::MojDbServiceHandlerInternal(MojDb& db, MojReactor& 
 
 MojErr MojDbServiceHandlerInternal::open()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojErr err = addMethods(s_privMethods, false);
 	MojErrCheck(err);
@@ -61,6 +61,7 @@ MojErr MojDbServiceHandlerInternal::open()
 
 MojErr MojDbServiceHandlerInternal::subscribe()
 {
+	MojLogTrace(s_log);
     MojAssert(!m_mediaChangeHandler.get());
     m_mediaChangeHandler = new MojDbMediaHandler(m_service, m_db);
 
@@ -72,14 +73,21 @@ MojErr MojDbServiceHandlerInternal::subscribe()
 
 MojErr MojDbServiceHandlerInternal::close()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	return MojErrNone;
+/*   if(m_compactRunning) // do the real space check - we have no idea how long it'll take to clean up everything
+   {
+      int bytesUsed = 0;
+      int bytesAvailable = 0;
+      AlertLevel alertLevel = AlertLevelHigh;
+      doSpaceCheck(alertLevel, bytesUsed, bytesAvailable);
+      return alertLevel;
+   }
+   return MojDbServiceHandlerInternal::m_spaceAlertLevel;*/
 }
 
 MojErr MojDbServiceHandlerInternal::configure(bool fatalError)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	if (fatalError) {
 		MojErr err = generateFatalAlert();
@@ -94,8 +102,6 @@ MojErr MojDbServiceHandlerInternal::configure(bool fatalError)
 
 MojErr MojDbServiceHandlerInternal::handlePostBackup(MojServiceMessage* msg, MojObject& payload, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	// Chance to clean up anything we might have done during backup.
 	// Don't need to delete the backup file - BackupService handles that
 	MojErr err = msg->replySuccess();
@@ -106,8 +112,8 @@ MojErr MojDbServiceHandlerInternal::handlePostBackup(MojServiceMessage* msg, Moj
 
 MojErr MojDbServiceHandlerInternal::handlePostRestore(MojServiceMessage* msg, MojObject& payload, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(msg);
+	MojLogTrace(s_log);
 
 	MojString dir;
 	MojErr err = payload.getRequired(MojDbServiceDefs::DirKey, dir);
@@ -138,8 +144,8 @@ MojErr MojDbServiceHandlerInternal::handlePostRestore(MojServiceMessage* msg, Mo
 
 MojErr MojDbServiceHandlerInternal::handlePreBackup(MojServiceMessage* msg, MojObject& payload, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(msg);
+	MojLogTrace(s_log);
 
 	MojErr err = MojErrNone;
 	MojString dir;
@@ -185,8 +191,8 @@ MojErr MojDbServiceHandlerInternal::handlePreBackup(MojServiceMessage* msg, MojO
 
 MojErr MojDbServiceHandlerInternal::handlePreRestore(MojServiceMessage* msg, MojObject& payload, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(msg);
+	MojLogTrace(s_log);
 
 	MojString version;
 	bool found = false;
@@ -214,8 +220,8 @@ MojErr MojDbServiceHandlerInternal::handlePreRestore(MojServiceMessage* msg, Moj
 
 MojErr MojDbServiceHandlerInternal::handleScheduledPurge(MojServiceMessage* msg, MojObject& payload, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(msg);
+	MojLogTrace(s_log);
 
 	MojObject activity;
 	MojErr err = payload.getRequired(_T("$activity"), activity);
@@ -236,8 +242,8 @@ MojErr MojDbServiceHandlerInternal::handleScheduledPurge(MojServiceMessage* msg,
 
 MojErr MojDbServiceHandlerInternal::handleScheduledSpaceCheck(MojServiceMessage* msg, MojObject& payload, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(msg);
+	MojLogTrace(s_log);
 
 	MojObject activity;
 	MojErr err = payload.getRequired(_T("$activity"), activity);
@@ -258,8 +264,8 @@ MojErr MojDbServiceHandlerInternal::handleScheduledSpaceCheck(MojServiceMessage*
 
 MojErr MojDbServiceHandlerInternal::handleSpaceCheck(MojServiceMessage* msg, MojObject& payload, MojDbReq& req)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
 	MojAssert(msg);
+	MojLogTrace(s_log);
 
 	MojErr err = MojErrNone;
     MojDbSpaceAlert& spaceAlert = m_db.getSpaceAlert();
@@ -296,8 +302,6 @@ MojErr MojDbServiceHandlerInternal::handleSpaceCheck(MojServiceMessage* msg, Moj
 
 MojErr MojDbServiceHandlerInternal::requestLocale()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
 	// register with the system service for locale changes
 	MojObject keys;
 	MojErr err = keys.pushString(MojDbServiceDefs::LocaleKey);
@@ -321,7 +325,7 @@ MojErr MojDbServiceHandlerInternal::requestLocale()
 
 MojErr MojDbServiceHandlerInternal::generateFatalAlert()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojObject message;
 	MojErr err = message.putString(_T("errorType"), _T("fsckError"));
@@ -336,7 +340,7 @@ MojErr MojDbServiceHandlerInternal::generateFatalAlert()
 
 MojErr MojDbServiceHandlerInternal::generateAlert(const MojChar* event, const MojObject& msg)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojObject payload;
 	MojErr err = payload.putString(_T("event"), event);
@@ -364,7 +368,7 @@ MojDbServiceHandlerInternal::PurgeHandler::PurgeHandler(MojDbServiceHandlerInter
 
 MojErr MojDbServiceHandlerInternal::PurgeHandler::init()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojObject payload;
 	MojErr err = initPayload(payload);
@@ -383,8 +387,7 @@ MojErr MojDbServiceHandlerInternal::PurgeHandler::init()
 
 MojErr MojDbServiceHandlerInternal::PurgeHandler::handleAdopt(MojObject& payload, MojErr errCode)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
+	MojLogTrace(s_log);
 	MojErrCheck(errCode);
 	 MojErr err;
 
@@ -423,13 +426,13 @@ MojErr MojDbServiceHandlerInternal::PurgeHandler::handleAdopt(MojObject& payload
 
 MojErr MojDbServiceHandlerInternal::PurgeHandler::handleComplete(MojObject& payload, MojErr errCode)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	// cancel subscription
 	m_adoptSlot.cancel();
 	m_subscription.reset();
 	if (errCode != MojErrNone) {
-        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 0, "error completing activity: %d", errCode);
+		MojLogError(s_log, _T("error completing activity: %d"), errCode);
 		MojErrThrow(errCode);
 	}
 	return MojErrNone;
@@ -453,10 +456,10 @@ MojDbServiceHandlerInternal::LocaleHandler::LocaleHandler(MojDb& db)
 
 MojErr MojDbServiceHandlerInternal::LocaleHandler::handleResponse(MojObject& payload, MojErr errCode)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	if (errCode != MojErrNone) {
-        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 0, "error from system service, locale query: %d", errCode);
+		MojLogError(s_log, _T("error from system service, locale query: %d"), errCode);
 		MojErrThrow(errCode);
 	}
 
@@ -483,9 +486,7 @@ MojErr MojDbServiceHandlerInternal::LocaleHandler::handleResponse(MojObject& pay
         uloc_setDefault(str.data(), &errorU);
 
         if (U_FAILURE(errorU)) {
-            LOG_WARNING(MSGID_MOJ_DB_SERVICE_WARNING, 1,
-                        PMLOGKS("locale", str.data()),
-                        "MojDbServiceHandlerInternal::LocaleHandler::handleResponse. Can't set locale to %s", str.data());
+            MojLogWarning(s_log, "MojDbServiceHandlerInternal::LocaleHandler::handleResponse. Can't set locale to %s", str.data());
         }
 	}
 	return MojErrNone;
@@ -501,7 +502,7 @@ MojDbServiceHandlerInternal::AlertHandler::AlertHandler(MojService& service, con
 
 MojErr MojDbServiceHandlerInternal::AlertHandler::send()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
+	MojLogTrace(s_log);
 
 	MojObject payload;
 	MojErr err = payload.put(_T("subscribe"), true);
@@ -516,12 +517,9 @@ MojErr MojDbServiceHandlerInternal::AlertHandler::send()
 
 MojErr MojDbServiceHandlerInternal::AlertHandler::handleBootStatusResponse(MojObject& payload, MojErr errCode)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
+	MojLogTrace(s_log);
 	if (errCode != MojErrNone) {
-        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-            PMLOGKS("error", errCode),
-            "error attempting to get sysmgr boot status %d", errCode);
+		MojLogError(s_log, _T("error attempting to get sysmgr boot status %d"), errCode);
 		MojErrThrow(errCode);
 	}
 
@@ -541,13 +539,11 @@ MojErr MojDbServiceHandlerInternal::AlertHandler::handleBootStatusResponse(MojOb
 
 MojErr MojDbServiceHandlerInternal::AlertHandler::handleAlertResponse(MojObject& payload, MojErr errCode)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
+	MojLogTrace(s_log);
 	if (errCode != MojErrNone) {
-        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 1,
-            PMLOGKS("error", errCode),
-            "error attempting to display alert: %d", errCode);
+		MojLogError(s_log, _T("error attempting to display alert: %d"), errCode);
 		MojErrThrow(errCode);
 	}
 	return MojErrNone;
 }
+
