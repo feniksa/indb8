@@ -60,8 +60,7 @@ const MojUInt32 MojDb::TmpVersionFileLength = 32;
 MojLogger MojDb::s_log(_T("db.mojodb"));
 static volatile bool DefaultLocaleAlreadyInited = false;
 
-MojDb::MojDb()
-: m_spaceAlert(*this),
+MojDb::MojDb() :
   m_shardEngine(*this),
   m_purgeWindow(PurgeNumDaysDefault),
   m_loadStepSize(LoadStepSizeDefault),
@@ -150,12 +149,6 @@ MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
 	// check the database version number and bail if there's a mismatch
 	err = checkDbVersion(path);
 	MojErrCheck(err);
-
-    MojString pathAsString;
-    err = pathAsString.assign(path);
-    MojErrCheck(err);
-    err = m_spaceAlert.configure(pathAsString);
-    MojErrCheck(err);
 
 	// engine
 	if (engine == NULL) {
@@ -1197,7 +1190,6 @@ MojErr MojDb::checkDbVersion(const MojChar* path)
 
 MojErr MojDb::createVersionFile(const MojChar* path, const MojString versionFileName)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(path);
 
     MojChar nameTemplate[TmpVersionFileLength] = _T("_tmpVersion_XXXXXX");

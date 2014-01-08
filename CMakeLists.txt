@@ -141,8 +141,6 @@ set(DB_LIB_SOURCES
     src/db/MojDbShardEngine.cpp
     src/db/MojDbKindState.cpp
     src/db/MojDbKindIdList.cpp
-    src/db/MojDbMediaLinkManager.cpp
-    src/db/MojDbMediaHandler.cpp
     src/db/MojDbObjectHeader.cpp
     src/db/MojDbObjectItem.cpp
     src/db/MojDbPermissionEngine.cpp
@@ -156,20 +154,15 @@ set(DB_LIB_SOURCES
     src/db/MojDbSearchCursor.cpp
     src/db/MojDbServiceClient.cpp
     src/db/MojDbServiceDefs.cpp
-    src/db/MojDbServiceHandler.cpp
-    src/db/MojDbServiceHandlerBase.cpp
-    src/db/MojDbServiceSchemas.cpp
     src/db/MojDbStorageEngine.cpp
     src/db/MojDbShardIdCache.cpp
     src/db/MojDbShardEngine.cpp
-    src/db/MojDbSpaceAlert.cpp
     src/db/MojDbShardInfo.cpp
     src/db/MojDbTextCollator.cpp
     src/db/MojDbTextTokenizer.cpp
     src/db/MojDbTextUtils.cpp
     src/db/MojDbUtils.cpp
     src/db/MojDbWatcher.cpp
-    src/db/MojDbServiceHandlerInternal.cpp
     )
 
 add_library(mojodb SHARED ${DB_LIB_SOURCES})
@@ -184,43 +177,49 @@ target_link_libraries(mojodb
 #webos_build_library(TARGET mojodb NOHEADERS)
 
 # -- source for generating libmojoluna.so
-set(LUNA_LIB_SOURCES
-    src/luna/MojLunaErr.cpp
-    src/luna/MojLunaMessage.cpp
-    src/luna/MojLunaRequest.cpp
-    src/luna/MojLunaService.cpp
-    )
+#set(LUNA_LIB_SOURCES
+#    src/luna/MojLunaErr.cpp
+#    src/luna/MojLunaMessage.cpp
+#    src/luna/MojLunaRequest.cpp
+#    src/luna/MojLunaService.cpp
+#    )
 
-add_library(mojoluna SHARED ${LUNA_LIB_SOURCES})
-target_link_libraries(mojoluna
-                      ${GLIB2_LDFLAGS}
-                      ${GTHREAD2_LDFLAGS}
-                      mojocore
-                      ${LS2_LDFLAGS}
-                      ${ICU}
-                      ${ICUI18N}
-                      )
-#webos_build_library(TARGET mojoluna NOHEADERS)
+#add_library(mojoluna SHARED ${LUNA_LIB_SOURCES})
+#target_link_libraries(mojoluna
+#                      ${GLIB2_LDFLAGS}
+#                      ${GTHREAD2_LDFLAGS}
+#                      mojocore
+#                      ${LS2_LDFLAGS}
+#                      ${ICU}
+#                      ${ICUI18N}
+#                      )
 
 # -- source for generating mojodb-luna
-set(LUNA_BIN_SOURCES
-    src/db-luna/MojDbLunaServiceApp.cpp
-    src/db-luna/MojDbLunaServiceDb.cpp
-)
+#set(LUNA_BIN_SOURCES
+#    src/db-luna/MojDbLunaServiceApp.cpp
+#    src/db-luna/MojDbLunaServiceDb.cpp
+#    src/db/MojDbMediaLinkManager.cpp
+#    src/db/MojDbMediaHandler.cpp
+#    src/db/MojDbSpaceAlert.cpp
+#    src/db/MojDbServiceHandler.cpp
+#    src/db/MojDbServiceHandlerBase.cpp
+#    src/db/MojDbServiceHandlerInternal.cpp
+#    #src/db/MojDbServiceSchemas.cpp
+#)
 
-include_directories (${DB_BACKEND_INCLUDES})
-add_executable(mojodb-luna ${LUNA_BIN_SOURCES} ${DB_BACKEND_WRAPPER_SOURCES})
-target_link_libraries(mojodb-luna
-                      ${GLIB2_LDFLAGS}
-                      ${GTHREAD2_LDFLAGS}
-                      mojocore
-                      mojodb
-                      mojoluna
-                      ${DB_BACKEND_LIB}
-                      ${LS2_LDFLAGS}
-                      ${ICU}
-                      ${ICUI18N}
-)
+#include_directories (${DB_BACKEND_INCLUDES})
+#add_executable(mojodb-luna ${LUNA_BIN_SOURCES} ${DB_BACKEND_WRAPPER_SOURCES})
+#target_link_libraries(mojodb-luna
+#                      ${GLIB2_LDFLAGS}
+#                      ${GTHREAD2_LDFLAGS}
+#                      mojocore
+#                      mojodb
+#                      mojoluna
+#                      ${DB_BACKEND_LIB}
+#                      ${LS2_LDFLAGS}
+#                      ${ICU}
+#                      ${ICUI18N}
+#)
 
 #webos_add_compiler_flags(ALL ${DB_BACKEND_WRAPPER_CFLAGS})
 
@@ -257,4 +256,4 @@ if (WEBOS_CONFIG_BUILD_TESTS)
     endif ()
     add_subdirectory(test/db-media)
 endif()
-add_subdirectory(tool/dbgen)
+#add_subdirectory(tool/dbgen)

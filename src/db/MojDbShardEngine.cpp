@@ -1066,8 +1066,7 @@ MojErr MojDbShardEngine::removeShardInfo (const MojUInt32 shardId)
 
 MojErr MojDbShardEngine::processShardInfo(const MojDbShardInfo& shardInfo)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-    LOG_DEBUG("[db_shardEngine] Shard engine notified about new shard");
+    MojLogDebug(s_log, "[db_shardEngine] Shard engine notified about new shard");
 
     MojErr err;
     bool found;
@@ -1090,7 +1089,7 @@ MojErr MojDbShardEngine::processShardInfo(const MojDbShardInfo& shardInfo)
     } else {        // not found in database
         err = allocateId(shardInfo.deviceId, databaseShardInfo.id);
         MojErrCheck(err);
-        LOG_DEBUG("[db_shardEngine] shardEngine for device %s generated shard id: %d", databaseShardInfo.deviceId.data(), databaseShardInfo.id);
+        MojLogDebug("[db_shardEngine] shardEngine for device %s generated shard id: %d", databaseShardInfo.deviceId.data(), databaseShardInfo.id);
 
         copyRequiredFields(shardInfo, databaseShardInfo);
         databaseShardInfo.deviceId = shardInfo.deviceId;
@@ -1107,8 +1106,6 @@ MojErr MojDbShardEngine::processShardInfo(const MojDbShardInfo& shardInfo)
 
 MojErr MojDbShardEngine::copyRequiredFields(const MojDbShardInfo& from, MojDbShardInfo& to)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     to.deviceUri = from.deviceUri;
     to.deviceName = from.deviceName;
     to.active = from.active;
