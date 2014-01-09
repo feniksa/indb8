@@ -16,9 +16,9 @@
 *
 * LICENSE@@@ */
 
-#include "db-luna/leveldb/MojDbLevelFactory.h"
-#include "db-luna/leveldb/MojDbLevelEngine.h"
-#include "db-luna/leveldb/MojDbLevelEnv.h"
+#include "db-engine/leveldb/MojDbLevelFactory.h"
+#include "db-engine/leveldb/MojDbLevelEngine.h"
+#include "db-engine/leveldb/MojDbLevelEnv.h"
 
 MojErr MojDbLevelFactory::create(MojRefCountedPtr<MojDbStorageEngine>& engineOut) const
 {

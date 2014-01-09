@@ -12,7 +12,6 @@ set(MOJ_DB_SOURCES
     MojDbKindEngine.cpp
     MojDbKindIdList.cpp
     MojDbKindState.cpp
-    MojDbMediaLinkManager.cpp
     MojDbObjectHeader.cpp
     MojDbObjectItem.cpp
     MojDbPermissionEngine.cpp
@@ -27,7 +26,6 @@ set(MOJ_DB_SOURCES
     MojDbSearchCursor.cpp
     MojDbServiceClient.cpp
     MojDbServiceDefs.cpp
-    MojDbServiceHandlerBase.cpp
     MojDbShardEngine.cpp
     MojDbShardIdCache.cpp
     MojDbShardInfo.cpp

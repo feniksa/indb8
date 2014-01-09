@@ -19,9 +19,8 @@
 #include <cassert>
 
 #include <leveldb/db.h>
-#include "db-luna/leveldb/MojDbLevelIterator.h"
-#include "db-luna/leveldb/MojDbLevelEngine.h"
-#include <iostream>
+#include "db-engine/leveldb/MojDbLevelIterator.h"
+#include "db-engine/leveldb/MojDbLevelEngine.h"
 
 MojDbLevelIterator::MojDbLevelIterator (database_t* database)
     : m_database(database)

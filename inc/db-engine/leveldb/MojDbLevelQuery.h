@@ -20,10 +20,11 @@
 #define MOJDBLEVELQUERY_H_
 
 #include "db/MojDbDefs.h"
-#include "db-luna/leveldb/MojDbLevelEngine.h"
-#include "db-luna/leveldb/MojDbLevelCursor.h"
-#include "db-luna/leveldb/MojDbLevelItem.h"
 #include "db/MojDbIsamQuery.h"
+
+#include "MojDbLevelEngine.h"
+#include "MojDbLevelCursor.h"
+#include "MojDbLevelItem.h"
 
 class MojDbLevelQuery : public MojDbIsamQuery
 {

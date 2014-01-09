@@ -19,6 +19,7 @@
 #ifndef LEVELDB_DEFS_H
 #define LEVELDB_DEFS_H
 
+#include <errno.h>
 #include "core/MojErr.h"
 
 #define MojLdbErrCheck(E, FNAME)                if (!E.ok()) MojErrThrowMsg(MojErrDbFatal, _T("ldb: %s - %s"), FNAME, E.ToString().data())

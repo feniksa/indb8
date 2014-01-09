@@ -16,9 +16,9 @@
 *
 * LICENSE@@@ */
 
-#include "db-luna/leveldb/MojDbLevelTxnIterator.h"
-#include "db-luna/leveldb/MojDbLevelEngine.h"
-#include "db-luna/leveldb/MojDbLevelTxn.h"
+#include "db-engine/leveldb/MojDbLevelTxnIterator.h"
+#include "db-engine/leveldb/MojDbLevelEngine.h"
+#include "db-engine/leveldb/MojDbLevelTxn.h"
 
 namespace {
     inline bool operator<(const leveldb::Slice &a, const leveldb::Slice &b)

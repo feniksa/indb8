@@ -71,28 +71,13 @@ add_definitions(-Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-str
 include_directories(inc)
 add_subdirectory(src/core)
 add_subdirectory(src/db)
-add_subdirectory(src/luna)
-
-# -- source for generating libmojoluna.so
-#set(LUNA_LIB_SOURCES
-#    src/luna/MojLunaErr.cpp
-#    src/luna/MojLunaMessage.cpp
-#    src/luna/MojLunaRequest.cpp
-#    src/luna/MojLunaService.cpp
-#    )
-
-#add_library(mojoluna SHARED ${LUNA_LIB_SOURCES})
-#target_link_libraries(mojoluna
-#                      ${GLIB2_LDFLAGS}
-#                      ${GTHREAD2_LDFLAGS}
-#                      mojocore
-#                      ${LS2_LDFLAGS}
-#                      ${ICU}
-#                      ${ICUI18N}
-#                      )
+add_subdirectory(src/db-engine)
+#add_subdirectory(src/luna)
 
 # configure database backend.
-include(${CMAKE_SOURCE_DIR}/src/db-luna/BackendBuildRules.cmake)
+#include(${CMAKE_SOURCE_DIR}/src/db-luna/BackendBuildRules.cmake)
+#add_definitions(${DB_BACKEND_WRAPPER_CFLAGS})
+#add_subdirectory(src/db-luna)
 
 # -- source for generating mojodb-luna
 #set(LUNA_BIN_SOURCES

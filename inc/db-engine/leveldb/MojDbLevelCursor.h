@@ -21,8 +21,7 @@
 
 #include <leveldb/db.h>
 #include "db/MojDbDefs.h"
-
-#include <db-luna/leveldb/MojDbLevelIterator.h>
+#include "MojDbLevelIterator.h"
 
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
     #include <boost/smart_ptr/scoped_ptr.hpp>

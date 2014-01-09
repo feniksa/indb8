@@ -17,8 +17,7 @@
 * LICENSE@@@ */
 
 #include <cassert>
-
-#include "db-luna/leveldb/MojDbLevelContainerIterator.h"
+#include "db-engine/leveldb/MojDbLevelContainerIterator.h"
 
 MojDbLevelContainerIterator::MojDbLevelContainerIterator (std::map<std::string, std::string>& database)
     : m_container(database)

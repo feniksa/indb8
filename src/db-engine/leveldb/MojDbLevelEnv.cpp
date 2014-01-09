@@ -16,8 +16,8 @@
 *
 * LICENSE@@@ */
 
-#include "db-luna/leveldb/MojDbLevelEnv.h"
-#include "db-luna/leveldb/MojDbLevelEngine.h"
+#include "db-engine/leveldb/MojDbLevelEnv.h"
+#include "db-engine/leveldb/MojDbLevelEngine.h"
 
 const MojChar* const MojDbLevelEnv::LockFileName = _T("_ldblock");
 

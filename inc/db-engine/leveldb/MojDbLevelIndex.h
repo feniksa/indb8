@@ -20,7 +20,7 @@
 #define MOJDBLEVELINDEX_H
 
 #include "db/MojDbStorageEngine.h"
-#include "db-luna/leveldb/MojDbLevelDatabase.h"
+#include "db-engine/leveldb/MojDbLevelDatabase.h"
 
 class MojDbLevelIndex : public MojDbStorageIndex
 {

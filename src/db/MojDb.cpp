@@ -31,7 +31,6 @@
 #include "core/MojObjectSerialization.h"
 #include "core/MojTime.h"
 #include "core/MojFile.h"
-#include "db-luna/leveldb/MojDbLevelItem.h"
 
 const MojChar* const MojDb::AdminRole = _T("admin");
 const MojChar* const MojDb::ObjDbName = _T("objects.db");
