@@ -24,7 +24,7 @@ include_directories(../db)
 
 add_definitions(-Wall -ansi -Wno-deprecated -pthread --std=c++0x)
 
-add_executable(${PROJECT_NAME}
+add_executable(gtest_db_core
                Runner.cpp
                JsonTest.cpp
                DumpLoadTest.cpp
@@ -37,14 +37,16 @@ add_executable(${PROJECT_NAME}
                ../db/MojDbTestStorageEngine.cpp
                )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(gtest_db_core
                       mojocore
                       mojodb
                       mojodbengine
                       gtest
                       gtest_main
                      )
+install( TARGETS gtest_db_core
+    RUNTIME DESTINATION lib/indb8/tests
+)
+                     
+add_test(NAME gtest_db_core COMMAND gtest_db_core)
 
-add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
-
-#install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)

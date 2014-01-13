@@ -19,26 +19,24 @@
 
 project(gtest_mojocore C CXX)
 
-# the RPATH to be used when installing
-set(CMAKE_INSTALL_RPATH "")
-
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_definitions(-Wall -std=c++0x -Wno-deprecated -pthread)
 
-add_executable(${PROJECT_NAME}
+add_executable(gtest_mojocore
                Runner.cpp
                AtomicIntTest.cpp
                DecimalTest.cpp
                NumberTest.cpp
                )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(gtest_mojocore
                       mojocore
                       )
 
-target_link_libraries(${PROJECT_NAME} gtest gtest_main)
+target_link_libraries(gtest_mojocore gtest gtest_main)
+install( TARGETS gtest_mojocore
+    RUNTIME DESTINATION lib/indb8/tests
+)
 
-add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
-
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+add_test(NAME gtest_mojocore COMMAND gtest_mojocore)

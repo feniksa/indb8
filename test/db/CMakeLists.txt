@@ -60,9 +60,12 @@ add_executable(test_db_core ${DB_TEST_SOURCES})
 target_link_libraries(test_db_core
                       mojocore
                       mojodb
-                      mojodbengine
+                      mojodbengine                      
 )
-#install(PROGRAMS ${CMAKE_BINARY_DIR}/test/db/test_db_core DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+install( TARGETS test_db_core
+    RUNTIME DESTINATION lib/indb8/tests
+)
+add_test(test_db_core test_db_core)
 
 # --------------------------------
 # performance test target
@@ -83,7 +86,9 @@ target_link_libraries(test_db_performance
                       mojodb
                       mojodbengine
 )
-#install(PROGRAMS ${CMAKE_BINARY_DIR}/test/db/test_db_performance DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+install( TARGETS test_db_performance
+    RUNTIME DESTINATION lib/indb8/tests
+)
 
 # --------------------------------
 # stress test target
@@ -99,6 +104,6 @@ target_link_libraries(test_db_stress
                       mojoluna
                       mojodbengine
 )
-#install(PROGRAMS ${CMAKE_BINARY_DIR}/test/db/test_db_stress DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
-
-#add_test(NAME MojDbStressTest COMMAND test_db_stress)
+install( TARGETS test_db_stress
+    RUNTIME DESTINATION lib/indb8/tests
+)

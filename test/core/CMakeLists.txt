@@ -47,5 +47,8 @@ set (CORE_TEST_SOURCES
 
 add_executable(test_core ${CORE_TEST_SOURCES})
 target_link_libraries(test_core mojocore)
+add_test(test_core test_core)
 
-install(PROGRAMS ${CMAKE_BINARY_DIR}/test/core/test_core DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+install( TARGETS test_core
+    RUNTIME DESTINATION lib/indb8/tests
+)

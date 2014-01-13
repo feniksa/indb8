@@ -23,20 +23,21 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_definitions(-Wall -ansi -Wno-deprecated -pthread)
 
-add_executable(${PROJECT_NAME}
+add_executable(gtest_leveldb
                Runner.cpp
                TestContainerIterator.cpp
                TestIterator.cpp
                TestTxn.cpp
                TestTxnIterator.cpp
 )
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(gtest_leveldb
                       mojocore
                       mojodb
                       mojodbengine)
 
-target_link_libraries(${PROJECT_NAME} gtest gtest_main)
+target_link_libraries(gtest_leveldb gtest gtest_main)
+install( TARGETS gtest_leveldb
+    RUNTIME DESTINATION lib/indb8/tests
+)
 
-add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
-
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+add_test(NAME gtest_leveldb COMMAND gtest_leveldb)

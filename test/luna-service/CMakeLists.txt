@@ -16,9 +16,6 @@
 #
 # LICENSE@@@
 
-# the RPATH to be used when installing
-set(CMAKE_INSTALL_RPATH "")
-
 set (LUNA_SERVICE_TEST_SOURCES
      MojLunaServiceTest.cpp
 )
@@ -29,5 +26,8 @@ target_link_libraries(test_luna_service
                       mojodb
                       mojoluna
 )
+install( TARGETS test_luna_service
+    RUNTIME DESTINATION lib/indb8/tests
+)
 
-install(PROGRAMS ${CMAKE_BINARY_DIR}/test/luna-service/test_luna_service DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+add_test(NAME test_luna_service COMMAND test_luna_service)

@@ -16,9 +16,6 @@
 #
 # LICENSE@@@
 
-# the RPATH to be used when installing
-set(CMAKE_INSTALL_RPATH "")
-
 set (DB_CLIENT_TEST_SOURCES
      MojDbClientTest.cpp
 )
@@ -30,4 +27,8 @@ target_link_libraries(test_dbclient
                       mojoluna
 )
 
-install(PROGRAMS ${CMAKE_BINARY_DIR}/test/dbclient/test_dbclient DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+install( TARGETS test_dbclient
+    RUNTIME DESTINATION lib/indb8/tests
+)
+
+add_test(test_dbclient test_dbclient)
