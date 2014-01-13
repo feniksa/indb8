@@ -81,8 +81,10 @@ add_subdirectory(src/db-luna)
 
 option(BUILD_TESTS "Build tests" ON)
 if (BUILD_TESTS)
+	enable_testing()
+
 	add_subdirectory(test/core)
-	add_subdirectory(test/db)
+	add_subdirectory(test/db)1
 	add_subdirectory(test/dbclient)
 	add_subdirectory(test/luna-service)
 
