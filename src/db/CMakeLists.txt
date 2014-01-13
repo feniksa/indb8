@@ -47,5 +47,5 @@ target_link_libraries(mojodb
                       ${ICUI18N}
 )
 install(TARGETS mojodb
-        LIBRARY DESTINATION lib
+        LIBRARY DESTINATION usr/lib
 )

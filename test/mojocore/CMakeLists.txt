@@ -36,7 +36,7 @@ target_link_libraries(gtest_mojocore
 
 target_link_libraries(gtest_mojocore gtest gtest_main)
 install( TARGETS gtest_mojocore
-    RUNTIME DESTINATION lib/indb8/tests
+    RUNTIME DESTINATION usr/lib/indb8/tests
 )
 
 add_test(NAME gtest_mojocore COMMAND gtest_mojocore)

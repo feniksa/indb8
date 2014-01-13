@@ -16,6 +16,6 @@ target_link_libraries(mojoluna
 )
 
 install(TARGETS mojoluna
-        LIBRARY DESTINATION lib
+        LIBRARY DESTINATION usr/lib
 )
 

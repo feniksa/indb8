@@ -27,7 +27,7 @@ target_link_libraries(test_luna_service
                       mojoluna
 )
 install( TARGETS test_luna_service
-    RUNTIME DESTINATION lib/indb8/tests
+    RUNTIME DESTINATION usr/lib/indb8/tests
 )
 
 add_test(NAME test_luna_service COMMAND test_luna_service)

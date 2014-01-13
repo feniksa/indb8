@@ -27,5 +27,5 @@ target_link_libraries(mojodb-luna
 )
 
 install(TARGETS mojodb-luna 
-        RUNTIME DESTINATION bin
+        RUNTIME DESTINATION usr/bin
 )

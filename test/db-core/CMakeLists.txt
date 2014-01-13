@@ -45,7 +45,7 @@ target_link_libraries(gtest_db_core
                       gtest_main
                      )
 install( TARGETS gtest_db_core
-    RUNTIME DESTINATION lib/indb8/tests
+    RUNTIME DESTINATION usr/lib/indb8/tests
 )
                      
 add_test(NAME gtest_db_core COMMAND gtest_db_core)

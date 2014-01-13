@@ -61,5 +61,5 @@ add_library(mojodbengine SHARED ${DB_BACKEND_WRAPPER_SOURCES})
 target_link_libraries(mojodbengine ${GLIB2_LDFLAGS} ${GTHREAD2_LDFLAGS}
     leveldb)
 install(TARGETS mojodbengine
-    LIBRARY DESTINATION lib
+    LIBRARY DESTINATION usr/lib
 )

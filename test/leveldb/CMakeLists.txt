@@ -31,13 +31,15 @@ add_executable(gtest_leveldb
                TestTxnIterator.cpp
 )
 target_link_libraries(gtest_leveldb
+                      gtest
+                      gtest_main
                       mojocore
                       mojodb
-                      mojodbengine)
+                      mojodbengine
+                      )
 
-target_link_libraries(gtest_leveldb gtest gtest_main)
 install( TARGETS gtest_leveldb
-    RUNTIME DESTINATION lib/indb8/tests
+    RUNTIME DESTINATION usr/lib/indb8/tests
 )
 
 add_test(NAME gtest_leveldb COMMAND gtest_leveldb)

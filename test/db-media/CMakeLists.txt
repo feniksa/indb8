@@ -27,23 +27,18 @@ include_directories(../db)
 
 add_definitions(-Wall -ansi -Wno-deprecated -pthread --std=c++0x)
 
-foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
-    set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
-endforeach ()
 
 add_executable(${PROJECT_NAME}
-               MediaTest.cpp
-               ${DB_BACKEND_WRAPPER_SOURCES_CPP})
+               MediaTest.cpp)
 
 target_link_libraries(${PROJECT_NAME}
+				      gtest gtest_main
                       mojocore
                       mojodb
                       mojoluna
-                      ${DB_BACKEND_LIB})
-
-target_link_libraries(${PROJECT_NAME} gtest gtest_main)
+                      )
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+#install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
 
