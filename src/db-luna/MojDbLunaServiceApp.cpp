@@ -18,13 +18,13 @@
 
 
 #include "db-luna/MojDbLunaServiceApp.h"
+#include "db-luna/MojDbServiceHandler.h"
 #include "db/MojDbServiceDefs.h"
-#include "db/MojDbServiceHandler.h"
 
 #ifdef MOJ_USE_BDB
 #include "db-luna/MojDbBerkeleyFactory.h"
 #elif MOJ_USE_LDB
-#include "db-luna/leveldb/MojDbLevelFactory.h"
+#include "db-engine/leveldb/MojDbLevelFactory.h"
 #else
 #error "Set database type"
 #endif

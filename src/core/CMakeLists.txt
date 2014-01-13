@@ -40,4 +40,7 @@ set (MOJ_CORE_SOURCES
 
 add_library(mojocore SHARED ${MOJ_CORE_SOURCES})
 target_link_libraries(mojocore ${GLIB2_LDFLAGS} ${GTHREAD2_LDFLAGS} ${LS2_LDFLAGS} ${PMLOG_LDFLAGS})
+install(TARGETS mojocore
+        LIBRARY DESTINATION lib
+)
 

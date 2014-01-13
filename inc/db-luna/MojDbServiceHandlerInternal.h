@@ -20,16 +20,17 @@
 #ifndef MOJDBSERVICEHANDLERINTERNAL_H_
 #define MOJDBSERVICEHANDLERINTERNAL_H_
 
-#include "db/MojDbDefs.h"
-#include "db/MojDb.h"
-#include "db/MojDbSpaceAlert.h"
-#include "db/MojDbServiceHandlerBase.h"
-#include "db/MojDbMediaHandler.h"
 #include "core/MojService.h"
 #include "core/MojServiceMessage.h"
 #include "core/MojServiceRequest.h"
 #include "core/MojVector.h"
+
+#include "db/MojDbDefs.h"
+#include "db/MojDb.h"
 #include "luna/MojLunaService.h"
+#include "db-luna/MojDbLunaSpaceAlert.h"
+#include "db-luna/MojDbServiceHandlerBase.h"
+#include "db-luna/MojDbMediaHandler.h"
 
 class MojDbServiceHandlerInternal : public MojDbServiceHandlerBase
 {

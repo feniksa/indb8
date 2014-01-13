@@ -71,26 +71,14 @@ add_definitions(-Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-str
 include_directories(inc)
 add_subdirectory(src/core)
 add_subdirectory(src/db)
+
+# hardcode used engine
+# Todo: make ability to use any avaliable engine at runtime
+add_definitions("-DMOJ_USE_LDB")
 add_subdirectory(src/db-engine)
-#add_subdirectory(src/luna)
 
-# configure database backend.
-#include(${CMAKE_SOURCE_DIR}/src/db-luna/BackendBuildRules.cmake)
-#add_definitions(${DB_BACKEND_WRAPPER_CFLAGS})
-#add_subdirectory(src/db-luna)
-
-# -- source for generating mojodb-luna
-#set(LUNA_BIN_SOURCES
-#    src/db-luna/MojDbLunaServiceApp.cpp
-#    src/db-luna/MojDbLunaServiceDb.cpp
-#    src/db/MojDbMediaLinkManager.cpp
-#    src/db/MojDbMediaHandler.cpp
-#    src/db/MojDbSpaceAlert.cpp
-#    src/db/MojDbServiceHandler.cpp
-#    src/db/MojDbServiceHandlerBase.cpp
-#    src/db/MojDbServiceHandlerInternal.cpp
-#    #src/db/MojDbServiceSchemas.cpp
-#)
+add_subdirectory(src/luna)
+add_subdirectory(src/db-luna)
 
 #include_directories (${DB_BACKEND_INCLUDES})
 #add_executable(mojodb-luna ${LUNA_BIN_SOURCES} ${DB_BACKEND_WRAPPER_SOURCES})
@@ -105,8 +93,6 @@ add_subdirectory(src/db-engine)
 #                      ${ICU}
 #                      ${ICUI18N}
 #)
-
-#webos_add_compiler_flags(ALL ${DB_BACKEND_WRAPPER_CFLAGS})
 
 #webos_build_system_bus_files()
 

@@ -16,14 +16,14 @@
 *
 * LICENSE@@@ */
 
-
-#include "db/MojDbServiceHandler.h"
-#include "db/MojDbServiceHandlerInternal.h"
+#include "core/MojJson.h"
 #include "db/MojDbServiceDefs.h"
 #include "db/MojDbSearchCursor.h"
 #include "db/MojDbReq.h"
 #include "db/MojDbIndex.h"
-#include "core/MojJson.h"
+#include "db-luna/MojDbServiceHandler.h"
+#include "db-luna/MojDbServiceHandlerInternal.h"
+
 #include <list>
 
 const MojDbServiceHandler::SchemaMethod MojDbServiceHandler::s_pubMethods[] = {
@@ -400,8 +400,9 @@ MojErr MojDbServiceHandler::handlePut(MojServiceMessage* msg, MojObject& payload
 	MojLogTrace(s_log);
 
     // check space level
-    if( m_db.getSpaceAlert().spaceAlertLevel() == MojDbSpaceAlert::AlertLevelHigh)
+/*    if( m_db.getSpaceAlert().spaceAlertLevel() == MojDbSpaceAlert::AlertLevelHigh)
        return MojErrDbQuotaExceeded;
+*/
 
 	MojObject obj;
 	MojErr err = payload.getRequired(MojDbServiceDefs::ObjectsKey, obj);
@@ -430,10 +431,10 @@ MojErr MojDbServiceHandler::handlePutKind(MojServiceMessage* msg, MojObject& pay
 	MojAssert(msg);
 	MojLogTrace(s_log);
 
-    // check space level
+/*    // check space level
     if( m_db.getSpaceAlert().spaceAlertLevel() == MojDbSpaceAlert::AlertLevelHigh)
        return MojErrDbQuotaExceeded;
-
+*/
     // check alert level
 	MojErr err = m_db.putKind(payload, MojDb::FlagNone, req);
 	MojErrCheck(err);
@@ -449,8 +450,8 @@ MojErr MojDbServiceHandler::handlePutPermissions(MojServiceMessage* msg, MojObje
 	MojLogTrace(s_log);
 
     // check space level
-    if( m_db.getSpaceAlert().spaceAlertLevel() == MojDbSpaceAlert::AlertLevelHigh)
-       return MojErrDbQuotaExceeded;
+  /*  if( m_db.getSpaceAlert().spaceAlertLevel() == MojDbSpaceAlert::AlertLevelHigh)
+       return MojErrDbQuotaExceeded;*/
 
 	MojObject permissionsArr;
 	MojErr err = payload.getRequired(MojDbServiceDefs::PermissionsKey, permissionsArr);
@@ -473,8 +474,8 @@ MojErr MojDbServiceHandler::handlePutQuotas(MojServiceMessage* msg, MojObject& p
 	MojLogTrace(s_log);
 
     // check space level
-    if( m_db.getSpaceAlert().spaceAlertLevel() == MojDbSpaceAlert::AlertLevelHigh)
-       return MojErrDbQuotaExceeded;
+/*    if( m_db.getSpaceAlert().spaceAlertLevel() == MojDbSpaceAlert::AlertLevelHigh)
+       return MojErrDbQuotaExceeded;*/
 
 	MojObject quotas;
 	MojErr err = payload.getRequired(MojDbServiceDefs::QuotasKey, quotas);
@@ -519,9 +520,9 @@ MojErr MojDbServiceHandler::handleReserveIds(MojServiceMessage* msg, MojObject& 
 	MojLogTrace(s_log);
 
     // check space level
-    if( m_db.getSpaceAlert().spaceAlertLevel() == MojDbSpaceAlert::AlertLevelHigh)
+/*    if( m_db.getSpaceAlert().spaceAlertLevel() == MojDbSpaceAlert::AlertLevelHigh)
        return MojErrDbQuotaExceeded;
-
+*/
 	MojInt64 count;
 	MojErr err = payload.getRequired(MojDbServiceDefs::CountKey, count);
 	MojErrCheck(err);
@@ -575,7 +576,6 @@ MojErr MojDbServiceHandler::handleStats(MojServiceMessage* msg, MojObject& paylo
 {
 	MojAssert(msg);
 	MojLogTrace(s_log);
-
 
 	MojString forKind;
 

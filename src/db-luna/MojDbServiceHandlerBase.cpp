@@ -16,12 +16,11 @@
 *
 * LICENSE@@@ */
 
-
-#include "db/MojDbServiceHandlerBase.h"
-#include "db/MojDbServiceDefs.h"
 #include "core/MojReactor.h"
 #include "core/MojTime.h"
 #include "core/MojJson.h"
+#include "db-luna/MojDbServiceHandlerBase.h"
+#include "db/MojDbServiceDefs.h"
 
 MojLogger MojDbServiceHandlerBase::s_log(_T("db.serviceHandler"));
 

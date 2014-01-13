@@ -17,7 +17,7 @@
 * LICENSE@@@ */
 
 
-#include "db/MojDbServiceHandler.h"
+#include "db-luna/MojDbServiceHandler.h"
 
 #define MOJ_QUERY_UNCLOSED_SCHEMA \
 	_T("{\"type\":\"object\",") \

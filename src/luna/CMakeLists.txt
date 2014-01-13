@@ -14,3 +14,8 @@ target_link_libraries(mojoluna
                       ${ICUI18N}
                       mojocore
 )
+
+install(TARGETS mojoluna
+        LIBRARY DESTINATION lib
+)
+

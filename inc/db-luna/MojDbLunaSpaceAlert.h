@@ -19,11 +19,11 @@
 #ifndef MOJDBSPACEALERT_H
 #define MOJDBSPACEALERT_H
 
-#include "db/MojDbDefs.h"
 #include "core/MojString.h"
 #include "core/MojSignal.h"
-//#include "luna/MojLunaMessage.h"
-//#include "luna/MojLunaRequest.h"
+#include "db/MojDbDefs.h"
+#include "luna/MojLunaMessage.h"
+#include "luna/MojLunaRequest.h"
 
 class MojDbSpaceAlert
 {

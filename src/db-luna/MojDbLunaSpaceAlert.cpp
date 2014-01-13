@@ -16,7 +16,7 @@
  *
  * LICENSE@@@ */
 
-#include "db/MojDbSpaceAlert.h"
+#include "db-luna/MojDbLunaSpaceAlert.h"
 #include "db/MojDb.h"
 #include <sys/statvfs.h>
 
@@ -45,8 +45,6 @@ MojErr MojDbSpaceAlert::configure(const MojString& databaseRoot)
 
 MojDbSpaceAlert::AlertLevel MojDbSpaceAlert::spaceAlertLevel()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     if(m_compactRunning) // do the real space check - we have no idea how long it'll take to clean up everything
    {
        int bytesUsed = 0;
@@ -66,8 +64,6 @@ void MojDbSpaceAlert::subscribe(MojServiceMessage* msg)
 
 MojErr MojDbSpaceAlert::doSpaceCheck()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     AlertLevel alertLevel;
     int bytesUsed;
     int bytesAvailable;
@@ -130,7 +126,6 @@ MojErr MojDbSpaceAlert::doSpaceCheck()
 
 MojErr MojDbSpaceAlert::doSpaceCheck(AlertLevel& alertLevel, int& bytesUsed, int& bytesAvailable)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(!m_databaseRoot.empty());
 
     alertLevel = NoSpaceAlert;
@@ -141,11 +136,7 @@ MojErr MojDbSpaceAlert::doSpaceCheck(AlertLevel& alertLevel, int& bytesUsed, int
 
     int ret = ::statvfs(m_databaseRoot.data(), &dbFsStat);
     if (ret != 0) {
-        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 2,
-                  PMLOGKFV("error", "%d", ret),
-                  PMLOGKS("db_root", m_databaseRoot.data()),
-                  "Error 'error' attempting to stat database filesystem mounted at 'db_root'");
-                  return MojErrInternal;
+        return MojErrInternal;
     }
 
     fsblkcnt_t blocksUsed = dbFsStat.f_blocks - dbFsStat.f_bfree;
@@ -155,8 +146,6 @@ MojErr MojDbSpaceAlert::doSpaceCheck(AlertLevel& alertLevel, int& bytesUsed, int
 
     MojDouble percentUsed =
     ((MojDouble)blocksUsed / (MojDouble)dbFsStat.f_blocks) * 100.0;
-
-    LOG_DEBUG("[db_mojodb] Database volume %.1f full", percentUsed);
 
     if (MASSIVE_AVAILABLE_SPACE > bigBytesAvailable) { // regardless of percent used, if available space is massive, don't set space alert
         int level;
@@ -169,14 +158,14 @@ MojErr MojDbSpaceAlert::doSpaceCheck(AlertLevel& alertLevel, int& bytesUsed, int
 
 
     if ((AlertLevel)alertLevel > NoSpaceAlert) {
-        LOG_WARNING(MSGID_MOJ_DB_SERVICE_WARNING, 2,
+/*        LOG_WARNING(MSGID_MOJ_DB_SERVICE_WARNING, 2,
                     PMLOGKFV("volume", "%.1f", percentUsed),
                     PMLOGKS("severity", getAlertName(alertLevel)),
-                    "Database volume usage 'volume', generating warning, severity");
+                    "Database volume usage 'volume', generating warning, severity");*/
     } else {
         if ((AlertLevel)alertLevel != m_spaceAlertLevel) {
             // Generate 'ok' message only if there has been a transition.
-            LOG_DEBUG("[db_mojodb] Database volume usage %1.f, space ok, no warning needed.\n", percentUsed);
+//            LOG_DEBUG("[db_mojodb] Database volume usage %1.f, space ok, no warning needed.\n", percentUsed);
         }
     }
 
@@ -189,8 +178,6 @@ MojErr MojDbSpaceAlert::doSpaceCheck(AlertLevel& alertLevel, int& bytesUsed, int
 
 gboolean MojDbSpaceAlert::periodicSpaceCheck(gpointer data)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojDbSpaceAlert* base;
 
     base = static_cast<MojDbSpaceAlert *>(data);
@@ -216,8 +203,6 @@ MojDbSpaceAlert::SpaceCheckHandler::~SpaceCheckHandler()
 
 MojErr MojDbSpaceAlert::SpaceCheckHandler::dispatchUpdate(const MojObject& message)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojErr err = MojErrNone;
     err = m_msg->reply(message);
     MojErrCheck(err);
@@ -227,7 +212,6 @@ MojErr MojDbSpaceAlert::SpaceCheckHandler::dispatchUpdate(const MojObject& messa
 
 MojErr MojDbSpaceAlert::SpaceCheckHandler::handleCancel(MojServiceMessage* msg)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
     MojAssert(msg == m_msg.get());
 
     m_msg.reset();

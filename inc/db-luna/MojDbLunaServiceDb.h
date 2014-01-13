@@ -19,14 +19,14 @@
 #ifndef MOJDBLUNASERVICEDB_H
 #define MOJDBLUNASERVICEDB_H
 
-#include "db/MojDbDefs.h"
-#include "db/MojDbServiceHandlerInternal.h"
-#include "db/MojDbServiceHandler.h"
 #include "core/MojReactorApp.h"
 #include "core/MojGmainReactor.h"
 #include "core/MojMessageDispatcher.h"
+#include "db/MojDbDefs.h"
 #include "db/MojDb.h"
 #include "luna/MojLunaService.h"
+#include "db-luna/MojDbServiceHandlerInternal.h"
+#include "db-luna/MojDbServiceHandler.h"
 
 class MojDbLunaServiceDb
 {

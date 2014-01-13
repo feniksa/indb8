@@ -20,7 +20,7 @@
 #ifndef MOJDBSERVICEHANDLER_H_
 #define MOJDBSERVICEHANDLER_H_
 
-#include "db/MojDbServiceHandlerBase.h"
+#include "db-luna/MojDbServiceHandlerBase.h"
 
 class MojDbServiceHandler : public MojDbServiceHandlerBase
 {

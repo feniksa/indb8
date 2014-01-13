@@ -1,15 +1,5 @@
-# This CMakeLists.txt contains build instructions for database backend.                                                                                                                                                                      
-# This script MUST provide such variables:                                                                                                                                                                                                   
-# DB_BACKEND_INCLUDES           - includes for database headers (like leveldb/db.h)                                                                                                                                                          
-# DB_BACKEND_LIB                - requre libraries for database (like -lleveldb)                                                                                                                                                             
-# DB_BACKEND_WRAPPER_SOURCES    - wrapper cpp files inside this directory (like MojDbBerkeleyEngine.cpp)                                                                                                                                     
-# Optional variable:                                                                                                                                                                                                                         
-# DB_BACKEND_WRAPPER_CFLAGS     - compiller flags                                                                                                                                                                                            
-                                                                                                                                                                                                                                             
-set(WEBOS_DB8_BACKEND "leveldb" CACHE STRING "Backend to use with DB8")                                                                                                                                                                      
-                                                                                                                                                                                                                                             
-message (STATUS "Use database frontend: ${WEBOS_DB8_BACKEND}")                                                                                                                                                                               
-
+set(WEBOS_DB8_BACKEND "leveldb" CACHE STRING "Backend to use with DB8")
+message (STATUS "Use database frontend: ${WEBOS_DB8_BACKEND}")
 if (WEBOS_DB8_BACKEND STREQUAL "berkeleydb")
     # -- check for BerkeleyDB
     # (add an alternate standard path in case building BDB locally: does not override)
@@ -63,24 +53,12 @@ elseif (WEBOS_DB8_BACKEND STREQUAL "leveldb")
    )
 
     set (DB_BACKEND_WRAPPER_CFLAGS "-DMOJ_USE_LDB")
-else () 
+else ()
     message(FATAL_ERROR "WEBOS_DB8_BACKEND: unsuported value '${WEBOS_DB8_BACKEND}'")
 endif ()
 
-add_library(mojodbengine SHARED ${DB_BACKEND_WRAPPER_SOURCES}) 
+add_library(mojodbengine SHARED ${DB_BACKEND_WRAPPER_SOURCES})
 target_link_libraries(mojodbengine ${GLIB2_LDFLAGS} ${GTHREAD2_LDFLAGS})
-
-# -- check for errors
-#if(NOT DEFINED DB_BACKEND_LIB)
-#        message(FATAL_ERROR "Not set DB_BACKEND_LIB in ${CMAKE_SOURCE_DIR}/ CMakeLists.txt")
-#endif()
-#if (NOT DEFINED DB_BACKEND_INCLUDES)
-#        message (FATAL_ERROR "Not set DB_BACKEND_INCLUDES in ${CMAKE_SOURCE_DIR}/ CMakeLists.txt")
-#endif()
-#if (NOT DEFINED DB_BACKEND_WRAPPER_SOURCES)
-#        message (FATAL_ERROR "Not set DB_BACKEND_WRAPPER_SOURCES in ${CMAKE_SOURCE_DIR}/ CMakeLists.txt")
-#endif()
-#if (NOT DEFINED DB_BACKEND_WRAPPER_CFLAGS)
-#        message (FATAL_ERROR "Not set DB_BACKEND_WRAPPER_CFLAGS in ${CMAKE_SOURCE_DIR}/ CMakeLists.txt")
-#endif()
-
+install(TARGETS mojodbengine
+    LIBRARY DESTINATION lib
+)

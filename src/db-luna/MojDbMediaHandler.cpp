@@ -16,7 +16,7 @@
 *
 * LICENSE@@@ */
 
-#include "db/MojDbMediaHandler.h"
+#include "db-luna/MojDbMediaHandler.h"
 #include "db/MojDbServiceDefs.h"
 #include "db/MojDb.h"
 
@@ -29,10 +29,6 @@ MojDbMediaHandler::MojDbMediaHandler(MojService& service, MojDb& db)
 
 MojErr MojDbMediaHandler::subscribe()
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
-    LOG_DEBUG("[db-luna_shard] subscribe for pdm notifications");
-
     MojObject payload;
     MojErr err = payload.put(_T("subscribe"), true);
     MojErrCheck(err);
@@ -46,19 +42,12 @@ MojErr MojDbMediaHandler::subscribe()
 
 MojErr MojDbMediaHandler::handleDeviceListResponse(MojObject& payload, MojErr errCode)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     MojErr err;
     if (errCode != MojErrNone) {
         MojString payloadStr;
         err = payload.stringValue(payloadStr);
         MojErrCheck(err);
-
-        LOG_ERROR(MSGID_DB_SERVICE_ERROR, 2,
-                  PMLOGKFV("error", "%d", errCode),
-                  PMLOGKS("payload", payloadStr.data()),
-                  "error attempting to get list of devices");
-
+    
         MojErrThrow(errCode);
     }
     MojObject deviceList;
@@ -74,10 +63,8 @@ MojErr MojDbMediaHandler::handleDeviceListResponse(MojObject& payload, MojErr er
 
         err = i->getRequired("deviceType", deviceType);
         MojErrCheck(err);
-        LOG_DEBUG("[db-luna_shard] Device type is: %s", deviceType.data());
 
         if (deviceType != "usb") {
-            LOG_DEBUG("[db-luna_shard] Got from PDM device, but device not usb media. Ignore it");
             // not usb media. PDM returns ALL list of media, like USB, Internal storage and other.
             // db8 intresting only in usb sticks
             continue;
@@ -92,7 +79,6 @@ MojErr MojDbMediaHandler::handleDeviceListResponse(MojObject& payload, MojErr er
             MojErrCheck(err);
 
             if (shardInfo.deviceId.empty()) {
-                LOG_WARNING(MSGID_LUNA_SERVICE_WARNING, 0, "Device id is empty, ignore it");
                 continue;
             }
 
@@ -101,23 +87,17 @@ MojErr MojDbMediaHandler::handleDeviceListResponse(MojObject& payload, MojErr er
             shardIds.erase(shardInfo.deviceId);  // mark it as processed
 
             if (!existInCache(shardInfo.deviceId)) {
-                LOG_DEBUG("[db-luna_shard] Found new device %s. Add to device cache and send notification to shard engine", shardInfo.deviceId.data());
-
                 m_shardCache[shardInfo.deviceId] = shardInfo;
                 err = m_db.shardEngine()->processShardInfo(shardInfo);
                 MojErrCheck(err);
-            } else {
-                LOG_DEBUG("[db-luna_shard] Device uuid cached, it looks like it doesn't changed");
             }
-        } // end subDevices loop
+       } // end subDevices loop
     }   // end main list of devices loop
 
     // notify shard engine about all inactive shards
     for (std::set<MojString>::const_iterator i = shardIds.begin(); i != shardIds.end(); ++i) {
         shard_cache_t::iterator shardCacheIterator = m_shardCache.find(*i);
         if (shardCacheIterator != m_shardCache.end()) {
-            LOG_DEBUG("[db-luna_shard] Device %s not found in cache. Notify shard engine that shard not active", shardCacheIterator->second.deviceId.data());
-
             shardCacheIterator->second.active = false;
             err = m_db.shardEngine()->processShardInfo(shardCacheIterator->second);
             MojErrCheck(err);
@@ -156,16 +136,12 @@ MojErr MojDbMediaHandler::convert(const MojObject& object, MojDbShardInfo& shard
 
 bool MojDbMediaHandler::existInCache(const MojString& id)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     shard_cache_t::iterator i = m_shardCache.find(id);
     return (i != m_shardCache.end());
 }
 
 void MojDbMediaHandler::copyShardCache(std::set<MojString>* shardIdSet)
 {
-    LOG_TRACE("Entering function %s", __FUNCTION__);
-
     for (shard_cache_t::const_iterator i = m_shardCache.begin(); i != m_shardCache.end(); ++i) {
         shardIdSet->insert(i->first);
     }

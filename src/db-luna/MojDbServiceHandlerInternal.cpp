@@ -18,12 +18,12 @@
 
 #include <unicode/uloc.h>
 
-#include "db/MojDbServiceHandler.h"
-#include "db/MojDbServiceDefs.h"
-#include "db/MojDbServiceHandlerInternal.h"
-#include "db/MojDbReq.h"
 #include "core/MojServiceRequest.h"
 #include "core/MojTime.h"
+#include "db/MojDbServiceDefs.h"
+#include "db/MojDbReq.h"
+#include "db-luna/MojDbServiceHandlerInternal.h"
+#include "db-luna/MojDbServiceHandler.h"
 
 const MojDbServiceHandlerInternal::Method MojDbServiceHandlerInternal::s_privMethods[] = {
 	{MojDbServiceDefs::PostBackupMethod, (Callback) &MojDbServiceHandlerInternal::handlePostBackup},
@@ -268,7 +268,7 @@ MojErr MojDbServiceHandlerInternal::handleSpaceCheck(MojServiceMessage* msg, Moj
 	MojLogTrace(s_log);
 
 	MojErr err = MojErrNone;
-    MojDbSpaceAlert& spaceAlert = m_db.getSpaceAlert();
+/*    MojDbSpaceAlert& spaceAlert = m_db.getSpaceAlert();
 
 	MojObject response;
     MojDbSpaceAlert::AlertLevel alertLevel;
@@ -294,7 +294,7 @@ MojErr MojDbServiceHandlerInternal::handleSpaceCheck(MojServiceMessage* msg, Moj
 	err = response.putBool("subscribed", subscribed);
 	MojErrCheck(err);
 	err = msg->reply(response);
-	MojErrCheck(err);
+	MojErrCheck(err);*/
 
 	return err;
 }
@@ -396,9 +396,9 @@ MojErr MojDbServiceHandlerInternal::PurgeHandler::handleAdopt(MojObject& payload
 		m_handled = true;
         if( m_doSpaceCheck )
         {
-           LOG_DEBUG("Do space check");
-           err = m_serviceHandler->m_db.getSpaceAlert().doSpaceCheck();
-           MojErrCheck(err);
+//           err = m_serviceHandler->m_db.getSpaceAlert().doSpaceCheck();
+//           TODO: make spaceCheck
+           //MojErrCheck(err);
         }
         else
         {

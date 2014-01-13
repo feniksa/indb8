@@ -2,9 +2,9 @@
 set(LUNA_BIN_SOURCES
     MojDbLunaServiceApp.cpp
     MojDbLunaServiceDb.cpp
+    MojDbLunaSpaceAlert.cpp
     MojDbMediaLinkManager.cpp
     MojDbMediaHandler.cpp
-    MojDbSpaceAlert.cpp
     MojDbServiceHandler.cpp
     MojDbServiceHandlerBase.cpp
     MojDbServiceHandlerInternal.cpp
@@ -22,7 +22,11 @@ target_link_libraries(mojodb-luna
                       ${DB_BACKEND_LIB}
                       mojocore
                       mojodb
-                      mojoluna                      
+                      mojodbengine
+                      mojoluna
+                      leveldb       # hardcoded, should be removed
 )
 
-
+install(TARGETS mojodb-luna 
+        RUNTIME DESTINATION bin
+)
