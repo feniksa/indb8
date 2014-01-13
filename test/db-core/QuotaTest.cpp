@@ -26,9 +26,9 @@
 #include "db/MojDb.h"
 
 #ifdef MOJ_USE_BDB
-#include "db-luna/MojDbBerkeleyEngine.h"
+#include "db-engine/MojDbBerkeleyEngine.h"
 #elif MOJ_USE_LDB
-#include "db-luna/leveldb/MojDbLevelEngine.h"
+#include "db-engine/leveldb/MojDbLevelEngine.h"
 #else
 #error "Specify database engine"
 #endif

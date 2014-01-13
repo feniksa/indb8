@@ -16,14 +16,7 @@
 #
 # LICENSE@@@
 
-# the RPATH to be used when installing
-set(CMAKE_INSTALL_RPATH "")
-
 include_directories(${CMAKE_SOURCE_DIR}/inc)
-set(DB_BACKEND_WRAPPER_SOURCES_CPP "")
-foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
-    set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
-endforeach ()
 
 # --------------------------------
 # dbcore target
@@ -63,13 +56,13 @@ foreach(test
     set(DB_TEST_SOURCES ${DB_TEST_SOURCES} ${test}Test.cpp)
 endforeach()
 
-add_executable(test_db_core ${DB_TEST_SOURCES} ${DB_BACKEND_WRAPPER_SOURCES_CPP})
+add_executable(test_db_core ${DB_TEST_SOURCES})
 target_link_libraries(test_db_core
                       mojocore
                       mojodb
-                      ${DB_BACKEND_LIB}
+                      mojodbengine
 )
-install(PROGRAMS ${CMAKE_BINARY_DIR}/test/db/test_db_core DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+#install(PROGRAMS ${CMAKE_BINARY_DIR}/test/db/test_db_core DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
 
 # --------------------------------
 # performance test target
@@ -84,13 +77,13 @@ set (DB_PERF_TEST_SOURCES
      MojDbPerfUpdateTest.cpp
 )
 
-add_executable(test_db_performance ${DB_PERF_TEST_SOURCES} ${DB_BACKEND_WRAPPER_SOURCES_CPP})
+add_executable(test_db_performance ${DB_PERF_TEST_SOURCES})
 target_link_libraries(test_db_performance
                       mojocore
                       mojodb
-                      ${DB_BACKEND_LIB}
+                      mojodbengine
 )
-install(PROGRAMS ${CMAKE_BINARY_DIR}/test/db/test_db_performance DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+#install(PROGRAMS ${CMAKE_BINARY_DIR}/test/db/test_db_performance DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
 
 # --------------------------------
 # stress test target
@@ -99,13 +92,13 @@ set (DB_STRESS_TEST_SOURCES
      MojDbStressTest.cpp
 )
 
-add_executable(test_db_stress ${DB_STRESS_TEST_SOURCES} ${DB_BACKEND_WRAPPER_SOURCES_CPP})
+add_executable(test_db_stress ${DB_STRESS_TEST_SOURCES})
 target_link_libraries(test_db_stress
                       mojocore
                       mojodb
                       mojoluna
-                      ${DB_BACKEND_LIB}
+                      mojodbengine
 )
-install(PROGRAMS ${CMAKE_BINARY_DIR}/test/db/test_db_stress DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+#install(PROGRAMS ${CMAKE_BINARY_DIR}/test/db/test_db_stress DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
 
 #add_test(NAME MojDbStressTest COMMAND test_db_stress)

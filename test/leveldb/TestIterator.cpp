@@ -22,7 +22,7 @@
  *  @file TestIterator.cpp
  ****************************************************************/
 
-#include "db-luna/leveldb/MojDbLevelIterator.h"
+#include "db-engine/leveldb/MojDbLevelIterator.h"
 
 #include "Runner.h"
 #include "TestLdb.h"

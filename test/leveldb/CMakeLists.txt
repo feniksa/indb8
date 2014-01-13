@@ -19,16 +19,9 @@
 
 project(gtest_leveldb C CXX)
 
-# the RPATH to be used when installing
-set(CMAKE_INSTALL_RPATH "")
-
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 add_definitions(-Wall -ansi -Wno-deprecated -pthread)
-
-foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
-    set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
-endforeach ()
 
 add_executable(${PROJECT_NAME}
                Runner.cpp
@@ -36,12 +29,11 @@ add_executable(${PROJECT_NAME}
                TestIterator.cpp
                TestTxn.cpp
                TestTxnIterator.cpp
-               ${DB_BACKEND_WRAPPER_SOURCES_CPP})
-
+)
 target_link_libraries(${PROJECT_NAME}
                       mojocore
                       mojodb
-                      ${DB_BACKEND_LIB})
+                      mojodbengine)
 
 target_link_libraries(${PROJECT_NAME} gtest gtest_main)
 

@@ -25,7 +25,7 @@
 #ifndef __TestTxn_h__
 #define __TestTxn_h__
 
-#include "db-luna/leveldb/MojDbLevelTxn.h"
+#include "db-engine/leveldb/MojDbLevelTxn.h"
 
 #include "TestLdb.h"
 

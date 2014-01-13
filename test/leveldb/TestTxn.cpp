@@ -22,7 +22,7 @@
  *  @file TestTxn.cpp
  ****************************************************************/
 
-#include "db-luna/leveldb/MojDbLevelTxn.h"
+#include "db-engine/leveldb/MojDbLevelTxn.h"
 
 #include "Runner.h"
 #include "TestTxn.h"

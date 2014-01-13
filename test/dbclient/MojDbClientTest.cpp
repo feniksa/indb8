@@ -23,7 +23,7 @@
 #include "core/MojSocketService.h"
 #include "core/MojEpollReactor.h"
 #include "core/MojGmainReactor.h"
-#include "db/MojDbServiceHandler.h"
+#include "db-luna/MojDbServiceHandler.h"
 
 int main(int argc, char** argv)
 {

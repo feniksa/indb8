@@ -20,7 +20,6 @@
 #include "db/MojDbKind.h"
 #include "db/MojDb.h"
 #include "db/MojDbServiceDefs.h"
-#include "db/MojDbMediaLinkManager.h"
 #include "core/MojDataSerialization.h"
 #include "core/MojLog.h"
 #include <boost/crc.hpp>
@@ -107,9 +106,6 @@ MojErr MojDbShardEngine::configure(const MojObject& conf)
     } else {
         MojLogDebug(s_log, "Configuration section \"mediaMountpointDirectory\" doesn't found, use default value for mediaMountpointDirectory");
     }
-
-    err = m_mediaLinkManager.setLinkDirectory(mediaLinkDirectory);
-    MojErrCheck(err);
 
     return MojErrNone;
 }
@@ -1078,8 +1074,6 @@ MojErr MojDbShardEngine::processShardInfo(const MojDbShardInfo& shardInfo)
 
     if (found) {    // shard already registered in database
         copyRequiredFields(shardInfo, databaseShardInfo);
-        err = m_mediaLinkManager.processShardInfo(databaseShardInfo);
-        MojErrCheck(err);
 
         err = removeTransientShard(databaseShardInfo);
         MojErrCheck(err);
@@ -1094,9 +1088,6 @@ MojErr MojDbShardEngine::processShardInfo(const MojDbShardInfo& shardInfo)
         copyRequiredFields(shardInfo, databaseShardInfo);
         databaseShardInfo.deviceId = shardInfo.deviceId;
         databaseShardInfo.transient = false;
-
-        err = m_mediaLinkManager.processShardInfo(databaseShardInfo);
-        MojErrCheck(err);
 
         err = put(databaseShardInfo);
         MojErrCheck(err);

@@ -21,8 +21,6 @@ cmake_minimum_required(VERSION 2.8.7)
 
 project(OBJDB CXX)
 
-enable_testing()
-
 include(FindPkgConfig)
 
 # -- check for glib 2.0
@@ -80,40 +78,9 @@ add_subdirectory(src/db-engine)
 add_subdirectory(src/luna)
 add_subdirectory(src/db-luna)
 
-#include_directories (${DB_BACKEND_INCLUDES})
-#add_executable(mojodb-luna ${LUNA_BIN_SOURCES} ${DB_BACKEND_WRAPPER_SOURCES})
-#target_link_libraries(mojodb-luna
-#                      ${GLIB2_LDFLAGS}
-#                      ${GTHREAD2_LDFLAGS}
-#                      mojocore
-#                      mojodb
-#                      mojoluna
-#                      ${DB_BACKEND_LIB}
-#                      ${LS2_LDFLAGS}
-#                      ${ICU}
-#                      ${ICUI18N}
-#)
 
-#webos_build_system_bus_files()
-
-# specifying files/launch allows creating upstart scripts
-# of all files named as <name>.in into upstart/name
-# (see cmake_webos)
-#webos_build_daemon(NAME mojodb-luna LAUNCH files/launch/)
-
-# extras
-#install(FILES src/db-luna/mojodb.conf DESTINATION ${WEBOS_INSTALL_WEBOS_SYSCONFDIR})
-#install(FILES src/db-luna/backup-com.palm.db DESTINATION ${WEBOS_INSTALL_WEBOS_SYSCONFDIR}/backup)
-#install(FILES src/db-luna/activity-com.palm.db.purge.json DESTINATION ${WEBOS_INSTALL_WEBOS_SYSCONFDIR}/activities/com.palm.db)
-#install(FILES src/db-luna/activity-com.palm.db.space.json DESTINATION ${WEBOS_INSTALL_WEBOS_SYSCONFDIR}/activities/com.palm.db)
-#install(FILES src/db-luna/activity-com.palm.tempdb.space.json DESTINATION ${WEBOS_INSTALL_WEBOS_SYSCONFDIR}/activities/com.palm.tempdb)
-#install(FILES src/db-luna/activity-com.palm.tempdb.purge.json DESTINATION ${WEBOS_INSTALL_WEBOS_SYSCONFDIR}/activities/com.palm.tempdb)
-#install(FILES src/db-luna/activity-com.webos.mediadb.purge.json DESTINATION ${WEBOS_INSTALL_WEBOS_SYSCONFDIR}/activities/com.webos.mediadb)
-#install(FILES src/db-luna/activity-com.webos.mediadb.space.json DESTINATION ${WEBOS_INSTALL_WEBOS_SYSCONFDIR}/activities/com.webos.mediadb)
-
-#install(DIRECTORY inc/ DESTINATION ${WEBOS_INSTALL_INCLUDEDIR}/mojodb/)
-
-if (WEBOS_CONFIG_BUILD_TESTS)
+option(BUILD_TESTS "Build tests" ON)
+if (BUILD_TESTS)
 	add_subdirectory(test/core)
 	add_subdirectory(test/db)
 	add_subdirectory(test/dbclient)

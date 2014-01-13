@@ -23,7 +23,7 @@
 #include "luna/MojLunaService.h"
 #include "db/MojDbServiceClient.h"
 #include "db/MojDbServiceDefs.h"
-#include "db/MojDbServiceHandler.h"
+#include "db-luna/MojDbServiceHandler.h"
 
 int main(int argc, char** argv)
 {

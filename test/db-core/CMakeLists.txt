@@ -19,17 +19,10 @@
 
 project(gtest_db_core C CXX)
 
-# the RPATH to be used when installing
-set(CMAKE_INSTALL_RPATH "")
-
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 include_directories(../db)
 
 add_definitions(-Wall -ansi -Wno-deprecated -pthread --std=c++0x)
-
-foreach(filename ${DB_BACKEND_WRAPPER_SOURCES})
-    set(DB_BACKEND_WRAPPER_SOURCES_CPP ${DB_BACKEND_WRAPPER_SOURCES_CPP} "${CMAKE_SOURCE_DIR}/${filename}")
-endforeach ()
 
 add_executable(${PROJECT_NAME}
                Runner.cpp
@@ -42,15 +35,16 @@ add_executable(${PROJECT_NAME}
                IdGeneratorTest.cpp
                ShardsTest.cpp
                ../db/MojDbTestStorageEngine.cpp
-               ${DB_BACKEND_WRAPPER_SOURCES_CPP})
+               )
 
 target_link_libraries(${PROJECT_NAME}
                       mojocore
                       mojodb
-                      ${DB_BACKEND_LIB})
-
-target_link_libraries(${PROJECT_NAME} gtest gtest_main)
+                      mojodbengine
+                      gtest
+                      gtest_main
+                     )
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)
+#install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME} DESTINATION ${WEBOS_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}/tests)

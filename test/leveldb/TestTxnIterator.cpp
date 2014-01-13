@@ -24,7 +24,7 @@
 
 #include <memory>
 
-#include "db-luna/leveldb/MojDbLevelTxnIterator.h"
+#include "db-engine/leveldb/MojDbLevelTxnIterator.h"
 
 #include "Runner.h"
 #include "TestTxn.h"

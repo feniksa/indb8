@@ -29,7 +29,6 @@
 #include "db/MojDbReq.h"
 #include "db/MojDbShardIdCache.h"
 #include "db/MojDbShardInfo.h"
-#include "db/MojDbMediaLinkManager.h"
 
 class MojDbShardEngine : private MojNoCopy
 {
@@ -180,7 +179,6 @@ private:
      */
     MojErr removeShardInfo (const MojUInt32 shardId);
 
-    MojDbMediaLinkManager m_mediaLinkManager;
     MojDb& m_db;
     MojDbShardIdCache m_cache;
     static MojLogger s_log;

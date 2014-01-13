@@ -28,9 +28,9 @@
 #include "core/MojUtil.h"
 
 #ifdef MOJ_USE_BDB
-#include "db-luna/MojDbBerkeleyFactory.h"
+#include "db-engine/MojDbBerkeleyFactory.h"
 #elif MOJ_USE_LDB
-#include "db-luna/leveldb/MojDbLevelFactory.h"
+#include "db-engine/leveldb/MojDbLevelFactory.h"
 #else
 #error "Database Engine doesn't set. See README.txt"
 #endif
