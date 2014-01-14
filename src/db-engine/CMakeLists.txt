@@ -34,6 +34,7 @@
     endif()
 
     set(DB_BACKEND_WRAPPER_SOURCES
+         leveldb/defs.cpp
          leveldb/MojDbLevelEngine.cpp
          leveldb/MojDbLevelFactory.cpp
          leveldb/MojDbLevelDatabase.cpp

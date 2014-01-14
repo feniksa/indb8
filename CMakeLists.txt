@@ -19,7 +19,6 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 project(INDB8 CXX)
-
 include(FindPkgConfig)
 
 # -- check for glib 2.0
