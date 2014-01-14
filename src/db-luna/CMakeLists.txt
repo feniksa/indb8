@@ -9,8 +9,7 @@ set(LUNA_BIN_SOURCES
     MojDbServiceSchemas.cpp
 )
 
-include_directories (${DB_BACKEND_INCLUDES})
-add_executable(mojodb-luna ${LUNA_BIN_SOURCES} ${DB_BACKEND_WRAPPER_SOURCES})
+add_executable(mojodb-luna ${LUNA_BIN_SOURCES})
 target_link_libraries(mojodb-luna
                       ${GLIB2_LDFLAGS}
                       ${GTHREAD2_LDFLAGS}

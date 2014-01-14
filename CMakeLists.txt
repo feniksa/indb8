@@ -56,14 +56,14 @@ add_definitions(-Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-str
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMOJ_DEBUG -DMOJ_DEBUG_LOGGING")
 
+# hardcode used engine
+# Todo: make ability to use any avaliable engine at runtime
+add_definitions("-DMOJ_USE_LDB")
+
 # -- add local include paths
 include_directories(inc)
 add_subdirectory(src/core)
 add_subdirectory(src/db)
-
-# hardcode used engine
-# Todo: make ability to use any avaliable engine at runtime
-add_definitions("-DMOJ_USE_LDB")
 add_subdirectory(src/db-engine)
 
 add_subdirectory(src/luna)
