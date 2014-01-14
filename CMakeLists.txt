@@ -53,17 +53,9 @@ if(ICUI18N STREQUAL "ICUI18N-NOTFOUND")
 	MESSAGE(FATAL_ERROR "Failed to find ICU-I18N libaries. Please install.")
 endif()
 
-# provide both db8 and mojodb pkgconfigs
-#webos_build_pkgconfig(files/pkgconfig/mojodb)
-#webos_build_pkgconfig(files/pkgconfig/db8)
-
 add_definitions(-Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
 
-# Note: no-psabi will disable notice for gcc: the mangling of 'va_list' has changed in GCC 4.4
-
-# to turn on extra debug information (like output to log dirty buffers data) add debug compile flag -DMOJ_DEBUG_LOGGING
-#webos_add_compiler_flags(DEBUG -DMOJ_DEBUG)
-#webos_add_linker_options(ALL --no-undefined)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMOJ_DEBUG -DMOJ_DEBUG_LOGGING")
 
 # -- add local include paths
 include_directories(inc)
