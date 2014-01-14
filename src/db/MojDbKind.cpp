@@ -105,7 +105,7 @@ MojErr MojDbKind::stats(MojObject& objOut, MojSize& usageOut, MojDbReq& req, boo
 	MojDbCursor cursor;
 	err = m_kindEngine->find(query, cursor, NULL, req, OpRead);
 	MojLogDebug(s_log, _T("KindStats start: %s ; Indexes = %zu; Using Index: %s; \n"),
-				m_id.data(), m_indexes.size(), cursor.m_dbIndex->name().data());
+				m_id.data(), m_indexes.size(), (cursor.m_dbIndex)?cursor.m_dbIndex->name().data():"m_dbIndex is null");
 
 	MojErrCheck(err);
 	MojSize count = 0;
