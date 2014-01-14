@@ -1,7 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (c) 2012-2013 LG Electronics, Inc.
-# Copyright (C) 2013 Maxim Sditanov
+# Copyright (C) 2013 Maksym Sditanov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +18,7 @@
 
 cmake_minimum_required(VERSION 2.8.7)
 
-project(OBJDB CXX)
+project(INDB8 CXX)
 
 include(FindPkgConfig)
 
