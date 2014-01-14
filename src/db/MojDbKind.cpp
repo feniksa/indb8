@@ -320,7 +320,6 @@ MojErr MojDbKind::configure(const MojObject& obj, const KindMap& map, const MojS
 	m_state.reset(new MojDbKindState(m_id, m_kindEngine));
 	MojAllocCheck(m_state.get());
 
-	// TODO: bugging inside this function
 	err = m_state->init(m_schema.strings(), req);
 	MojErrCheck(err);
 	// indexes

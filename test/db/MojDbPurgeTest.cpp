@@ -164,9 +164,8 @@ MojErr MojDbPurgeTest::run()
 	err = checkObjectsPurged(db, count, 1, 8, 6, revFromDb);
 	MojTestErrCheck(err);
 
-	//TODO 2.12.10 - this test does not pass yet, we need to fix calling delKind after a purge
-	//err = delKindTest(db);
-	//MojTestErrCheck(err);
+	err = delKindTest(db);
+	MojTestErrCheck(err);
 
 	err = db.close();
 	MojTestErrCheck(err);
