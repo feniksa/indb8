@@ -85,9 +85,6 @@ public:
 	static const MojChar* const WatchKey;
 	static const MojChar* const WindowKey;
 	static const MojChar* const ListActiveMediaKey;
-	static const MojChar* const ShardInfoKey;
-	static const MojChar* const ShardKindKey;
-	static const MojChar* const SetShardModeKey;
 	static const MojChar* const MediaKey;
 	static const MojChar* const TransientKey;
 	// property values
@@ -122,10 +119,7 @@ public:
 	static const MojChar* const ScheduledSpaceCheckMethod;
 	static const MojChar* const StatsMethod;
 	static const MojChar* const WatchMethod;
-	static const MojChar* const ListActiveMediaMethod;
-	static const MojChar* const ShardInfoMethod;
-	static const MojChar* const ShardKindMethod;
-	static const MojChar* const SetShardModeMethod;
+	static const MojChar* const ListActiveMediaMethod;		
 	// service names
 	static const MojChar* const Category;
 	static const MojChar* const InternalCategory;    

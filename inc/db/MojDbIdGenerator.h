@@ -22,21 +22,14 @@
 
 #include "db/MojDbDefs.h"
 #include "core/MojThread.h"
-#include "core/MojString.h"
 
 class MojDbIdGenerator
 {
 public:
-    // magical shard id that is not used as a prefix for _id
-    static const MojUInt32 MainShardId;
-
 	MojDbIdGenerator();
 
 	MojErr init();
-    MojErr id(MojObject& idOut, MojString shard);
-    MojErr id(MojObject& idOut, MojUInt32 shard = MainShardId);
-    static MojErr extractShard(const MojObject &id, MojUInt32 &shardIdOut);
-
+    MojErr id(MojObject& idOut);
 private:
 	char m_randStateBuf[8];
 	MojRandomDataT m_randBuf;

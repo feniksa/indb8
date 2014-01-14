@@ -53,10 +53,7 @@ public:
 	static const MojChar* const IgnoreIdKey;
 	static const MojChar* const KindKey;
 	static const MojChar* const RevKey;
-	static const MojChar* const SyncKey;
-    static const MojChar* const KindIdPrefix;
-    static const MojChar* const QuotaIdPrefix;
-    static const MojChar* const PermissionIdPrefix;
+	static const MojChar* const SyncKey;    
 	static const MojUInt32 AutoBatchSize;
 	static const MojUInt32 AutoCompactSize;
     static const MojUInt32 TmpVersionFileLength;
@@ -142,12 +139,11 @@ private:
 	MojErr mergeInto(MojObject& dest, const MojObject& obj, const MojObject& prev);
 	MojErr mergeArray(MojObject& dest, const MojObject& obj, MojObject& prev);
     MojErr putObj(const MojObject& id, MojObject& obj, const MojObject* oldObj,
-                  MojDbStorageItem* oldItem, MojDbReq& req, MojDbOp op, bool checkSchema = true, MojString shardId = MojString());
+                  MojDbStorageItem* oldItem, MojDbReq& req, MojDbOp op, bool checkSchema = true);
 	MojErr delObj(const MojObject& id, const MojObject& obj, MojDbStorageItem* item, MojObject& foundObjOut, MojDbReq& req, MojUInt32 flags);
 	MojErr delImpl(const MojObject& id, bool& foundOut, MojObject& foundObjOut, MojDbReq& req, MojUInt32 flags);
 	MojErr delImpl(const MojDbQuery& query, MojUInt32& countOut, MojDbReq& req, MojUInt32 flags = FlagNone);
-    MojErr putImpl(MojObject& obj, MojUInt32 flags, MojDbReq& req, bool checkSchema = true, MojString shardId = MojString());
-    MojErr addShardIdToMasterKind(MojString shardId, MojObject& obj, MojDbReqRef req);
+    MojErr putImpl(MojObject& obj, MojUInt32 flags, MojDbReq& req, bool checkSchema = true);
 	MojErr putConfig(MojObject* begin, const MojObject* end, MojDbReq& req, MojDbPutHandler& handler);
 
 	MojErr updateLocaleImpl(const MojString& oldLocale, const MojString& newLocale, MojDbReq& req);
@@ -161,7 +157,6 @@ private:
 	MojErr loadImpl(MojObject& obj, MojUInt32 flags, MojDbReq& req);
 	MojErr purgeImpl(MojObject& obj, MojUInt32& countOut, MojDbReq& req);
 
-    MojErr attachShardId(MojString shardId, MojObject& id);
 	MojErr nextId(MojInt64& idOut);
 	MojErr getState(const MojChar* key, MojObject& valOut, MojDbReq& req);
 	MojErr updateState(const MojChar* key, const MojObject& val, MojDbReq& req);
