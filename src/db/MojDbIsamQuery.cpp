@@ -323,7 +323,6 @@ MojErr MojDbIsamQuery::getKey(MojUInt32& groupOut, bool& foundOut)
 		m_state = StateSeek;
 		++m_iter;
 	}
-    MojLogDebug (MojDb::s_log, "Matching records found: %d, ignore: %d", countFound, countIgnored);
 	return MojErrNone;
 }
 

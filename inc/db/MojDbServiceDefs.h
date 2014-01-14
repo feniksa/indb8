@@ -128,12 +128,7 @@ public:
 	static const MojChar* const SetShardModeMethod;
 	// service names
 	static const MojChar* const Category;
-	static const MojChar* const InternalCategory;
-	static const MojChar* const ServiceName;
-    static const MojChar* const MediaServiceName;
-	static const MojChar* const TempServiceName;
-    static const MojChar* const PDMServiceName;
-    static const MojChar* const PDMClientName;
+	static const MojChar* const InternalCategory;    
     // other
     static const MojChar* const DefaultMediaLinkPath;
 };

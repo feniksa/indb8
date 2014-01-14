@@ -63,7 +63,7 @@ public:
 	using MojDbClient::del;
 	using MojDbClient::merge;
 
-	MojDbServiceClient(MojService* service, const MojChar* serviceName = MojDbServiceDefs::ServiceName);
+	MojDbServiceClient(MojService* service, const MojChar* serviceName = "com.palm.db");
 
 	virtual MojErr putKind(Signal::SlotRef handler, const MojObject& obj);
 	virtual MojErr delKind(Signal::SlotRef handler, const MojChar* id);
