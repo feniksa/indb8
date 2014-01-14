@@ -34,11 +34,6 @@
 #endif
 
 const MojChar* const MojDbLunaServiceApp::VersionString = MOJ_VERSION_STRING;
-const MojChar* const MojDbLunaServiceApp::MainDir = _T("main");
-const MojChar* const MojDbLunaServiceApp::MediaDir = _T("media");
-const MojChar* const MojDbLunaServiceApp::TempDir = _T("temp");
-const MojChar* const MojDbLunaServiceApp::TempStateDir = _T("/tmp/mojodb");
-const MojChar* const MojDbLunaServiceApp::TempInitStateFile = _T("/tmp/mojodb/tempdb_init");
 
 int main(int argc, char** argv)
 {
@@ -50,8 +45,6 @@ int main(int argc, char** argv)
 MojDbLunaServiceApp::MojDbLunaServiceApp()
 : MojReactorApp<MojGmainReactor>(MajorVersion, MinorVersion, VersionString)
 , m_mainService(m_dispatcher)
-, m_mediaService(m_dispatcher)
-, m_tempService(m_dispatcher)
 {
    // set up db first
 #ifdef MOJ_USE_BDB
@@ -80,18 +73,10 @@ MojErr MojDbLunaServiceApp::init()
     MojAllocCheck(m_env.get());
 
     m_internalHandler.reset(new MojDbServiceHandlerInternal(m_mainService.db(), m_reactor, m_mainService.service()));
-    MojAllocCheck(m_internalHandler.get());
-    m_tempInternalHandler.reset(new MojDbServiceHandlerInternal(m_tempService.db(), m_reactor, m_tempService.service()));
-    MojAllocCheck(m_tempInternalHandler.get());
-    m_mediaInternalHandler.reset(new MojDbServiceHandlerInternal(m_mediaService.db(), m_reactor, m_mediaService.service()));
-    MojAllocCheck(m_mediaInternalHandler.get());
+    MojAllocCheck(m_internalHandler.get());    
 
     err = m_mainService.init(m_reactor);
-    MojErrCheck(err);
-    err = m_mediaService.init(m_reactor);
-    MojErrCheck(err);
-    err = m_tempService.init(m_reactor);
-    MojErrCheck(err);
+    MojErrCheck(err);    
 
     return MojErrNone;
 }
@@ -103,19 +88,30 @@ MojErr MojDbLunaServiceApp::configure(const MojObject& conf)
 	MojErr err = Base::configure(conf);
 	MojErrCheck(err);
 
-    MojObject dbConf;
+    MojObject engineConf;
 
-    conf.get(MojDbStorageEngine::engineFactory()->name(), dbConf);
-    err = m_env->configure(dbConf);
+	conf.get(MojDbStorageEngine::engineFactory()->name(), engineConf);
+	err = m_env->configure(engineConf);
     MojErrCheck(err);
     err = m_mainService.db().configure(conf);
     MojErrCheck(err);
-    err = m_mediaService.db().configure(conf);
-    MojErrCheck(err);
-    err = m_tempService.db().configure(conf);
-    MojErrCheck(err);
-
-    m_conf = dbConf;
+	m_conf = engineConf;
+	
+	MojObject dbConf;
+	err = conf.getRequired("db", dbConf);
+	MojErrCheck(err);
+	
+	MojObject dbPath;
+	err = dbConf.getRequired("path", dbPath);
+	MojErrCheck(err);
+	err = dbPath.stringValue(m_dbDir);
+	MojErrCheck(err);
+	
+	MojObject serviceName;
+	err = dbConf.getRequired("service_name", serviceName);
+	MojErrCheck(err);
+	err = serviceName.stringValue(m_serviceName);
+	MojErrCheck(err);
 
     return MojErrNone;
 }
@@ -140,21 +136,9 @@ MojErr MojDbLunaServiceApp::open()
 	}
 
 	// open db services
-	err = m_mainService.open(m_reactor, m_env.get(), MojDbServiceDefs::ServiceName, m_dbDir, MainDir, m_conf);
+	err = m_mainService.open(m_reactor, m_env.get(), m_serviceName, m_dbDir, m_conf);
 	MojErrCatchAll(err) {
 		dbOpenFailed = true;
-	}
-	err = m_mediaService.open(m_reactor, m_env.get(), MojDbServiceDefs::MediaServiceName, m_mediaDbDir, MediaDir, m_conf);
-    MojErrCatchAll(err) {
-        dbOpenFailed = true;
-    }
-	err = m_tempService.open(m_reactor, m_env.get(), MojDbServiceDefs::TempServiceName, m_dbDir, TempDir, m_conf);
-	MojErrCatchAll(err) {
-		dbOpenFailed = true;
-	}
-	if (!dbOpenFailed) {
-		err = dropTemp();
-		MojErrCheck(err);
 	}
 
 	// open internal handler
@@ -163,17 +147,7 @@ MojErr MojDbLunaServiceApp::open()
 	err = m_mainService.service().addCategory(MojDbServiceDefs::InternalCategory, m_internalHandler.get());
 	MojErrCheck(err);
 	err = m_internalHandler->configure(dbOpenFailed);
-	MojErrCheck(err);
-    // tempdb and mediadb service also need internal category
-    // to use scheduled space check and scheduled purge method through activity manager.
-    err = m_tempInternalHandler->open();
-    MojErrCheck(err);
-    err = m_tempService.service().addCategory(MojDbServiceDefs::InternalCategory, m_tempInternalHandler.get());
-    MojErrCheck(err);
-    err = m_mediaInternalHandler->open();
-    MojErrCheck(err);
-    err = m_mediaService.service().addCategory(MojDbServiceDefs::InternalCategory, m_mediaInternalHandler.get());
-    MojErrCheck(err);
+	MojErrCheck(err);    
 
 	MojLogDebug(s_log, _T("mojodb started"));
 
@@ -193,11 +167,7 @@ MojErr MojDbLunaServiceApp::close()
 	MojErrAccumulate(err, errClose);
 	// close services
 	errClose = m_mainService.close();
-	MojErrAccumulate(err, errClose);
-	errClose = m_tempService.close();
-	MojErrAccumulate(err, errClose);
-    errClose = m_mediaService.close();
-    MojErrAccumulate(err, errClose);
+	MojErrAccumulate(err, errClose);	
 
 	m_internalHandler->close();
 	m_internalHandler.reset();
@@ -210,42 +180,19 @@ MojErr MojDbLunaServiceApp::close()
 	return err;
 }
 
-MojErr MojDbLunaServiceApp::dropTemp()
-{
-	MojStatT stat;
-	MojErr err = MojStat(TempInitStateFile, &stat);
-	MojErrCatch(err, MojErrNotFound) {
-		err = m_tempService.db().drop(TempDir);
-		MojErrCheck(err);
-		err = m_tempService.openDb(m_env.get(), m_dbDir, TempDir, m_conf);
-		MojErrCheck(err);
-		err = MojCreateDirIfNotPresent(TempStateDir);
-		MojErrCheck(err);
-		err = MojFileFromString(TempInitStateFile, _T(""));
-		MojErrCheck(err);
-	}
-	MojErrCheck(err);
-
-	return MojErrNone;
-}
-
 MojErr MojDbLunaServiceApp::handleArgs(const StringVec& args)
 {
 	MojErr err = Base::handleArgs(args);
 	MojErrCheck(err);
 
-	if (args.size() != 2)
-		MojErrThrow(MojErrInvalidArg);
-
-    m_dbDir = args[0];
-    m_mediaDbDir = args[1];
+	MojLogDebug(s_log, _T("Pathed arguments: %li"), args.size());
 
 	return MojErrNone;
 }
 
 MojErr MojDbLunaServiceApp::displayUsage()
 {
-	MojErr err = displayMessage(_T("Usage: %s [OPTION]... db-dir mediadb-dir\n"), name().data());
+	MojErr err = displayMessage(_T("Usage: %s [OPTION]...\n"), name().data());
 	MojErrCheck(err);
 
 	return MojErrNone;

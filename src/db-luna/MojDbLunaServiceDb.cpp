@@ -38,9 +38,9 @@ MojErr MojDbLunaServiceDb::init(MojReactor& reactor)
 }
 
 MojErr MojDbLunaServiceDb::open(MojGmainReactor& reactor, MojDbEnv* env,
-                                const MojChar* serviceName, const MojChar* baseDir, const MojChar* subDir, const MojObject& conf)
+                                const MojChar* serviceName, const MojChar* dir, const MojObject& conf)
 {
-    MojAssert(serviceName && baseDir && subDir);
+    MojAssert(serviceName && dir);
     MojLogTrace(s_log);
 
     // open service
@@ -54,36 +54,33 @@ MojErr MojDbLunaServiceDb::open(MojGmainReactor& reactor, MojDbEnv* env,
     err = m_service.addCategory(MojDbServiceDefs::Category, m_handler.get());
     MojErrCheck(err);
     // open db
-    err = openDb(env, baseDir, subDir, conf);
+    err = openDb(env, dir, conf);
     if (err != MojErrNone) {
         MojString msg;
         MojErrToString(err, msg);
-        MojLogError(s_log, _T("Error opening %s/%s - %s (%d)"), baseDir, subDir, msg.data(), (int) err);
+        MojLogError(s_log, _T("Error opening %s - %s (%d)"), dir, msg.data(), (int) err);
     }
     MojErrCheck(err);
 
     return MojErrNone;
 }
 
-MojErr MojDbLunaServiceDb::openDb(MojDbEnv* env, const MojChar* baseDir, const MojChar* subDir, const MojObject& conf)
+MojErr MojDbLunaServiceDb::openDb(MojDbEnv* env, const MojChar* dir, const MojObject& conf)
 {
-    MojAssert(env && baseDir && subDir);
+    MojAssert(env && dir);
 
-    // create engine with shared env
-    MojString path;
-    MojErr err = path.format(_T("%s/%s"), baseDir, subDir);
-    MojErrCheck(err);
+    MojErr err;
     //  MojRefCountedPtr<MojDbBerkeleyEngine> engine(new MojDbBerkeleyEngine);
     MojRefCountedPtr<MojDbStorageEngine> engine;
     MojDbStorageEngine::engineFactory()->create(engine);
     MojAllocCheck(engine.get());
     err = engine->configure(conf);
     MojErrCheck(err);
-    err = engine->open(path, env);
+    err = engine->open(dir, env);
     MojErrCheck(err);
 
     // open db
-    err = m_db.open(path, engine.get());
+    err = m_db.open(dir, engine.get());
     MojErrCheck(err);
 
     return MojErrNone;
