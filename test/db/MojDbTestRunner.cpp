@@ -43,9 +43,7 @@
 #include "MojDbWatchTest.h"
 #include "MojDbTxnTest.h"
 #include "MojDbCursorTxnTest.h"
-#include "MojDbNewIdTest.h"
 
-#include "MojDbShardManagerTest.h"
 #ifdef MOJ_USE_BDB
 #include "db-engine/MojDbBerkeleyFactory.h"
 #elif MOJ_USE_LDB
@@ -80,7 +78,6 @@ int main(int argc, char** argv)
 
 void MojDbTestRunner::runTests()
 {
-	test(MojDbShardManagerTest());
 	test(MojDbBulkTest());
 	test(MojDbConcurrencyTest());
 	test(MojDbCrudTest());
@@ -103,5 +100,4 @@ void MojDbTestRunner::runTests()
 	test(MojDbTxnTest());
 	test(MojDbWhereTest());
 	test(MojDbCursorTxnTest());
-    test(MojDbNewIdTest());
 }

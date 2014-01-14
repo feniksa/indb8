@@ -33,7 +33,6 @@ add_executable(gtest_db_core
                SearchTest.cpp
                TextCollatorTest.cpp
                IdGeneratorTest.cpp
-               ShardsTest.cpp
                ../db/MojDbTestStorageEngine.cpp
                )
 

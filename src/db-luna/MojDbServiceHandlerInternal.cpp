@@ -59,18 +59,6 @@ MojErr MojDbServiceHandlerInternal::open()
 	return MojErrNone;
 }
 
-MojErr MojDbServiceHandlerInternal::subscribe()
-{
-	MojLogTrace(s_log);
-    MojAssert(!m_mediaChangeHandler.get());
-    m_mediaChangeHandler = new MojDbMediaHandler(m_service, m_db);
-
-    MojErr err = m_mediaChangeHandler->subscribe();
-    MojErrCheck(err);
-
-    return MojErrNone;
-}
-
 MojErr MojDbServiceHandlerInternal::close()
 {
 	return MojErrNone;

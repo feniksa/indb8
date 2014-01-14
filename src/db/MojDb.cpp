@@ -59,8 +59,7 @@ const MojUInt32 MojDb::TmpVersionFileLength = 32;
 MojLogger MojDb::s_log(_T("db.mojodb"));
 static volatile bool DefaultLocaleAlreadyInited = false;
 
-MojDb::MojDb() :
-  m_shardEngine(*this),
+MojDb::MojDb() :  
   m_purgeWindow(PurgeNumDaysDefault),
   m_loadStepSize(LoadStepSizeDefault),
   m_isOpen(false)
@@ -193,11 +192,6 @@ MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
     MojLogDebug(s_log, _T("Open Quota engine"));
 	err = m_quotaEngine.open(m_conf, this, req);
 	MojErrCheck(err);
-
-    // shard's
-    MojLogDebug(s_log, _T("Init shard engine"));
-    err = m_shardEngine.init(m_conf, req);
-    MojErrCheck(err);
 
     // explicitly finish request
     err = req.end();
@@ -474,52 +468,33 @@ MojErr MojDb::merge(const MojDbQuery& query, const MojObject& props, MojUInt32& 
 	return MojErrNone;
 }
 
-MojErr MojDb::put(MojObject& obj, MojUInt32 flags, MojDbReqRef req, MojString shardId)
+MojErr MojDb::put(MojObject& obj, MojUInt32 flags, MojDbReqRef req)
 {
 	MojLogTrace(s_log);
 
-    MojErr err = put(&obj, &obj + 1, flags, req, shardId);
+    MojErr err = put(&obj, &obj + 1, flags, req);
 	MojErrCheck(err);
 
 	return MojErrNone;
 }
 
-MojErr MojDb::put(MojObject* begin, const MojObject* end, MojUInt32 flags, MojDbReqRef req, MojString shardId)
+MojErr MojDb::put(MojObject* begin, const MojObject* end, MojUInt32 flags, MojDbReqRef req)
 {
 	MojAssert(begin || begin == end);
 	MojAssert(end >= begin);
 	MojLogTrace(s_log);
     MojString kindId;
     bool foundOut;
-    MojErr err;
-
-    if (!shardId.empty())
-    {
-        // extract UInt32 shard info from shard Id
-        MojUInt32 id;
-        err = MojDbShardEngine::convertId(shardId, id);
-        MojErrCheck(err);
-
-        // Length of max shard ID(0xFFFFFFFF) converted base-64 is 6("zzzzzk")
-        // Shard ID should be registered within shard engine
-        bool found = false;
-        err = shardEngine()->isIdExist(id, found);
-        if(!found) {
-            MojLogWarning(s_log, _T("Invalid shard ID\n"));
-            MojErrThrowMsg(MojErrDbMalformedId, _T("db: Invalid shard ID"));
-        }
-    }
+    MojErr err;    
 
     err = beginReq(req);
     MojErrCheck(err);
 
 	for (MojObject* i = begin; i != end; ++i) {
-		err = putImpl(*i, flags, req, true, shardId);
+		err = putImpl(*i, flags, req, true);
 		MojErrCheck(err);
         err = (*i).get(MojDb::KindKey, kindId, foundOut);
-        MojErrCheck(err);
-        err = shardEngine()->linkShardAndKindId(shardId, kindId);
-        MojErrCheck(err);
+        MojErrCheck(err);        
 	}
 	err = req->end();
 	MojErrCheck(err);
@@ -1368,55 +1343,5 @@ bool MojDb::isValidKind (MojString& i_kindStr)
     cursor.close();
 
     return foundOut;
-}
-
-/**
- * successful, if records for the _kind have been written to this shard
- */
-bool MojDb::isSupported (MojString& i_shardId, MojString& i_kindStr)
-{
-    bool foundOut = false;
-    bool isExist = false;
-    MojErr err;
-    // make query
-    MojDbQuery query;
-    err = query.from(MojDbKindEngine::KindKindId);
-    MojErrCheck(err);
-    MojObject idObj(i_kindStr);
-    err = query.where(IdKey, MojDbQuery::OpEq, idObj);
-    MojErrCheck(err);
-    // find cursor using query
-    MojDbCursor cursor;
-    err = find(query, cursor);
-    MojErrCheck(err);
-    // get item from cursor
-    MojDbStorageItem* p_item = NULL;
-    err = cursor.get(p_item, foundOut);
-    MojErrCheck(err);
-    cursor.close();
-
-    if(foundOut)
-    {
-        // convert extracted item to object type
-        MojObject oldObj;
-        err = p_item->toObject(oldObj, m_kindEngine);
-        MojErrCheck(err);
-        // extract shardIds from result object
-        MojObject shardIdsObj;
-        oldObj.get(MojDbServiceDefs::ShardIdKey, shardIdsObj);
-        // check if shardId exists in extracted shardIds
-        MojString shardIdStr;
-        for(MojSize i=0; i<shardIdsObj.size(); i++)
-        {
-            shardIdsObj.at(i, shardIdStr, foundOut);
-            if(shardIdStr.compare(i_shardId.data()) == 0)
-            {
-                isExist = true;
-                break;
-            }
-        }
-    }
-
-    return isExist;
 }
 

@@ -124,9 +124,6 @@ MojErr MojDb::purge(MojUInt32& countOut, MojInt64 numDays, MojDbReqRef req)
 		numDays = m_purgeWindow;
 	}
 
-    //mark obsolete shards records
-    shardEngine()->purgeShardObjects(numDays);
-
 	MojErr err = beginReq(req);
 	MojErrCheck(err);
 

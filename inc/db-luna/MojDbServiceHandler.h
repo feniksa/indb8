@@ -94,11 +94,6 @@ private:
 	MojErr handleSearch(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
 	MojErr handleStats(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
 	MojErr handleWatch(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
-	MojErr handleListActiveMedia(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
-	MojErr handleShardInfo(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
-	MojErr handleShardKind(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
-	MojErr handleSetShardMode(MojServiceMessage* msg, MojObject& payload, MojDbReq& req);
-
 	MojErr findImpl(MojServiceMessage* msg, MojObject& payload, MojDbReq& req, MojDbCursor& cursor, bool doCount);
 
 	BatchMap m_batchCallbacks;

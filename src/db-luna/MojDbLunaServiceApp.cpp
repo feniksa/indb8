@@ -175,13 +175,6 @@ MojErr MojDbLunaServiceApp::open()
     err = m_mediaService.service().addCategory(MojDbServiceDefs::InternalCategory, m_mediaInternalHandler.get());
     MojErrCheck(err);
 
-    err = m_internalHandler->subscribe();
-    MojErrCheck(err);
-    err = m_tempInternalHandler->subscribe();
-    MojErrCheck(err);
-    err = m_mediaInternalHandler->subscribe();
-    MojErrCheck(err);
-
 	MojLogDebug(s_log, _T("mojodb started"));
 
 	return MojErrNone;

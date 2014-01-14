@@ -3,7 +3,6 @@ set(LUNA_BIN_SOURCES
     MojDbLunaServiceApp.cpp
     MojDbLunaServiceDb.cpp
     MojDbLunaSpaceAlert.cpp
-    MojDbMediaHandler.cpp
     MojDbServiceHandler.cpp
     MojDbServiceHandlerBase.cpp
     MojDbServiceHandlerInternal.cpp

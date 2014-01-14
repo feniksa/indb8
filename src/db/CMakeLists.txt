@@ -26,9 +26,6 @@ set(MOJ_DB_SOURCES
     MojDbSearchCursor.cpp
     MojDbServiceClient.cpp
     MojDbServiceDefs.cpp
-    MojDbShardEngine.cpp
-    MojDbShardIdCache.cpp
-    MojDbShardInfo.cpp
     MojDbStorageEngine.cpp
     MojDbTextCollator.cpp
     MojDbTextTokenizer.cpp

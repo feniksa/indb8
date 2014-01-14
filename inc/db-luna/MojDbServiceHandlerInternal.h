@@ -30,7 +30,6 @@
 #include "luna/MojLunaService.h"
 #include "db-luna/MojDbLunaSpaceAlert.h"
 #include "db-luna/MojDbServiceHandlerBase.h"
-#include "db-luna/MojDbMediaHandler.h"
 
 class MojDbServiceHandlerInternal : public MojDbServiceHandlerBase
 {
@@ -50,7 +49,6 @@ public:
 	virtual MojErr close();
 
 	MojErr configure(bool fatalError);
-    MojErr subscribe();
 
 private:
 	class PurgeHandler : public MojSignalHandler
@@ -113,8 +111,7 @@ private:
 	MojErr generateAlert(const MojChar* event, const MojObject& msg);
 
 	MojService& m_service;
-	MojRefCountedPtr<LocaleHandler> m_localeChangeHandler;
-    MojRefCountedPtr<MojDbMediaHandler> m_mediaChangeHandler;
+	MojRefCountedPtr<LocaleHandler> m_localeChangeHandler;    
 	static const Method s_privMethods[];
 
 };
