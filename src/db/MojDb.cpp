@@ -189,6 +189,12 @@ MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
     MojLogDebug(s_log, _T("Open Quota engine"));
 	err = m_quotaEngine.open(m_conf, this, req);
 	MojErrCheck(err);
+	
+	// idgen
+	err = m_idGenerator.init();
+	MojErrCheck(err);// idgen
+	err = m_idGenerator.init();
+	MojErrCheck(err);
 
     // explicitly finish request
     err = req.end();

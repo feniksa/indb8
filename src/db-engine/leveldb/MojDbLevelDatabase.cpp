@@ -306,7 +306,8 @@ MojErr MojDbLevelDatabase::get(MojDbLevelItem& key, MojDbStorageTxn* txn, bool f
     if(s.IsNotFound() == false)
     {
         foundOut = true;
-        valOut.fromBytes(reinterpret_cast<const MojByte*>(str.data()), str.size());
+        MojErr err = valOut.fromBytes(reinterpret_cast<const MojByte*>(str.data()), str.size());
+		MojErrCheck(err);
     }
 
     return MojErrNone;

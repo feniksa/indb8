@@ -54,11 +54,11 @@ endif()
 
 add_definitions(-Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMOJ_DEBUG -DMOJ_DEBUG_LOGGING")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMOJ_DEBUG -DMOJ_DEBUG_LOGGING -ggdb -O0")
 
 # hardcode used engine
 # Todo: make ability to use any avaliable engine at runtime
-add_definitions("-DMOJ_USE_LDB -ggdb")
+add_definitions("-DMOJ_USE_LDB")
 
 # -- add local include paths
 include_directories(inc)
