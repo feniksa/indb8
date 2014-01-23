@@ -19,6 +19,10 @@
 
 #include "core/MojSignal.h"
 
+MojSignalHandler::~MojSignalHandler() 
+{
+}
+
 MojErr MojSignalHandler::handleCancel()
 {
 	return MojErrNone;

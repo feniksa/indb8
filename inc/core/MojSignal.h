@@ -36,7 +36,8 @@ class MojSignalHandler : public MojRefCounted
 {
 protected:
 	friend class MojSignalBase;
-
+	
+	virtual ~MojSignalHandler();
 	virtual MojErr handleCancel();
 };
 
