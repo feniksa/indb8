@@ -38,6 +38,9 @@ const MojChar* ServiceName = _T("/tmp/mojsock");
 const MojChar* ServiceName = _T("com.palm.mojlstest");
 #endif // USE_SOCKET_SERVICE
 
+
+static MojLogger s_log(_T("test.mojolunatest"));
+
 static const MojUInt32 multiResponseCount = 10;
 
 class MojLunaTestService : public MojService::CategoryHandler
@@ -448,10 +451,10 @@ MojErr serviceThread(void*)
 	MojErrCheck(err);
 	MojLunaService msgService;
 #endif
-
+	
 	MojRefCountedPtr<MojLunaTestService> service(new MojLunaTestService(stop, msgService));
 	MojAllocCheck(service.get());
-	err = service->open(ServiceName);
+ 	err = service->open(ServiceName);
 	MojErrCheck(err);
 	err = msgService.attach(reactor.impl());
 	MojErrCheck(err);
@@ -467,12 +470,17 @@ MojErr serviceThread(void*)
 }
 
 int main(int argc, char** argv)
-{
+{	
+	// this will init all required variables inside MojTest
+    MojLunaServiceTestRunner runner;
+	
+	// init test thread
 	MojThreadT thread;
 	MojErr err = MojThreadCreate(thread, serviceThread, NULL);
 	MojErrCheck(err);
 	sleep(5); //wait for service thread start
-        MojLunaServiceTestRunner runner;
+	
+	//and run all tests
 	return runner.main(argc, argv);
 }
 
