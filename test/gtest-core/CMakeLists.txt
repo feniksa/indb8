@@ -17,26 +17,22 @@
 # LICENSE@@@
 
 
-project(gtest_mojocore C CXX)
-
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+project(gtest_core CXX)
 
 add_definitions(-Wall -std=c++0x -Wno-deprecated -pthread)
 
-add_executable(gtest_mojocore
+add_executable(gtest_core
                Runner.cpp
                AtomicIntTest.cpp
                DecimalTest.cpp
                NumberTest.cpp
                )
 
-target_link_libraries(gtest_mojocore
-                      mojocore
-                      )
+target_link_libraries(gtest_core mojocore)
 
-target_link_libraries(gtest_mojocore gtest gtest_main)
-install( TARGETS gtest_mojocore
+target_link_libraries(gtest_core gtest gtest_main)
+install( TARGETS gtest_core
     RUNTIME DESTINATION usr/lib/indb8/tests
 )
 
-add_test(NAME gtest_mojocore COMMAND gtest_mojocore)
+add_test(NAME gtest_core COMMAND gtest_core)
