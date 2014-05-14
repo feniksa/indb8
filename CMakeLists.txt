@@ -84,4 +84,6 @@ if (TESTS)
         add_subdirectory(test/leveldb)
     endif ()
 endif()
+
+install(FILES files/conf/indb8.conf DESTINATION etc/indb8) 
 #add_subdirectory(tool/dbgen)
