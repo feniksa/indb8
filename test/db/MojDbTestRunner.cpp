@@ -48,6 +48,8 @@
 #include "db-engine/MojDbBerkeleyFactory.h"
 #elif MOJ_USE_LDB
 #include "db-engine/leveldb/MojDbLevelFactory.h"
+#elif MOJ_USE_SANDWICH
+#include "db-engine/sandwich/MojDbSandwichFactory.h"
 #else
 #error "Database Engine doesn't set. See README.txt"
 #endif
@@ -71,6 +73,10 @@ int main(int argc, char** argv)
    MojDbStorageEngine::setEngineFactory(new MojDbBerkeleyFactory());
 #elif MOJ_USE_LDB
    MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
+#elif MOJ_USE_SANDWICH
+   MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
+#else
+	#error "Not set engine"
 #endif
 
 	return runner.main(argc, argv);

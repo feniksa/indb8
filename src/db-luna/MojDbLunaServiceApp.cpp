@@ -25,6 +25,8 @@
 #include "db-luna/MojDbBerkeleyFactory.h"
 #elif MOJ_USE_LDB
 #include "db-engine/leveldb/MojDbLevelFactory.h"
+#elif MOJ_USE_SANDWICH 
+#include "db-engine/sandwich/MojDbSandwichFactory.h"
 #else
 #error "Set database type"
 #endif
@@ -51,7 +53,9 @@ MojDbLunaServiceApp::MojDbLunaServiceApp()
    MojDbStorageEngine::setEngineFactory(new MojDbBerkeleyFactory());
 #elif MOJ_USE_LDB
    MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
-#else
+#elif MOJ_USE_SANDWICH
+   MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
+#else   
   #error "Database not set"
 #endif
    MojLogTrace(s_log);

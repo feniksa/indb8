@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2013 LG Electronics, Inc.
+* Copyright (c) 2013-2014 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,19 +16,30 @@
 *
 * LICENSE@@@ */
 
+#ifndef MOJDBLEVELENV_H
+#define MOJDBLEVELENV_H
 
-#ifndef MOJDBTXNTEST_H_
-#define MOJDBTXNTEST_H_
+#include "db/MojDbStorageEngine.h"
+#include "db/MojDbDefs.h"
+#include "core/MojFile.h"
 
-#include "MojDbTestRunner.h"
-
-class MojDbTxnTest : public MojTestCase
+class MojDbSandwichEnv final : public MojDbEnv
 {
 public:
-	MojDbTxnTest();
+    ~MojDbSandwichEnv() override;
 
-	virtual MojErr run();
-	virtual void cleanup();
+    MojErr configure(const MojObject& conf) override;
+    MojErr open(const MojChar* path) override;
+
+private:
+    static const MojChar* const LockFileName;
+
+    MojErr close();
+    MojErr lockDir(const MojChar* path);
+    MojErr unlockDir();
+
+    MojString m_lockFileName;
+    MojFile m_lockFile;
 };
 
 #endif

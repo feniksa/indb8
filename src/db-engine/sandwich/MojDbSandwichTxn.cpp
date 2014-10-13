@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2013 LG Electronics, Inc.
+* Copyright (c) 2013-2014 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,19 +16,25 @@
 *
 * LICENSE@@@ */
 
+#include "db-engine/sandwich/MojDbSandwichEngine.h"
+#include "db-engine/sandwich/MojDbSandwichTxn.h"
 
-#ifndef MOJDBTXNTEST_H_
-#define MOJDBTXNTEST_H_
+#include "db-engine/sandwich/MojDbSandwichLazyUpdater.h"
 
-#include "MojDbTestRunner.h"
-
-class MojDbTxnTest : public MojTestCase
+// class MojDbSandwichEnvTxn
+MojErr MojDbSandwichEnvTxn::abort()
 {
-public:
-	MojDbTxnTest();
+    // Note creation of databases will not be rolled back
+    m_txn->reset();
+    return MojErrNone;
+}
 
-	virtual MojErr run();
-	virtual void cleanup();
-};
+MojErr MojDbSandwichEnvTxn::commitImpl()
+{
+    m_txn->commit();
 
-#endif
+    if (m_engine.lazySync())
+        m_engine.getUpdater()->sendEvent( (*m_db).get() );
+
+    return MojErrNone;
+}

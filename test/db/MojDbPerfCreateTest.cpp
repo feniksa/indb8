@@ -28,6 +28,9 @@
 #elif MOJ_USE_LDB
 #include "db-engine/leveldb/MojDbLevelFactory.h"
 #include "db-engine/leveldb/MojDbLevelEngine.h"
+#elif MOJ_USE_SANDWICH
+#include "db-engine/sandwich/MojDbSandwichFactory.h"
+#include "db-engine/sandwich/MojDbSandwichEngine.h"
 #else
     #error "Doesn't specified database type. See macro MOJ_USE_BDB and MOJ_USE_LDB"
 #endif
@@ -80,6 +83,8 @@ MojErr MojDbPerfCreateTest::testCreate()
     MojDbStorageEngine::setEngineFactory (new MojDbBerkeleyFactory);
 #elif MOJ_USE_LDB
     MojDbStorageEngine::setEngineFactory (new MojDbLevelFactory);
+#elif MOJ_USE_SANDWICH
+	MojDbStorageEngine::setEngineFactory (new MojDbSandwichFactory);
 #else
     #error "Not defined engine type"
 #endif

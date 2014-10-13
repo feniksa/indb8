@@ -21,7 +21,6 @@ target_link_libraries(mojodb-luna
                       mojodb
                       mojodbengine
                       mojoluna
-                      leveldb       # hardcoded, should be removed
 )
 
 install(TARGETS mojodb-luna 

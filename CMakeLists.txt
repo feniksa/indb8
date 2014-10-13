@@ -51,13 +51,30 @@ if(ICUI18N STREQUAL "ICUI18N-NOTFOUND")
 	MESSAGE(FATAL_ERROR "Failed to find ICU-I18N libaries. Please install.")
 endif()
 
-add_definitions(-Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
+add_definitions(-std=c++11 -Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
+
+#add_definitions("-std=c++11"
+#                "-fno-elide-constructors"
+#               "-pedantic-errors"
+#                "-Wextra"
+#                "-Wall"
+#                "-Winit-self"
+#                "-Wold-style-cast"
+#                "-Woverloaded-virtual"
+#                "-Wuninitialized"
+#                "-Wmissing-declarations"
+#                "-Winit-self")
+
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMOJ_DEBUG -DMOJ_DEBUG_LOGGING -ggdb -O0")
 
-# hardcode used engine
-# Todo: make ability to use any avaliable engine at runtime
-add_definitions("-DMOJ_USE_LDB")
+# temporary hack for engines. See db-engine/CMakeLists.txt
+if (WEBOS_DB8_BACKEND STREQUAL "sandwich")
+	add_definitions("-DMOJ_USE_SANDWICH")
+elseif(WEBOS_DB8_BACKEND STREQUAL "leveldb")
+	add_definitions("-DMOJ_USE_LDB")
+endif()
+
 
 # -- add local include paths
 include_directories(inc)
@@ -81,7 +98,7 @@ if (TESTS)
     add_subdirectory(test/gtest-core)
     add_subdirectory(test/gtest-db)
     if (WEBOS_DB8_BACKEND STREQUAL "leveldb")
-        add_subdirectory(test/leveldb)
+        add_subdirectory(test/gtest-leveldb)
     endif ()
 endif()
 

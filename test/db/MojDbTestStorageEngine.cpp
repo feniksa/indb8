@@ -18,14 +18,6 @@
 
 
 #include "MojDbTestStorageEngine.h"
-#ifdef MOJ_USE_BDB
-#include "db-engine/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#else
-#error "Specify database engine"
-#endif
-
 #define MojTestTxn(TXN) ((TXN) ? ((MojDbTestStorageTxn*)(TXN))->txn() : NULL)
 
 MojDbTestStorageEngine::MojDbTestStorageEngine(MojDbStorageEngine* engine)

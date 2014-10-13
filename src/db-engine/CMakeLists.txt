@@ -1,5 +1,6 @@
-#set(WEBOS_DB8_BACKEND "leveldb" CACHE STRING "Backend to use with DB8")
-#message (STATUS "Use database frontend: ${WEBOS_DB8_BACKEND}")
+set(WEBOS_DB8_BACKEND "leveldb" CACHE STRING "Backend to use with DB8")
+message (STATUS "Use database frontend: ${WEBOS_DB8_BACKEND}")
+
 #if (WEBOS_DB8_BACKEND STREQUAL "berkeleydb")
     # -- check for BerkeleyDB
     # (add an alternate standard path in case building BDB locally: does not override)
@@ -25,7 +26,8 @@
     #)
 
     #set (DB_BACKEND_WRAPPER_CFLAGS "-DMOJ_USE_BDB")
-#elseif (WEBOS_DB8_BACKEND STREQUAL "leveldb")
+#else
+if (WEBOS_DB8_BACKEND STREQUAL "leveldb")
 
     # -- check for LevelDB backend
     find_library(LDB NAMES leveldb ${WEBOS_INSTALL_ROOT}/lib)
@@ -50,13 +52,33 @@
          leveldb/MojDbLevelContainerIterator.cpp
    )
 
-    #set (DB_BACKEND_WRAPPER_CFLAGS "-DMOJ_USE_LDB")
-#else ()
-    #message(FATAL_ERROR "WEBOS_DB8_BACKEND: unsuported value '${WEBOS_DB8_BACKEND}'")
-#endif ()
+   set (DB_BACKEND_LIB leveldb)
+elseif (WEBOS_DB8_BACKEND STREQUAL "sandwich")
+                # -- check for LevelDB backend
+                find_library(LDB NAMES leveldb ${WEBOS_INSTALL_ROOT}/lib)
+                if(LDB STREQUAL "LDB-NOTFOUND")
+                        MESSAGE(FATAL_ERROR "Failed to find LevelDB libaries. Please install.")
+                endif()
+
+                set(DB_BACKEND_WRAPPER_SOURCES
+                        sandwich/MojDbSandwichEngine.cpp
+                        sandwich/MojDbSandwichFactory.cpp
+                        sandwich/MojDbSandwichDatabase.cpp
+                        sandwich/MojDbSandwichQuery.cpp
+                        sandwich/MojDbSandwichTxn.cpp
+                        sandwich/MojDbSandwichSeq.cpp
+                        sandwich/MojDbSandwichEnv.cpp
+                        sandwich/MojDbSandwichIndex.cpp
+                        sandwich/MojDbSandwichItem.cpp
+                        sandwich/MojDbSandwichLazyUpdater.cpp
+                )
+	set (DB_BACKEND_LIB leveldb)
+else()
+    message(FATAL_ERROR "WEBOS_DB8_BACKEND: unsuported value '${WEBOS_DB8_BACKEND}' ")
+endif ()
 
 add_library(mojodbengine SHARED ${DB_BACKEND_WRAPPER_SOURCES})
-target_link_libraries(mojodbengine ${GLIB2_LDFLAGS} ${GTHREAD2_LDFLAGS} leveldb)
+target_link_libraries(mojodbengine ${GLIB2_LDFLAGS} ${GTHREAD2_LDFLAGS} ${DB_BACKEND_LIB})
 install(TARGETS mojodbengine
     LIBRARY DESTINATION usr/lib
 )

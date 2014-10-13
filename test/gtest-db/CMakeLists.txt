@@ -17,14 +17,14 @@
 # LICENSE@@@
 
 
-project(gtest_db_core C CXX)
+project(gtest_db C CXX)
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 include_directories(../db)
 
 add_definitions(-Wall -ansi -Wno-deprecated -pthread --std=c++0x)
 
-add_executable(gtest_db_core
+add_executable(gtest_db
                Runner.cpp
                JsonTest.cpp
                DumpLoadTest.cpp
@@ -36,16 +36,16 @@ add_executable(gtest_db_core
                ../db/MojDbTestStorageEngine.cpp
                )
 
-target_link_libraries(gtest_db_core
+target_link_libraries(gtest_db
                       mojocore
                       mojodb
                       mojodbengine
                       gtest
                       gtest_main
                      )
-install( TARGETS gtest_db_core
+install( TARGETS gtest_db
     RUNTIME DESTINATION usr/lib/indb8/tests
 )
                      
-add_test(NAME gtest_db_core COMMAND gtest_db_core)
+add_test(NAME gtest_db COMMAND gtest_db)
 

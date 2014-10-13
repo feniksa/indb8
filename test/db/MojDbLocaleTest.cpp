@@ -23,6 +23,8 @@
 #include "db-engine/MojDbBerkeleyEngine.h"
 #elif MOJ_USE_LDB
 #include "db-engine/leveldb/MojDbLevelEngine.h"
+#elif MOJ_USE_SANDWICH
+#include "db-engine/sandwich/MojDbSandwichEngine.h"
 #else 
 #error "Specify database engine"
 #endif
@@ -95,6 +97,8 @@ MojErr MojDbLocaleTest::run()
 	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbBerkeleyEngine());
 #elif MOJ_USE_LDB
 	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbLevelEngine());
+#elif MOJ_USE_SANDWICH
+	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbSandwichEngine());
 #else
 #error No engine
 #endif
