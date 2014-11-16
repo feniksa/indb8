@@ -20,7 +20,6 @@
 #include "db-engine/sandwich/MojDbSandwichEngine.h"
 #include "db-engine/sandwich/MojDbSandwichQuery.h"
 #include "db-engine/sandwich/MojDbSandwichTxn.h"
-#include "db-engine/sandwich/defs.h"
 
 ////////////////////MojDbIndex////////////////////////////////////////////
 

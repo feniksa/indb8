@@ -246,7 +246,7 @@ MojErr MojDbSearchCursor::load()
         }
     }
     // set remainder count
-    m_count = m_items.end() - m_pos;
+    m_count = MojUInt32(m_items.end() - m_pos);
 
 	return MojErrNone;
 }
@@ -403,7 +403,8 @@ MojErr MojDbSearchCursor::distinct()
 	MojSize itemSize = m_items.size();
 	if (itemSize == 0)
 		return MojErrNone;
-	while(idx < itemSize-1) {
+
+    while(idx < itemSize-1) {
 		if(itemComp(m_items[idx],m_items[idx+1]) == 0) {
 			m_items.erase(idx+1);
 			itemSize = m_items.size();

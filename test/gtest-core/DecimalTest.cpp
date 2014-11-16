@@ -33,7 +33,7 @@ TEST(DecimalTest, ctor_magnitude_fraction)
     MojDecimal d2(100, 65432);
 
     EXPECT_EQ( 100, d2.magnitude() );
-    EXPECT_EQ( 65432, d2.fraction() );
+    EXPECT_EQ( 65432u, d2.fraction() );
 }
 
 TEST(DecimalTest, ctor_double)
@@ -147,20 +147,20 @@ TEST(DecimalTest, original)
     MojDecimal d4(d2);
 
     EXPECT_EQ( 0, d1.magnitude() ) << "Default constructor should set magnitude to zero";
-    EXPECT_EQ( 0, d1.fraction() ) << "Default constructor should set fraction to zero";
+    EXPECT_EQ( 0u, d1.fraction() ) << "Default constructor should set fraction to zero";
 
     EXPECT_EQ( 100, d2.magnitude() );
-    EXPECT_EQ( 65432, d2.fraction() );
+    EXPECT_EQ( 65432u, d2.fraction() );
     // to work-around x*10^(-n) to y*2^(-m) conversion use integer part
     EXPECT_EQ( 100065432, round(d2.floatValue() * 1000000) );
     EXPECT_EQ( MojDecimal(100.065432), d2 );
 
     EXPECT_EQ( 3, d3.magnitude() );
-    EXPECT_EQ( 141500, d3.fraction() );
+    EXPECT_EQ( 141500u, d3.fraction() );
     EXPECT_EQ( MojDecimal(3.1415), d3 );
 
     EXPECT_EQ( 100, d4.magnitude() ) << "Magnitude of copy should match";
-    EXPECT_EQ( 65432, d4.fraction() ) << "Fraction of copy should match";
+    EXPECT_EQ( 65432u, d4.fraction() ) << "Fraction of copy should match";
     EXPECT_EQ( d2, d4 ) << "Copy and original should match";
 
     EXPECT_TRUE(d1 < d3);
@@ -177,16 +177,16 @@ TEST(DecimalTest, original)
 
     d2.assign(28.89);
     EXPECT_EQ( 28, d2.magnitude() );
-    EXPECT_EQ( 890000, d2.fraction() );
+    EXPECT_EQ( 890000u, d2.fraction() );
 
     d1.assign(-5.28);
     EXPECT_EQ( -528, round(d1.floatValue() * 100) );
     EXPECT_EQ( -5, d1.magnitude() );
-    EXPECT_EQ( 280000, d1.fraction() );
+    EXPECT_EQ( 280000u, d1.fraction() );
 
     d1.assign(-987, 654);
     EXPECT_EQ( -987, d1.magnitude() );
-    EXPECT_EQ( 654, d1.fraction() );
+    EXPECT_EQ( 654u, d1.fraction() );
     EXPECT_EQ( MojDecimal(-987.000654), d1 );
 
     MojChar buf[MojDecimal::MaxStringSize];

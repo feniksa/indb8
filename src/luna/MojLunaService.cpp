@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -126,13 +126,13 @@ MojErr MojLunaService::addCategory(const MojChar* name, CategoryHandler* handler
 	for (CategoryHandler::CallbackMap::ConstIterator i = callbacks.begin();
 		 i != callbacks.end();
 		 i++) {
-			LSMethod m = {i.key(), &handleRequest};
+			LSMethod m = {i.key(), &handleRequest, LSMethodFlags()};
 
 			MethodVec& methods = i->m_pub ? pubMethods : privMethods;
 			MojErr err = methods.push(m);
 			MojErrCheck(err);
 	}
-    LSMethod nullMethod = {NULL, NULL};
+	LSMethod nullMethod = {NULL, NULL, LSMethodFlags()};
     MojErr err = pubMethods.push(nullMethod);
     MojErrCheck(err);
     err = privMethods.push(nullMethod);

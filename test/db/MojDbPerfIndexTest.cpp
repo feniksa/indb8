@@ -127,7 +127,7 @@ static const MojChar* const Description = _T("Mary had a little lamb, its fleece
 MojDbPerfIndexTest::MojDbPerfIndexTest()
 : MojDbTestEnv(_T("MojDbPerfIndex"))
 {
-	srand( time(NULL) + getpid());
+	srand( unsigned(time(NULL) + getpid()));
 }
 
 MojErr MojDbPerfIndexTest::run()
@@ -207,7 +207,7 @@ MojErr MojDbPerfIndexTest::_runPhaseTest (MojDb& db, MojUInt32 i_phase_number)
 
 	if (time_result == 0)
 	{
-		time_t diff = (ts2.tv_sec - ts1.tv_sec) * 1000 + abs(1000000000 + ts2.tv_nsec - ts1.tv_nsec - 1000000000) / 1000000;
+		time_t diff = (ts2.tv_sec - ts1.tv_sec) * 1000 + (ts2.tv_nsec - ts1.tv_nsec) / 1000000;
 		_displayMessage("\n\tcompleted with time: %ums\n", diff);
 	}
 
@@ -539,6 +539,7 @@ MojErr MojDbPerfIndexTest::_generateValidDate (MojString& o_string, time_t& o_va
 	struct tm const *tmr = gmtime(&gen);
 	// tmr->tm_year = The number of years since 1900
 	MojErr err = o_string.format("%s %d, %d", Monthes[tmr->tm_mon], tmr->tm_mday, tmr->tm_year + 1900);
+    MojErrCheck(err);
 	o_value = gen;
 
 	return MojErrNone;
@@ -555,6 +556,7 @@ MojErr MojDbPerfIndexTest::_add3monthToDate (MojString& o_string, time_t& i_valu
 	MojInt32 tm_year = tmr->tm_year + ((tmr->tm_mon + 3) < 12 ? 0 : 1);
 	// tmr->tm_year = The number of years since 1900
 	MojErr err = o_string.format("%s %d, %d", Monthes[tm_mon], tmr->tm_mday, tm_year + 1900);
+    MojErrCheck(err);
 
 	return MojErrNone;
 }

@@ -79,8 +79,8 @@ public:
 		MojList* m_list;
 	};
 
-	MojList() { init(); }
-	MojList(MojList& list) { init(list); }
+	MojList() : MojNoCopy() { init(); }
+	MojList(MojList& list) : MojNoCopy() { init(list); }
 	~MojList();
 
 	MojSize size() const { return m_size; }

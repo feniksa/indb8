@@ -25,7 +25,7 @@ const MojInt64 MASSIVE_AVAILABLE_SPACE = 500000000L;
 const MojInt32 MojDbSpaceAlert::SpaceCheckInterval = 60;
 const MojDouble MojDbSpaceAlert::SpaceAlertLevels[] = { 85.0, 90.0, 95.0 };
 const MojChar* const MojDbSpaceAlert::SpaceAlertNames[] = {"none",  "low", "medium", "high" };
-const MojInt32 MojDbSpaceAlert::NumSpaceAlertLevels =
+const MojUInt64 MojDbSpaceAlert::NumSpaceAlertLevels =
 sizeof(MojDbSpaceAlert::SpaceAlertLevels) / sizeof(MojDouble);
 
 MojDbSpaceAlert::MojDbSpaceAlert(MojDb& db)

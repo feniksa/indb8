@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2014 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -46,12 +46,12 @@ public:
 	void fromTimespec(const MojTimespecT* ts);
 	void toTimespec(MojTimespecT* tsOut) const;
 
-	const bool operator==(const MojTime& rhs) { return m_val == rhs.m_val; }
-	const bool operator!=(const MojTime& rhs) { return m_val != rhs.m_val; }
-	const bool operator<(const MojTime& rhs) { return m_val < rhs.m_val; }
-	const bool operator<=(const MojTime& rhs) { return m_val <= rhs.m_val; }
-	const bool operator>(const MojTime& rhs) { return m_val > rhs.m_val; }
-	const bool operator>=(const MojTime& rhs) { return m_val >= rhs.m_val; }
+	bool operator==(const MojTime& rhs) const { return m_val == rhs.m_val; }
+	bool operator!=(const MojTime& rhs) const { return m_val != rhs.m_val; }
+	bool operator<(const MojTime& rhs) const { return m_val < rhs.m_val; }
+	bool operator<=(const MojTime& rhs) const { return m_val <= rhs.m_val; }
+	bool operator>(const MojTime& rhs) const { return m_val > rhs.m_val; }
+	bool operator>=(const MojTime& rhs) const { return m_val >= rhs.m_val; }
 
 	MojTime& operator=(const MojTime& rhs) { m_val = rhs.m_val; return *this; }
 	MojTime& operator+=(const MojTime& rhs) { m_val += rhs.m_val; return *this; }

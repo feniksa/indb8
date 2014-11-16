@@ -369,3 +369,4 @@ MojErr MojDbIsamQuery::checkExclude(MojDbStorageItem* item, bool& excludeOut)
 	}
 	return MojErrNone;
 }
+

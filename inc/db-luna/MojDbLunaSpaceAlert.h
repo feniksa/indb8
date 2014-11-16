@@ -66,7 +66,7 @@ private:
     static const MojInt32 SpaceCheckInterval;
     static const MojDouble SpaceAlertLevels[];
     static const MojChar* const SpaceAlertNames[];
-    static const MojInt32 NumSpaceAlertLevels;
+    static const MojUInt64 NumSpaceAlertLevels;
 };
 
 #endif

@@ -180,7 +180,7 @@ TEST_F(BatchTest, mergePutf)
     err = db.merge(query, object2, count, MojDb::FlagNone, req);
     MojExpectNoErr ( err );
 
-    ASSERT_EQ(1, count);
+    ASSERT_EQ(1u, count);
 }
 
 }

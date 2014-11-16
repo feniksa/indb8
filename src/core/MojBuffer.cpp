@@ -39,7 +39,8 @@ MojBuffer::MojBuffer()
 }
 
 MojBuffer::MojBuffer(MojBuffer& buf)
-: m_chunks(buf.m_chunks),
+: MojNoCopy(),
+  m_chunks(buf.m_chunks),
   m_readPos(buf.m_readPos)
 {
 	buf.m_readPos = NULL;

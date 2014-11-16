@@ -23,20 +23,18 @@
 #include "core/MojCoreDefs.h"
 #include "core/MojErr.h"
 
-namespace {
-	MojErr LdbToMojErr(const leveldb::Status& s)
-	{
-		if (!s.ok()) {
-			if (s.IsIOError())
-				return MojErrDbIO;
-			else if (s.IsCorruption())
-				return MojErrDbCorruptDatabase;
-			else
-				return MojErrDbFatal;
-		}
-
-		return MojErrNone;
+static MojErr LdbToMojErr(const leveldb::Status& s)
+{
+	if (!s.ok()) {
+		if (s.IsIOError())
+			return MojErrDbIO;
+		else if (s.IsCorruption())
+			return MojErrDbCorruptDatabase;
+		else
+			return MojErrDbFatal;
 	}
+   
+	return MojErrNone;
 }
 
 #define MojLdbErrCheck(E, FNAME)                if (!E.ok()) MojErrThrowMsg(LdbToMojErr(E), _T("ldb: %s - %s"), FNAME, E.ToString().data())
