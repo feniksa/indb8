@@ -27,6 +27,7 @@ foreach(test
 		Decimal
 		Number
 		Json
+        Signal
 	)
 	add_test(NAME "gtest-core/${test}" COMMAND gtest_core --gtest_filter="${test}.*")
 	set(TEST_SOURCES ${TEST_SOURCES} ${test}Test.cpp)
