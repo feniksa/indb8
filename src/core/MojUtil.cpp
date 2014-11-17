@@ -290,6 +290,7 @@ MojErr MojCreateDirIfNotPresent(const MojChar* path)
 		MojErrCheck(err);
 		err = MojCreateDirIfNotPresent(parentPath);
 		MojErrCheck(err);
+		err = MojMkDir(path, MOJ_S_IRWXU);
 	}
 	MojErrCheck(err);
 

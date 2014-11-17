@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2014 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ MojErr MojUtilTest::run()
 
         //change cwd to /tmp
         //due to NFS behaviour - it reporting wrong folder attributes and make a problem
-        chdir("/tmp");
+        MojTestAssert( chdir("/tmp") == 0 );
 	// rmdirr
 	MojErr err = MojMkDir(_T("foo"), S_IRWXU);
 	MojTestErrCheck(err);
@@ -130,6 +130,10 @@ MojErr MojUtilTest::run()
 	err = MojFileOpen(file, _T("foo/bar/file2"), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
 	MojTestErrCheck(err);
 	err = MojFileClose(file);
+	MojTestErrCheck(err);
+	err = MojCreateDirIfNotPresent("foo/zoom/zoom/boom");
+	MojTestErrCheck(err);
+	err = MojStat("foo/zoom/zoom/boom", &stat);
 	MojTestErrCheck(err);
 	err = MojRmDirRecursive(_T("foo"));
 	MojTestErrCheck(err);
