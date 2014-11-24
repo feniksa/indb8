@@ -22,6 +22,8 @@
 #include "db/MojDbStorageSeq.h"
 #include "MojDbLevelDatabase.h"
 #include "MojDbLevelItem.h"
+#include <mutex>
+#include <atomic>
 
 class MojDbLevelSeq : public MojDbStorageSeq
 {
@@ -37,13 +39,14 @@ public:
 private:
     friend class MojDbLevelEngine;
 
-    MojErr store(MojInt64 next);
-    MojErr allocateMore();
+    MojErr store(MojUInt64 next);
 
     MojDbLevelDatabase* m_db;
     MojDbLevelItem m_key;
-    MojInt64 m_next;
-    MojInt64 m_allocated;
+    std::atomic<MojUInt64> m_next; // requires atomic increment
+    std::atomic<MojUInt64> m_allocated; // requires atomic load/store
+
+    std::mutex m_allocationLock;
 };
 
 #endif

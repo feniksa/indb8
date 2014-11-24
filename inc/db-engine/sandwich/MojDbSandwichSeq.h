@@ -19,6 +19,9 @@
 #ifndef MOJDBLEVELSEQ_H_
 #define MOJDBLEVELSEQ_H_
 
+#include <mutex>
+#include <atomic>
+
 #include "MojDbSandwichDatabase.h"
 #include "MojDbSandwichItem.h"
 #include "db/MojDbStorageSeq.h"
@@ -37,13 +40,14 @@ public:
 private:
     friend class MojDbSandwichEngine;
 
-    MojErr store(MojInt64 next);
-    MojErr allocateMore();
+    MojErr store(MojUInt64 next);
 
     MojDbSandwichDatabase* m_db;
     MojDbSandwichItem m_key;
-    MojInt64 m_next;
-    MojInt64 m_allocated;
+    std::atomic<MojUInt64> m_next; // requires atomic increment
+    std::atomic<MojUInt64> m_allocated; // requires atomic load/store
+
+    std::mutex m_allocationLock;
 };
 
 #endif

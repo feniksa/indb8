@@ -20,6 +20,10 @@
 #include "db-engine/sandwich/MojDbSandwichDatabase.h"
 #include "db-engine/sandwich/MojDbSandwichEngine.h"
 
+namespace {
+    constexpr MojInt64 SequenceAllocationPage = 100;
+} // anonymous namespace
+
 // at this point it's just a placeholder
 MojDbSandwichSeq::~MojDbSandwichSeq()
 {
@@ -57,7 +61,7 @@ MojErr MojDbSandwichSeq::open(const MojChar* name, MojDbSandwichDatabase* db)
         m_next = 0;
     }
 
-    m_allocated = m_next;
+    m_allocated.store(m_next, std::memory_order_relaxed);
 
     return MojErrNone;
 }
@@ -74,23 +78,36 @@ MojErr MojDbSandwichSeq::close()
 
 MojErr MojDbSandwichSeq::get(MojInt64& valOut)
 {
-    if (m_next == m_allocated)
+#ifdef MOJ_DEBUG
+    valOut = -1; // in case of error trace down those who do not check MojErr
+#endif
+
+    auto val = m_next.fetch_add(1, std::memory_order_relaxed); // only attomicity of increment required
+
+    // the only stuff we need here is atomicity of load()
+    // we are ok if some concurrent get() will fallback to mutex due due to
+    // read of outdated value
+    if (val >= m_allocated.load(std::memory_order_relaxed))
     {
-        MojErr err = MojDbSandwichSeq::allocateMore();
-        MojErrCheck(err);
-        MojAssert(m_allocated > m_next);
+        // everyone who received val from unallocated range will come here and
+        // will be processed in a queue on this mutex
+        std::lock_guard<std::mutex> allocationGuard(m_allocationLock);
+
+        // re-read under lock before allocating more sequence values
+        auto allocated = m_allocated.load(std::memory_order_relaxed);
+        if (val >= allocated) // no other threads who marked our value allocated
+        {
+            // mark our allocated val as a start of next pre-allocated page
+            MojErr err = store(val + SequenceAllocationPage);
+            MojErrCheck(err);
+        }
     }
-    valOut = m_next++;
+    valOut = (MojInt64)val;
 
     return MojErrNone;
 }
 
-MojErr MojDbSandwichSeq::allocateMore()
-{
-    return store(m_allocated + 100);
-}
-
-MojErr MojDbSandwichSeq::store(MojInt64 next)
+MojErr MojDbSandwichSeq::store(MojUInt64 next)
 {
     MojAssert( next >= m_next );
     MojErr err;
@@ -107,20 +124,22 @@ MojErr MojDbSandwichSeq::store(MojInt64 next)
         MojObject valObj;
         err = val.toObject(valObj);
         MojErrCheck(err);
-        if (m_allocated != valObj.intValue()) return MojErrDbInconsistentIndex;
+        if (m_allocated != MojUInt64(valObj.intValue()))
+            MojErrThrowMsg(MojErrDbInconsistentIndex, "Stored and cached seq are different");
     }
     else
     {
-        if (m_allocated != 0) return MojErrDbInconsistentIndex;
+        if (m_allocated != 0)
+            MojErrThrowMsg(MojErrDbInconsistentIndex, "Failed to fetch previously allocated seq");
     }
 
 #endif
 
-    err = val.fromObject(next);
+    err = val.fromObject(MojInt64(next));
     MojErrCheck(err);
     err = m_db->put(m_key, val, NULL, false);
     MojErrCheck(err);
-    m_allocated = next;
+    m_allocated.store(next, std::memory_order_relaxed);
 
     return MojErrNone;
 }
