@@ -107,7 +107,7 @@ namespace MojNumber {
         MojErr toDecimal(MojDecimal &decimal) const
         {
             MojUInt64 rep = value;
-            const int alignExp = MojDecimal::Precision + valueExp + exponent;
+            const MojInt32 alignExp = static_cast<MojInt32> (MojDecimal::Precision) + valueExp + exponent;
 
             if (alignExp < 0)
             {
@@ -130,7 +130,7 @@ namespace MojNumber {
                 if (G_UNLIKELY(alignExp > int64_pow10_max))
                 {
                     MojErrThrowMsg( MojErrValueOutOfRange, "Too big value for MojDecimal %" PRIu64 " * %d^%d",
-                                    value, base, alignExp - MojDecimal::Precision );
+                                    value, base, alignExp - static_cast<MojInt32>(MojDecimal::Precision) );
                 }
 
                 const int64_t factor = npow((uint64_t)base, alignExp);

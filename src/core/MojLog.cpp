@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2014 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -45,9 +45,6 @@ MojLogger::MojLogger(const MojChar* name, MojLogEngine* engine)
 	if (m_engine == NULL)
 		m_engine = MojLogEngine::instance();
 	m_engine->addLogger(this);
-#if defined(USE_PMLOG)
-    PmLogGetContext(m_name, &m_context);
-#endif  // USE_PMLOG
 }
 
 MojLogger::~MojLogger()
@@ -99,19 +96,6 @@ MojErr MojLogger::levelFromString(const MojChar* str, Level& levelOut)
 	}
 	MojErrThrowMsg(MojErrLogLevelNotFound, _T("log: level not found: '%s'"), str);
 }
-
-#if defined(USE_PMLOG)
-char * MojLogger::fmtUnique(char *dest, const char *pFile, int32_t lineNbr)
-{
-    const char *pStart = strrchr (pFile, '/');
-    gchar *str = g_ascii_strup((pStart ? pStart + 1 : pFile), MOJLOG_UNIQUE_MAX - 6);
-    char *ptr = strchr(str, '.');
-    if (ptr) *ptr = '\0'; // trim off file extensions
-    snprintf (dest, MOJLOG_UNIQUE_MAX, "%s#%d", str, lineNbr);
-    g_free (str);
-    return dest;
-}
-#endif
 
 MojLogTracer::MojLogTracer(MojLogger& logger, const MojChar* function, const MojChar* file, int line)
 : m_logger(logger),

@@ -1,6 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (C) 2013 Maksym Sditanov
+# Copyright (C) 2014 Maksym Sditanov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -102,5 +102,5 @@ if (TESTS)
     endif ()
 endif()
 
-install(FILES files/conf/indb8.conf DESTINATION etc/indb8) 
+install(FILES files/conf/indb8.conf DESTINATION etc/indb8)
 #add_subdirectory(tool/dbgen)

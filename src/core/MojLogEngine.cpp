@@ -25,10 +25,6 @@
 #	include "syslog.h"
 #endif
 
-#ifdef MOJ_USE_PMLOG
-#	include "core/MojPmLogAppender.h"
-#endif
-
 const MojChar* const MojLogEngine::AppenderKey = _T("appender");
 const MojChar* const MojLogEngine::DefaultKey = _T("default");
 const MojChar* const MojLogEngine::ErrorKey = _T("error");
@@ -401,13 +397,6 @@ MojErr MojLogEngine::createAppender(const MojObject& conf, const MojChar* name, 
 		appenderOut = appender;
 	}
 #endif // MOJ_USE_SYSLOG
-#ifdef MOJ_USE_PMLOG
-	else if (type == _T("pmlog")) {
-		MojAutoPtr<MojPmLogAppender> appender(new MojPmLogAppender());
-		MojAllocCheck(appender.get());
-		appenderOut = appender;
-	}
-#endif // MOJ_USE_PMLOG
 	else {
 		MojErrThrowMsg(MojErrLogAppenderNotFound, _T("log: appender not found '%s'"), type.data());
 	}

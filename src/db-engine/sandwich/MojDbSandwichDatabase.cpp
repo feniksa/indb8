@@ -217,7 +217,6 @@ MojErr MojDbSandwichDatabase::put(MojDbSandwichItem& key, MojDbSandwichItem& val
 #if defined(MOJ_DEBUG)
     char str_buf[1024];
     size_t size1 = key.size();
-    size_t size2 = val.size();
     MojErr err2 = MojByteArrayToHex(key.data(), size1, str_buf);
     MojErrCheck(err2);
     if (size1 > 16) // if the object-id is in key
