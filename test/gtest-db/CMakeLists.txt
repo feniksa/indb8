@@ -31,6 +31,7 @@ foreach(test
 		Quota
 		Search
 		TextCollator
+		Threaded
 		Kinds
 	)
 	foreach (engine ${MOJO_ENGINES})
