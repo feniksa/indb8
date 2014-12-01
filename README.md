@@ -18,6 +18,24 @@ Move bug-fixes from db8 repository
 How to Build on Linux
 =====================
 
+## Building for OpenWebOS
+
+For building under webos, you can follow the same steps as for db8 (original fork). See: http://github.com/openwebos/db8
+
+### Dependencies
+
+Below are the tools and libraries (and their minimum versions) required to build this package:
+
+* cmake (version required by openwebos/cmake-modules-webos)
+* libdb-4.8-dev
+* libicu-dev
+* glib-2.0
+* gthread-2.0
+* openwebos/luna-service2
+* leveldb
+* leveldb-tl (https://github.com/ony/leveldb-tl)
+* berkeleydb
+
 ## Building for Gentoo
 
 Current InDB8 supported by gentoo WebOS layer.
@@ -31,21 +49,16 @@ And install from layman:
 
 Gentoo will automatically install indb8 upstart script and all required dependency.
 
-## Building using OpenEmbedded 
+## Building Standalone
 
-For building under webos, you can follow the same steps as for db8 (original fork). See: http://github.com/openwebos/db8
+### Using cmake
 
-### Dependencies
+Once you have downloaded the source, execute the following to build it (after changing into the directory under which it was downloaded):
 
-Below are the tools and libraries (and their minimum versions) required to build this package:
-
-* openwebos/cmake-modules-webos 1.0.0 RC7
-* cmake (version required by openwebos/cmake-modules-webos)
-* libdb-4.8-dev
-* libicu-dev
-* glib-2.0
-* gthread-2.0
-* openwebos/luna-service2
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
 
 ### Configure database backend
 
@@ -68,31 +81,74 @@ To build the unit tests for db8, specify a true value for `WEBOS_CONFIG_BUILD_TE
 
     $ cmake -D WEBOS_CONFIG_BUILD_TESTS:BOOL=TRUE
 
-### Building Standalone
-
-#### Using cmake
-
-Once you have downloaded the source, execute the following to build it (after changing into the directory under which it was downloaded):
-
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ make
-    $ sudo make install
-
 ### Debug build
 
 To build InDB8 in debug mode, add to cmake param -DCMAKE_BUILD_TYPE=debug
 
     $ cmake -DCMAKE_BUILD_TYPE=debug ..
 
-#### Uninstalling
+### Uninstalling
 
 From the directory where you originally ran `make install`, enter:
 
     $ [sudo] make uninstall
 
 You will need to use `sudo` if you did not specify `WEBOS_INSTALL_ROOT`.
+
+How to configure
+=====================
+
+## Configuration file mojodb.conf
+
+By defult, on startup InDB8 read configuration file /etc/palm/db8/maindb.conf
+This configuration file self-explained.
+
+To pass into InDB8 path to configuration file directly, you can set -c /path/mojodb.conf
+    
+    $ ./mojodb-luna -c /etc/palm/db8/maindb.conf
+
+## Configure Logging
+
+### Logging target 
+
+DB8 supportes different output targets. Supported output targets are: 
+    file
+    syslog
+    stdout
+    stderr
+
+To set output target, modify mojodb.conf (or maindb.conf) and set appender type to required:
+   ...
+   "log" : {
+      "appender" : {
+         "type" : "syslog"
+     },
+   ...
+
+### Output level
+
+    In release mode, input db8 output different log information into log appender, except debug and trace log messages. Debug and Trace log
+messages output only in indb8 debug  build (compiled with -DCMAKE_BUILD_TYPE=debug param)
+
+Supported levels of loggin:
+
+    trace
+    debug
+    info
+    notice
+    warning
+    error
+    critical
+    none
+
+To change loggin level,  modify mojodb.conf (maindb.conf) and set log -> level param to required value.
+    ...
+   "log" : {
+        ...
+        "levels" : {
+            "default" : "notice"
+        }
+    ...
 
 # Copyright and License Information
 
