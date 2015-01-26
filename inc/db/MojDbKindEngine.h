@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2014 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -62,9 +62,6 @@ public:
 	MojErr putKind(const MojObject& obj, MojDbReq& req, bool builtin = false);
 	MojErr delKind(const MojString& id, MojDbReq& req);
 	MojErr reloadKind(const MojString& id, const MojObject& kindObj, MojDbReq& req);
-
-    MojErr addShardIdToMasterKind (MojString shardId, MojObject& obj, MojDbReq& req);
-    MojErr removeShardIdsFromMasterKind (const MojString& id, const MojVector<MojUInt32>& shardIds, MojDbReq& req);
 
 	MojDb* db() { return m_db; }
 	MojDbPermissionEngine* permissionEngine();
