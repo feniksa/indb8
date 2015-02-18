@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -43,10 +43,12 @@ public:
 	static const MojChar* const MaxItemsKey;
 	static const MojChar* const MaxLengthKey;
 	static const MojChar* const OptionalKey;
+        static const MojChar* const RequiredKey;
 	static const MojChar* const PropertiesKey;
 	static const MojChar* const RequiresKey;
 	static const MojChar* const TypeKey;
 	static const MojChar* const UniqueItemsKey;
+        static const MojChar* const PatternKey;
 
 	typedef MojSet<MojString> StringSet;
 
@@ -207,6 +209,8 @@ private:
 	private:
 		MojString m_requiredProp;
 	};
+
+        class PatternRule;
 
 	template<class COMP1, class COMP2>
 	class CompRule : public Rule

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
 
 #include "core/MojSchema.h"
 
+#include <boost/regex.hpp>
+
 const MojChar* const MojSchema::AdditionalPropertiesKey = _T("additionalProperties");
 const MojChar* const MojSchema::DisallowKey = _T("disallow");
 const MojChar* const MojSchema::DivisibleByKey = _T("divisibleBy");
@@ -33,12 +35,50 @@ const MojChar* const MojSchema::MaximumCanEqualKey = _T("maximumCanEqual");
 const MojChar* const MojSchema::MaxItemsKey = _T("maxItems");
 const MojChar* const MojSchema::MaxLengthKey = _T("maxLength");
 const MojChar* const MojSchema::OptionalKey = _T("optional");
+const MojChar* const MojSchema::RequiredKey = _T("required");
 const MojChar* const MojSchema::PropertiesKey = _T("properties");
 const MojChar* const MojSchema::RequiresKey = _T("requires");
 const MojChar* const MojSchema::TypeKey = _T("type");
 const MojChar* const MojSchema::UniqueItemsKey = _T("uniqueItems");
+const MojChar* const MojSchema::PatternKey = _T("pattern");
 
 const MojChar* const MojSchema::InvalidSchemaPrefix = _T("invalid schema");
+
+class MojSchema::PatternRule : public MojSchema::Rule
+{
+public:
+        PatternRule(MojSchema* schema): Rule(schema) {}
+
+        MojErr fromObject (const MojObject& obj)
+        {
+                try {
+                        MojErr error = obj.stringValue(m_pattern);
+                        MojErrCheck (error);
+                        m_regexp = m_pattern.data();
+                }
+                catch (const boost::regex_error& ex) {
+                        MojErrThrowMsg(MojErrJson, _T("invalid regex : %s. Message : %s"), m_pattern.data(), ex.what());
+                }
+                return MojErrNone;
+        }
+
+        MojErr validate(const MojObject& val, const MojObject& parent, Result& resOut) const
+        {
+                MojString string_val;
+                val.stringValue(string_val);
+
+                if (!boost::regex_match (string_val.data(),m_regexp))
+                {
+                        resOut.valid(false);
+                        MojErr err = resOut.m_msg.format(_T("pattern : '%s' and value : '%s' do not match"), m_pattern.data(), string_val.data());
+                        MojErrCheck(err);
+                }
+                return MojErrNone;
+        }
+private:
+        boost::regex m_regexp;
+        MojString m_pattern; //for log message
+};
 
 MojSchema::MojSchema()
 {
@@ -73,7 +113,7 @@ MojErr MojSchema::validate(const MojObject& obj, Result& resOut) const
 
 MojSchema::SchemaRule::SchemaRule(MojSchema* schema)
 : Rule(schema),
-  m_optional(false)
+  m_optional(true)
 {
 }
 
@@ -96,8 +136,18 @@ MojErr MojSchema::SchemaRule::fromObject(const MojObject& obj)
 		MojErrCheck(err);
 		rule->additionalProperties(additionalProperties.get());
 	}
-	// optional
-	obj.get(OptionalKey, m_optional);
+        // optional or required
+        bool required = false;
+        if (obj.get(OptionalKey, m_optional)) {
+                if (obj.get(RequiredKey, required)) {
+                        if (m_optional == required) {
+                                MojErrThrowMsg(MojErrJson, "invalid schema (conflicting required/optional values)");
+                        }
+                }
+        }
+        else if (obj.get(RequiredKey, required)) {
+                m_optional = !required;
+        }
 	// type
 	if (obj.get(TypeKey, val)) {
 		if (val.type() == MojObject::TypeArray) {
@@ -130,6 +180,11 @@ MojErr MojSchema::SchemaRule::fromObject(const MojObject& obj)
 			MojErrCheck(err);
 		}
 	}
+        // pattern
+        if (obj.get(PatternKey, val)) {
+                err = addRule(new PatternRule(m_schema), val);
+                MojErrCheck(err);
+        }
 	// requires
 	if (obj.get(RequiresKey, val)) {
 		err = addRule(new RequiresRule(m_schema), val);

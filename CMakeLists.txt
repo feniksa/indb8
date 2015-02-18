@@ -63,6 +63,10 @@ if(ICUI18N STREQUAL "ICUI18N-NOTFOUND")
 	MESSAGE(FATAL_ERROR "Failed to find ICU-I18N libaries. Please install.")
 endif()
 
+# -- Check for Boost library
+find_package(Boost 1.40 COMPONENTS regex REQUIRED)
+include_directories(${Boost_INCLUDE_DIR})
+
 if (BUILD_LS2)
 	# -- check for LS2 (internally depends on pmloglib)
 	pkg_check_modules(LS2 REQUIRED luna-service2)

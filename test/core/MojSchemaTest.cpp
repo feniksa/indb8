@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -451,21 +451,72 @@ MojErr MojSchemaTest::propertiesTest()
 					 _T("{\"foo\":\"bar\"}"),
 					 false);
 	MojTestErrCheck(err);
-	// optional/required
-	err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"optional\":true}}}"),
-					 _T("{\"foo\":1, \"bar\":2}"),
-					 true);
-	MojTestErrCheck(err);
-	err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"optional\":true}}}"),
-					 _T("{\"foo\":1}"),
-					 true);
-	MojTestErrCheck(err);
-	err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"optional\":true}}}"),
-					 _T("{\"bar\":2}"),
-					 false);
-	MojTestErrCheck(err);
 
-	return MojErrNone;
+        // optional/required
+        err = checkValid(_T("{\"properties\":{\"foo\":{}}}"),
+                                         _T("{}"),
+                                         true);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{ \"required\" : true}}}"),
+                                         _T("{}"),
+                                         false);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{ \"required\" : true}}}"),
+                                         _T("{\"foo\":1}"),
+                                         true);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"required\":true}}}"),
+                                         _T("{\"foo\":1, \"bar\":2}"),
+                                         true);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"required\":true}}}"),
+                                         _T("{\"foo\":1}"),
+                                         false);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"optional\":true}}}"),
+                                         _T("{\"foo\":1, \"bar\":2}"),
+                                         true);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"optional\":true}}}"),
+                                         _T("{\"foo\":1}"),
+                                         true);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"optional\":false}}}"),
+                                         _T("{\"foo\":1}"),
+                                         false);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"optional\":false}}}"),
+                                         _T("{\"foo\":1,\"bar\":2}"),
+                                         true);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{},\"bar\":{\"optional\":true}}}"),
+                                         _T("{\"bar\":2}"),
+                                         true);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{\"required\":true},\"bar\":{\"optional\":true}}}"),
+                                         _T("{\"bar\":2}"),
+                                         false);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{\"required\":true},\"bar\":{\"optional\":true}}}"),
+                                         _T("{\"foo\":1, \"bar\":2}"),
+                                         true);
+        MojTestErrCheck(err);
+
+        // pattern
+        err = checkValid(_T("{\"properties\":{\"foo\":{ \"required\" : true, \"pattern\" : \"[0-9]_[0-9]\"}}}"),
+                                         _T("{\"foo\":1}"),
+                                         false);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{ \"required\" : true, \"pattern\" : \"[0-9]_[0-9]\"}}}"),
+                                         _T("{\"foo\":\"x_x\"}"),
+                                         false);
+        MojTestErrCheck(err);
+        err = checkValid(_T("{\"properties\":{\"foo\":{ \"required\" : true, \"pattern\" : \"[0-9]_[0-9]\"}}}"),
+                                         _T("{\"foo\":\"5_5\"}"),
+                                         true);
+        MojTestErrCheck(err);
+
+        return MojErrNone;
 }
 /**
 ***************************************************************************************************
