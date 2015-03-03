@@ -31,15 +31,6 @@ pkg_check_modules(GTHREAD2 REQUIRED gthread-2.0)
 include_directories(${GTHREAD2_INCLUDE_DIRS})
 add_definitions(${GTHREAD2_CFLAGS_OTHER})
 
-option(BUILD_LS2 "Build Mojo Luna interface" ON)
-
-if (BUILD_LS2)
-    # -- check for LS2 (internally depends on pmloglib)
-    pkg_check_modules(LS2 REQUIRED luna-service2)
-    include_directories(${LS2_INCLUDE_DIRS})
-    add_definitions(${LS2_CFLAGS_OTHER})
-endif(BUILD_LS2)
-
 # -- check for ICU
 find_library(ICU NAMES icuuc)
 if(ICU STREQUAL "ICU-NOTFOUND")
@@ -79,6 +70,9 @@ elseif(WEBOS_DB8_BACKEND STREQUAL "leveldb" OR WEBOS_ENGINE_LEVELDB)
 	add_definitions("-DMOJ_USE_LDB")
 endif()
 
+if (NOT WEBOS_ENGINE_SANDWICH AND NOT WEBOS_ENGINE_LEVELDB AND NOT WEBOS_ENGINE_BERKELEY)
+	message(FATAL_ERROR "Not selected any of engines")
+endif()
 
 # -- add local include paths
 include_directories(inc)
@@ -86,8 +80,16 @@ add_subdirectory(src/core)
 add_subdirectory(src/db)
 add_subdirectory(src/db-engine)
 
-add_subdirectory(src/luna)
-add_subdirectory(src/db-luna)
+option(BUILD_LS2 "Build Mojo Luna interface" ON)
+if (BUILD_LS2)
+	# -- check for LS2 (internally depends on pmloglib)
+	pkg_check_modules(LS2 REQUIRED luna-service2)
+	include_directories(${LS2_INCLUDE_DIRS})
+	add_definitions(${LS2_CFLAGS_OTHER})
+
+	add_subdirectory(src/luna)
+	add_subdirectory(src/db-luna)
+endif(BUILD_LS2)
 
 option(TESTS "Build tests" ON)
 if (TESTS)
