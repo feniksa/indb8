@@ -68,10 +68,14 @@ add_definitions(-std=c++11 -Wall -fPIC -Wconversion -frename-registers -DMOJ_LIN
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMOJ_DEBUG -DMOJ_DEBUG_LOGGING -ggdb -O0")
 
+option(WEBOS_ENGINE_SANDWICH "Build sandwich engine" ON)
+option(WEBOS_ENGINE_LEVELDB "Build sandwich engine" OFF)
+option(WEBOS_ENGINE_BERKELEY "Build berkeley engine" OFF)
+
 # temporary hack for engines. See db-engine/CMakeLists.txt
-if (WEBOS_DB8_BACKEND STREQUAL "sandwich")
+if (WEBOS_DB8_BACKEND STREQUAL "sandwich" OR WEBOS_ENGINE_SANDWICH)
 	add_definitions("-DMOJ_USE_SANDWICH")
-elseif(WEBOS_DB8_BACKEND STREQUAL "leveldb")
+elseif(WEBOS_DB8_BACKEND STREQUAL "leveldb" OR WEBOS_ENGINE_LEVELDB)
 	add_definitions("-DMOJ_USE_LDB")
 endif()
 
@@ -84,7 +88,6 @@ add_subdirectory(src/db-engine)
 
 add_subdirectory(src/luna)
 add_subdirectory(src/db-luna)
-
 
 option(TESTS "Build tests" ON)
 if (TESTS)
