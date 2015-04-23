@@ -1,6 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (C) 2014 Maksym Sditanov
+# Copyright (C) 2014-2015 Maksym Sditanov
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,14 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 project(INDB8 CXX)
+
+# Build options
+option(BUILD_LS2             "Build Mojo Luna interface" ON )
+option(TESTS                 "Build tests"               ON )
+option(WEBOS_ENGINE_SANDWICH "Build sandwich engine"     ON )
+option(WEBOS_ENGINE_LEVELDB  "Build sandwich engine"     OFF)
+option(WEBOS_ENGINE_BERKELEY "Build berkeley engine"     OFF)
+
 include(FindPkgConfig)
 
 # -- check for glib 2.0
@@ -42,7 +50,24 @@ if(ICUI18N STREQUAL "ICUI18N-NOTFOUND")
 	MESSAGE(FATAL_ERROR "Failed to find ICU-I18N libaries. Please install.")
 endif()
 
+if (BUILD_LS2)
+	# -- check for LS2 (internally depends on pmloglib)
+	pkg_check_modules(LS2 REQUIRED luna-service2)
+	include_directories(${LS2_INCLUDE_DIRS})
+	add_definitions(${LS2_CFLAGS_OTHER})
+endif()
+
 add_definitions(-std=c++11 -Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
+if (WEBOS_ENGINE_SANDWICH)
+	add_definitions(-DMOJ_USE_SANDWICH)
+endif()
+if (WEBOS_ENGINE_LEVELDB)
+	add_definitions(-DMOJ_USE_LDB)
+endif()
+if (WEBOS_ENGINE_BERKELEY)
+	add_definitions(-DMOJ_USE_BDB)
+endif()
+
 
 #add_definitions("-std=c++11"
 #                "-fno-elide-constructors"
@@ -57,18 +82,7 @@ add_definitions(-std=c++11 -Wall -fPIC -Wconversion -frename-registers -DMOJ_LIN
 #                "-Winit-self")
 
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMOJ_DEBUG -DMOJ_DEBUG_LOGGING -ggdb -O0")
-
-option(WEBOS_ENGINE_SANDWICH "Build sandwich engine" ON)
-option(WEBOS_ENGINE_LEVELDB "Build sandwich engine" OFF)
-option(WEBOS_ENGINE_BERKELEY "Build berkeley engine" OFF)
-
-# temporary hack for engines. See db-engine/CMakeLists.txt
-if (WEBOS_DB8_BACKEND STREQUAL "sandwich" OR WEBOS_ENGINE_SANDWICH)
-	add_definitions("-DMOJ_USE_SANDWICH")
-elseif(WEBOS_DB8_BACKEND STREQUAL "leveldb" OR WEBOS_ENGINE_LEVELDB)
-	add_definitions("-DMOJ_USE_LDB")
-endif()
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DMOJ_DEBUG -DMOJ_DEBUG_LOGGING")
 
 if (NOT WEBOS_ENGINE_SANDWICH AND NOT WEBOS_ENGINE_LEVELDB AND NOT WEBOS_ENGINE_BERKELEY)
 	message(FATAL_ERROR "Not selected any of engines")
@@ -76,22 +90,16 @@ endif()
 
 # -- add local include paths
 include_directories(inc)
+
 add_subdirectory(src/core)
 add_subdirectory(src/db)
 add_subdirectory(src/db-engine)
 
-option(BUILD_LS2 "Build Mojo Luna interface" ON)
 if (BUILD_LS2)
-	# -- check for LS2 (internally depends on pmloglib)
-	pkg_check_modules(LS2 REQUIRED luna-service2)
-	include_directories(${LS2_INCLUDE_DIRS})
-	add_definitions(${LS2_CFLAGS_OTHER})
-
 	add_subdirectory(src/luna)
 	add_subdirectory(src/db-luna)
-endif(BUILD_LS2)
+endif()
 
-option(TESTS "Build tests" ON)
 if (TESTS)
 	enable_testing()
 
@@ -100,12 +108,11 @@ if (TESTS)
 	add_subdirectory(test/dbclient)
 	add_subdirectory(test/luna-service)
 
-    add_subdirectory(test/gtest-core)
-    add_subdirectory(test/gtest-db)
-    if (WEBOS_DB8_BACKEND STREQUAL "leveldb")
-        add_subdirectory(test/gtest-leveldb)
-    endif ()
+	add_subdirectory(test/gtest-core)
+	add_subdirectory(test/gtest-db)
+	if (WEBOS_ENGINE_LEVELDB)
+		add_subdirectory(test/gtest-leveldb)
+	endif ()
 endif()
 
 install(FILES files/conf/indb8.conf DESTINATION etc/indb8)
-#add_subdirectory(tool/dbgen)

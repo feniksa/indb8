@@ -1,6 +1,3 @@
-set(WEBOS_DB8_BACKEND "leveldb" CACHE STRING "Backend to use with DB8")
-message (STATUS "Use database frontend: ${WEBOS_DB8_BACKEND}")
-
 #if (WEBOS_DB8_BACKEND STREQUAL "berkeleydb")
     # -- check for BerkeleyDB
     # (add an alternate standard path in case building BDB locally: does not override)
@@ -27,7 +24,8 @@ message (STATUS "Use database frontend: ${WEBOS_DB8_BACKEND}")
 
     #set (DB_BACKEND_WRAPPER_CFLAGS "-DMOJ_USE_BDB")
 #else
-if (WEBOS_DB8_BACKEND STREQUAL "leveldb")
+if (WEBOS_ENGINE_LEVELDB)
+	message (STATUS "Use database frontend: leveldb")
 
     # -- check for LevelDB backend
     find_library(LDB NAMES leveldb ${WEBOS_INSTALL_ROOT}/lib)
@@ -52,26 +50,30 @@ if (WEBOS_DB8_BACKEND STREQUAL "leveldb")
          leveldb/MojDbLevelContainerIterator.cpp
    )
 
+   add_definitions (-DMOJ_USE_LDB)
    set (DB_BACKEND_LIB leveldb)
-elseif (WEBOS_DB8_BACKEND STREQUAL "sandwich")
-                # -- check for LevelDB backend
-                find_library(LDB NAMES leveldb ${WEBOS_INSTALL_ROOT}/lib)
-                if(LDB STREQUAL "LDB-NOTFOUND")
-                        MESSAGE(FATAL_ERROR "Failed to find LevelDB libaries. Please install.")
-                endif()
+elseif (WEBOS_ENGINE_SANDWICH)
+	message (STATUS "Use database frontend: sandwich")
 
-                set(DB_BACKEND_WRAPPER_SOURCES
-                        sandwich/MojDbSandwichEngine.cpp
-                        sandwich/MojDbSandwichFactory.cpp
-                        sandwich/MojDbSandwichDatabase.cpp
-                        sandwich/MojDbSandwichQuery.cpp
-                        sandwich/MojDbSandwichTxn.cpp
-                        sandwich/MojDbSandwichSeq.cpp
-                        sandwich/MojDbSandwichEnv.cpp
-                        sandwich/MojDbSandwichIndex.cpp
-                        sandwich/MojDbSandwichItem.cpp
-                        sandwich/MojDbSandwichLazyUpdater.cpp
-                )
+	# -- check for LevelDB backend
+	find_library(LDB NAMES leveldb ${WEBOS_INSTALL_ROOT}/lib)
+	if(LDB STREQUAL "LDB-NOTFOUND")
+		message(FATAL_ERROR "Failed to find LevelDB libaries. Please install.")
+	endif()
+
+	set(DB_BACKEND_WRAPPER_SOURCES
+		sandwich/MojDbSandwichEngine.cpp
+		sandwich/MojDbSandwichFactory.cpp
+		sandwich/MojDbSandwichDatabase.cpp
+		sandwich/MojDbSandwichQuery.cpp
+		sandwich/MojDbSandwichTxn.cpp
+		sandwich/MojDbSandwichSeq.cpp
+		sandwich/MojDbSandwichEnv.cpp
+		sandwich/MojDbSandwichIndex.cpp
+		sandwich/MojDbSandwichItem.cpp
+		sandwich/MojDbSandwichLazyUpdater.cpp
+	)
+	add_definitions ("-DMOJ_USE_SANDWICH")
 	set (DB_BACKEND_LIB leveldb)
 else()
     message(FATAL_ERROR "WEBOS_DB8_BACKEND: unsuported value '${WEBOS_DB8_BACKEND}' ")
