@@ -16,35 +16,14 @@
 #
 # LICENSE@@@
 
-description "@WEBOS_PROJECT_SUMMARY@"
+description "InDB8 project"
 
 start on datastore-init-start
 stop on started start_update
 
 respawn
 
-# Comment this line out to suppress logs on the console
-#console output
-
 pre-start script
-	# check available disk space
-	BYTES_TOTAL=$(($(stat -f -c "%b*%S" /var/db)))
-	BYTES_FREE=$(($(stat -f -c "%a*%S" /var/db)))
-
-	# If /var/db contain less 4.5% of free space, do factory reset
-    BYTES_THRESHOLD=$(($BYTES_TOTAL*45/1000))
-
-	# if not enough disk space, make factory reset and reboot.
-	if [ "$BYTES_FREE" -le "$BYTES_THRESHOLD" ]; then
-	        /usr/bin/luna-send -n 1 luna://com.webos.service.tv.systemproperty/doUserDefault '{}'
-		exit 1
-	fi
-
-	# move logs
-	if [ -d @WEBOS_INSTALL_LOCALSTATEDIR@/dblog ]; then
-		mv @WEBOS_INSTALL_LOCALSTATEDIR@/dblog/* @WEBOS_INSTALL_LOCALSTATEDIR@/db
-		rmdir @WEBOS_INSTALL_LOCALSTATEDIR@/dblog
-	fi
 	if [ -d @WEBOS_INSTALL_LOCALSTATEDIR@/run/db8 ]; then
 		rm -rf @WEBOS_INSTALL_LOCALSTATEDIR@/run/db8
 	fi
