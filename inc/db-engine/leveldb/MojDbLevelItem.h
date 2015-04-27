@@ -22,12 +22,13 @@
 #include <leveldb/db.h>
 #include "db/MojDbStorageEngine.h"
 #include "db/MojDbObjectHeader.h"
+#include "db/MojDbStorageItem.h"
 
 class MojDbLevelItem : public MojDbStorageItem
 {
 public:
     MojDbLevelItem();
-    virtual ~MojDbLevelItem() { freeData(); }
+    ~MojDbLevelItem() override { freeData(); }
     virtual MojErr close() { return MojErrNone; }
     virtual MojErr kindId(MojString& kindIdOut, MojDbKindEngine& kindEngine);
     virtual MojErr visit(MojObjectVisitor& visitor, MojDbKindEngine& kindEngine, bool headerExpected = true) const;
