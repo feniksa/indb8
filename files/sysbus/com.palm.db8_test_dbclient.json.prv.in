@@ -1,6 +1,6 @@
 {
     "role": {
-        "exeName":"@WEBOS_INSTALL_LIBDIR@/@CMAKE_PROJECT_NAME@/tests/test_dbclient",
+        "exeName":"/usr/lib/db8/tests/test_dbclient",
         "type": "regular",
         "allowedNames": ["mojodbclient-test"]
     },

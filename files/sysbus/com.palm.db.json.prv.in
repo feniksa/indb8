@@ -1,6 +1,6 @@
 {
     "role": {
-        "exeName":"@WEBOS_INSTALL_SBINDIR@/mojodb-luna",
+        "exeName":"/usr/bin/mojodb-luna",
         "type": "regular",
         "allowedNames": ["com.palm.db","com.palm.tempdb","com.webos.mediadb", "com.palm.mojodbclient"]
     },

@@ -1,6 +1,6 @@
 {
     "role": {
-        "exeName":"@WEBOS_INSTALL_LIBDIR@/@CMAKE_PROJECT_NAME@/tests/test_db_stress",
+        "exeName":"/usr/lib/db8/tests/test_db_stress",
         "type": "regular",
         "allowedNames": ["*"]
     },
