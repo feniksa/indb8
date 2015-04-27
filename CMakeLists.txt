@@ -95,9 +95,23 @@ add_subdirectory(src/core)
 add_subdirectory(src/db)
 add_subdirectory(src/db-engine)
 
+function(install_ls2_roles role)
+	file(GLOB files "files/sysbus/*.${role}.in")
+	foreach(file ${files})
+		get_filename_component(filename ${file} NAME)
+		string(REGEX REPLACE ".${role}.in" "" dst_filename ${filename})
+		configure_file(${file} "files/sysbus/${role}/${dst_filename}")
+		message(STATUS "files/sysbus/${role}/${dst_filename}")
+		install(FILES "${CMAKE_CURRENT_BINARY_DIR}/files/sysbus/${role}/${dst_filename}" DESTINATION "usr/share/ls2/roles/${role}")
+	endforeach()
+endfunction()
+
 if (BUILD_LS2)
 	add_subdirectory(src/luna)
 	add_subdirectory(src/db-luna)
+
+	install_ls2_roles("prv")
+	install_ls2_roles("pub")
 endif()
 
 if (TESTS)
