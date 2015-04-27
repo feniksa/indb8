@@ -21,6 +21,7 @@
 #include "core/MojObjectBuilder.h"
 #include "db/MojDb.h"
 #include "db/MojDbIndex.h"
+#include "db/MojDbStorageItem.h"
 
 MojDbCursor::MojDbCursor()
 : m_ownTxn(true),
@@ -68,7 +69,7 @@ MojErr MojDbCursor::close()
 	m_watcher.reset();
 	m_query.clear();
     m_dbIndex = NULL;
-    
+
 	return err;
 }
 
@@ -81,7 +82,7 @@ MojErr MojDbCursor::get(MojDbStorageItem*& itemOut, bool& foundOut)
 	MojErr err = m_storageQuery->get(itemOut, foundOut);
 	if (err == MojErrInternalIndexOnFind) {
 		MojLogDebug(MojDb::s_log, _T("dbcursor_get1: IndexFind Warning; code = %d\n"), (int)err);
-	} 
+	}
 	else
 		MojErrAccumulate(m_lastErr, err);
 	MojErrCheck(err);

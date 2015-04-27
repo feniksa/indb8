@@ -22,6 +22,7 @@
 #include <leveldb/db.h>
 #include "db/MojDbStorageEngine.h"
 #include "db/MojDbObjectHeader.h"
+#include "db/MojDbStorageItem.h"
 
 class MojDbSandwichItem : public MojDbStorageItem
 {

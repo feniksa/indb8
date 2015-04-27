@@ -20,6 +20,7 @@
 #define MOJDBLEVELFACTORY_H_
 
 #include "db/MojDbDefs.h"
+#include "db/MojDbEnv.h"
 #include "db/MojDbStorageEngine.h"
 
 class MojDbLevelFactory : public MojDbStorageEngineFactory

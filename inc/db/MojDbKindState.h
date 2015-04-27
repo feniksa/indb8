@@ -23,6 +23,7 @@
 #include "core/MojSharedTokenSet.h"
 #include "core/MojSet.h"
 #include "db/MojDbKindEngine.h"
+#include "db/MojDbStorageItem.h"
 
 class MojDbKindState : public MojSharedTokenSet
 {

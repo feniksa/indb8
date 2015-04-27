@@ -30,7 +30,6 @@
 
 #include "db-luna/MojDbLunaServiceDb.h"
 
-class MojDbEnv;
 class MojDb;
 
 class MojDbLunaServiceApp : public MojReactorApp<MojGmainReactor>
@@ -43,7 +42,7 @@ public:
     virtual MojErr open();
     virtual MojErr close();
 private:
-    static const MojChar* const VersionString;    
+    static const MojChar* const VersionString;
     static const MojInt32 NumThreads = 3;
 
     typedef MojReactorApp<MojGmainReactor> Base;
@@ -55,10 +54,10 @@ private:
     MojString m_dbDir;
 	MojString m_serviceName;
     MojDbLunaServiceDb m_mainService;
-    
+
     MojMessageDispatcher m_dispatcher;
     MojRefCountedPtr<MojDbEnv> m_env;
-    MojRefCountedPtr<MojDbServiceHandlerInternal> m_internalHandler;    
+    MojRefCountedPtr<MojDbServiceHandlerInternal> m_internalHandler;
     MojObject m_conf;
 };
 

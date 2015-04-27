@@ -23,24 +23,6 @@
 
 MojRefCountedPtr<MojDbStorageEngineFactory> MojDbStorageEngine::m_factory;
 
-MojErr MojDbStorageItem::toObject(MojObject& objOut, MojDbKindEngine& kindEngine, bool headerExpected) const
-{
-	MojObjectBuilder builder;
-	MojErr err = visit(builder, kindEngine, headerExpected);
-	MojErrCheck(err);
-	objOut = builder.object();
-	return MojErrNone;
-}
-
-MojErr MojDbStorageItem::toJson(MojString& strOut, MojDbKindEngine& kindEngine) const
-{
-	MojJsonWriter writer;
-	MojErr err = visit(writer, kindEngine);
-	MojErrCheck(err);
-	strOut = writer.json();
-	return MojErrNone;
-}
-
 MojErr MojDbStorageEngine::createDefaultEngine(MojRefCountedPtr<MojDbStorageEngine>& engineOut)
 {
    if(m_factory.get() == 0)

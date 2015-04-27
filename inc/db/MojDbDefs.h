@@ -26,6 +26,7 @@ class MojDb;
 class MojDbBatch;
 class MojDbClient;
 class MojDbCursor;
+class MojDbEnv;
 class MojDbIndex;
 class MojDbKey;
 class MojDbKeyRange;

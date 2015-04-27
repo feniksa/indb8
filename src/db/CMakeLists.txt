@@ -27,6 +27,7 @@ set(MOJ_DB_SOURCES
     MojDbServiceClient.cpp
     MojDbServiceDefs.cpp
     MojDbStorageEngine.cpp
+    MojDbStorageItem.cpp
     MojDbTextCollator.cpp
     MojDbTextTokenizer.cpp
     MojDbTextUtils.cpp

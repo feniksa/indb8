@@ -21,7 +21,8 @@
 #define MOJDBOBJECTITEM_H_
 
 #include "db/MojDbDefs.h"
-#include "db/MojDbStorageEngine.h"
+#include "db/MojDbStorageItem.h"
+#include "db/MojDbKey.h"
 
 class MojDbObjectItem : public MojDbStorageItem
 {

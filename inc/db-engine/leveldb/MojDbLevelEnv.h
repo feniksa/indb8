@@ -22,6 +22,7 @@
 #include <leveldb/db.h>
 #include "db/MojDbStorageEngine.h"
 #include "db/MojDbDefs.h"
+#include "db/MojDbEnv.h"
 #include "core/MojFile.h"
 
 class MojDbLevelEnv : public MojDbEnv

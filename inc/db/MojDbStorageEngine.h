@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -27,31 +27,6 @@
 #include "core/MojObject.h"
 #include "core/MojVector.h"
 #include "core/MojSignal.h"
-
-class MojDbEnv : public MojRefCounted
-{
-  public:
-    virtual ~MojDbEnv() {}
-    virtual MojErr configure(const MojObject& conf) = 0;
-    virtual MojErr open(const MojChar* path) = 0;
-};
-
-class MojDbStorageItem : public MojRefCounted
-{
-public:
-	virtual ~MojDbStorageItem() {}
-	virtual MojErr close() = 0;
-	virtual MojErr kindId(MojString& kindIdOut, MojDbKindEngine& kindEngine) = 0;
-	virtual MojErr visit(MojObjectVisitor& visitor, MojDbKindEngine& kindEngine, bool headerExpected = true) const = 0;
-	virtual const MojObject& id() const = 0;
-	virtual MojSize size() const = 0;
-
-	MojErr toObject(MojObject& objOut, MojDbKindEngine& kindEngine, bool headerExpected = true) const;
-	MojErr toJson(MojString& strOut, MojDbKindEngine& kindEngine) const;
-
-protected:
-	MojObject m_id;
-};
 
 class MojDbStorageQuery : public MojRefCounted
 {

@@ -19,13 +19,14 @@
 
 #include "db-luna/MojDbLunaServiceApp.h"
 #include "db-luna/MojDbServiceHandler.h"
+#include "db/MojDbEnv.h"
 #include "db/MojDbServiceDefs.h"
 
 #ifdef MOJ_USE_BDB
 #include "db-luna/MojDbBerkeleyFactory.h"
 #elif MOJ_USE_LDB
 #include "db-engine/leveldb/MojDbLevelFactory.h"
-#elif MOJ_USE_SANDWICH 
+#elif MOJ_USE_SANDWICH
 #include "db-engine/sandwich/MojDbSandwichFactory.h"
 #else
 #error "Set database type"
@@ -55,7 +56,7 @@ MojDbLunaServiceApp::MojDbLunaServiceApp()
    MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
 #elif MOJ_USE_SANDWICH
    MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
-#else   
+#else
   #error "Database not set"
 #endif
    MojLogTrace(s_log);
@@ -77,10 +78,10 @@ MojErr MojDbLunaServiceApp::init()
     MojAllocCheck(m_env.get());
 
     m_internalHandler.reset(new MojDbServiceHandlerInternal(m_mainService.db(), m_reactor, m_mainService.service()));
-    MojAllocCheck(m_internalHandler.get());    
+    MojAllocCheck(m_internalHandler.get());
 
     err = m_mainService.init(m_reactor);
-    MojErrCheck(err);    
+    MojErrCheck(err);
 
     return MojErrNone;
 }
@@ -100,17 +101,17 @@ MojErr MojDbLunaServiceApp::configure(const MojObject& conf)
     err = m_mainService.db().configure(conf);
     MojErrCheck(err);
 	m_conf = engineConf;
-	
+
 	MojObject dbConf;
 	err = conf.getRequired("db", dbConf);
 	MojErrCheck(err);
-	
+
 	MojObject dbPath;
 	err = dbConf.getRequired("path", dbPath);
 	MojErrCheck(err);
 	err = dbPath.stringValue(m_dbDir);
 	MojErrCheck(err);
-	
+
 	MojObject serviceName;
 	err = dbConf.getRequired("service_name", serviceName);
 	MojErrCheck(err);
@@ -151,7 +152,7 @@ MojErr MojDbLunaServiceApp::open()
 	err = m_mainService.service().addCategory(MojDbServiceDefs::InternalCategory, m_internalHandler.get());
 	MojErrCheck(err);
 	err = m_internalHandler->configure(dbOpenFailed);
-	MojErrCheck(err);    
+	MojErrCheck(err);
 
 	MojLogDebug(s_log, _T("mojodb started"));
 
@@ -171,7 +172,7 @@ MojErr MojDbLunaServiceApp::close()
 	MojErrAccumulate(err, errClose);
 	// close services
 	errClose = m_mainService.close();
-	MojErrAccumulate(err, errClose);	
+	MojErrAccumulate(err, errClose);
 
 	m_internalHandler->close();
 	m_internalHandler.reset();
