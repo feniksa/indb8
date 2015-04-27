@@ -147,5 +147,5 @@ if (TESTS)
 	endif ()
 endif()
 
-install(FILES files/conf/indb8.conf DESTINATION etc/indb8)
-install(FILES files/conf/indb8-tempdb.conf DESTINATION etc/indb8)
+install(FILES files/conf/maindb.conf DESTINATION etc/indb8)
+install(FILES files/conf/tempdb.conf DESTINATION etc/indb8)

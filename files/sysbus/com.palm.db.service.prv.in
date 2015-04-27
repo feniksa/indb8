@@ -17,5 +17,5 @@
 # LICENSE@@@
 [D-BUS Service]
 Name=com.palm.db
-Exec=/usr/bin/mojodb-luna /var/db
+Exec=/usr/bin/mojodb-luna -c /etc/indb8/maindb.conf
 Type=static
