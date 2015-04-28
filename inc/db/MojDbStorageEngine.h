@@ -28,14 +28,6 @@
 #include "core/MojVector.h"
 #include "core/MojSignal.h"
 
-class MojDbStorageSeq : public MojRefCounted
-{
-public:
-	virtual ~MojDbStorageSeq() {}
-	virtual MojErr close() = 0;
-	virtual MojErr get(MojInt64& valOut) = 0;
-};
-
 class MojDbStorageTxn : public MojSignalHandler
 {
 public:

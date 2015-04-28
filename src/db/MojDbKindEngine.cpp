@@ -22,6 +22,7 @@
 #include "db/MojDbKind.h"
 #include "db/MojDbQuery.h"
 #include "db/MojDbServiceDefs.h"
+#include "db/MojDbStorageSeq.h"
 
 // prefixes
 const MojChar* const MojDbKindEngine::KindIdPrefix = _T("_kinds/");
@@ -380,7 +381,7 @@ MojErr MojDbKindEngine::idFromToken(MojInt64 tok, MojString& idOut)
 MojErr MojDbKindEngine::tokenSet(const MojChar* kindName, MojTokenSet& tokenSetOut)
 {
 	MojLogTrace(s_log);
-	
+
 	MojAssert(kindName);
 	MojDbKind* kind = NULL;
 	MojErr err = getKind(kindName, kind);

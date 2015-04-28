@@ -20,6 +20,7 @@
 #include "db/MojDbKindState.h"
 #include "db/MojDbStorageEngine.h"
 #include "db/MojDbReq.h"
+#include "db/MojDbStorageSeq.h"
 #include "core/MojObjectSerialization.h"
 
 const MojChar* const MojDbKindState::IndexIdsKey = _T("indexIds");
