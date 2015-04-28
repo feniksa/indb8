@@ -75,7 +75,7 @@ if (BUILD_ENGINE_SANDWICH)
 	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} leveldb)
 endif ()
 
-add_library(mojodbengine SHARED ${DB_BACKEND_WRAPPER_SOURCES})
+add_library(mojodbengine SHARED ${DB_BACKEND_WRAPPER_SOURCES} MojDbEngineFactory.cpp)
 target_link_libraries(mojodbengine ${GLIB2_LDFLAGS} ${GTHREAD2_LDFLAGS} ${DB_BACKEND_LIB})
 install(TARGETS mojodbengine
     LIBRARY DESTINATION usr/lib
