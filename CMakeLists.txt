@@ -126,7 +126,7 @@ if (BUILD_LS2)
 	install_ls2_service("files/sysbus" "pub")
 endif()
 
-if (TESTS)
+if (BUILD_TESTING)
 	enable_testing()
 
 	add_subdirectory(test/core)
