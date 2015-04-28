@@ -18,7 +18,7 @@
 
 
 #include "db/MojDbKindState.h"
-#include "db/MojDbStorageEngine.h"
+#include "db/MojDbStorageDatabase.h"
 #include "db/MojDbReq.h"
 #include "db/MojDbStorageSeq.h"
 #include "core/MojObjectSerialization.h"

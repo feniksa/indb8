@@ -21,6 +21,7 @@
 #include "db/MojDb.h"
 #include "db/MojDbIndex.h"
 #include "db/MojDbQuery.h"
+#include "db/MojDbStorageIndex.h"
 #include "core/MojObjectSerialization.h"
 
 class TestIndex : public MojDbStorageIndex

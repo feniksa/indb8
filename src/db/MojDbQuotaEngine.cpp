@@ -20,6 +20,7 @@
 #include "db/MojDbQuotaEngine.h"
 #include "db/MojDb.h"
 #include "db/MojDbKind.h"
+#include "db/MojDbStorageDatabase.h"
 #include "db/MojDbServiceDefs.h"
 
 const MojChar* const MojDbQuotaEngine::QuotasKey = _T("quotas");

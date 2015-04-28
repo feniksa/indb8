@@ -50,6 +50,7 @@ class MojDbTextTokenizer;
 class MojDbWatcher;
 
 class MojDbStorageCursor;
+class MojDbStorageCollection;
 class MojDbStorageDatabase;
 class MojDbStorageEngine;
 class MojDbStorageIndex;

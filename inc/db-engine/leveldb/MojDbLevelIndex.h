@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2013 LG Electronics, Inc.
+* Copyright (c) 2013-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -19,8 +19,9 @@
 #ifndef MOJDBLEVELINDEX_H
 #define MOJDBLEVELINDEX_H
 
-#include "db/MojDbStorageEngine.h"
+#include "db/MojDbStorageIndex.h"
 #include "db-engine/leveldb/MojDbLevelDatabase.h"
+#include "core/MojObject.h"
 
 class MojDbLevelIndex : public MojDbStorageIndex
 {

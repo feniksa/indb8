@@ -23,6 +23,7 @@
 #include "db/MojDbQuery.h"
 #include "db/MojDbServiceDefs.h"
 #include "db/MojDbStorageSeq.h"
+#include "db/MojDbStorageDatabase.h"
 
 // prefixes
 const MojChar* const MojDbKindEngine::KindIdPrefix = _T("_kinds/");

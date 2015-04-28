@@ -22,6 +22,8 @@
 #include "db/MojDbCursor.h"
 #include "db/MojDbKind.h"
 #include "db/MojDbQueryPlan.h"
+#include "db/MojDbStorageCollection.h"
+#include "db/MojDbStorageIndex.h"
 #include "core/MojObject.h"
 #include "core/MojObjectSerialization.h"
 
@@ -57,7 +59,7 @@ MojDbIndex::~MojDbIndex()
 	MojLogTrace(s_log);
 }
 
-MojErr MojDbIndex::fromObject(const MojObject& obj, const MojString& locale) 
+MojErr MojDbIndex::fromObject(const MojObject& obj, const MojString& locale)
 {
 	MojLogTrace(s_log);
 
@@ -71,7 +73,7 @@ MojErr MojDbIndex::fromObject(const MojObject& obj, const MojString& locale)
 	m_locale = locale;
     if(m_locale == _T("en_CN"))
        m_locale = locale;
-       
+
 	// get deleted flag
 	bool includeDel = false;
 	if (obj.get(IncludeDeletedKey, includeDel)) {
@@ -180,7 +182,7 @@ MojErr MojDbIndex::stats(MojObject& objOut, MojSize& usageOut, MojDbReq& req)
 {
 	MojAssert(isOpen());
 	MojLogTrace(s_log);
-	
+
 	MojSize count = 0;
 	MojSize size = 0;
 	MojErr err = m_index->stats(req.txn(), count, size);
@@ -243,7 +245,7 @@ MojErr MojDbIndex::updateLocale(const MojChar* locale, MojDbReq& req)
 		MojErrCheck(err);
 	}
     m_locale.assign(locale);
-    
+
 	return MojErrNone;
 }
 
@@ -299,7 +301,7 @@ MojErr MojDbIndex::update(const MojObject* newObj, const MojObject* oldObj, MojD
 		err = insertKeys(keysToPut, txn);
 		MojErrCheck(err);
 		err = delKeys(keysToDel, txn, forcedel);
-		
+
         MojLogDebug(s_log, _T("IndexMerge: %s; OldKeys= %zu; NewKeys= %zu; Dropped= %zu; Added= %zu ; err = %d\n"),
 			this->name().data(), oldKeys.size(), newKeys.size(), keysToDel.size(), keysToPut.size(), (int)err);
 
@@ -309,7 +311,7 @@ MojErr MojDbIndex::update(const MojObject* newObj, const MojObject* oldObj, MojD
 		MojErrCheck(err);
 		err = notifyWatches(newKeys, txn);
 		MojErrCheck(err);
-	
+
 	}
 	return MojErrNone;
 }
@@ -346,7 +348,7 @@ MojErr MojDbIndex::find(MojDbCursor& cursor, MojDbWatcher* watcher, MojDbReq& re
 	err = m_collection->find(plan, cursor.txn(), cursor.m_storageQuery);
 	MojErrCheck(err);
 	cursor.m_watcher = watcher;
-	
+
 	return MojErrNone;
 }
 
@@ -609,8 +611,8 @@ MojErr MojDbIndex::delKeys(const KeySet& keys, MojDbStorageTxn* txn, bool forced
 		if (m_kind)
 			s2 = (char *)(m_kind->id().data());
 		size_t size = (*i).size();
-		MojErr err2 = MojByteArrayToHex((*i).data(), size, s); 
-		MojErrCheck(err2); 
+		MojErr err2 = MojByteArrayToHex((*i).data(), size, s);
+		MojErrCheck(err2);
 		if (size > 16)	// if the object-id is in key
 			strncat(s, (char *)((*i).data()) + (size - 17), 16);
         MojLogDebug(s_log, _T("delKey %d for: %s - %s; key= %s ; err= %d\n"), count+1, s2, this->m_name.data(), s, err);
@@ -643,7 +645,7 @@ MojErr MojDbIndex::insertKeys(const KeySet& keys, MojDbStorageTxn* txn)
 #if defined(MOJ_DEBUG_LOGGING)
 		char s[1024];
 		size_t size = (*i).size();
-		MojErr err2 = MojByteArrayToHex((*i).data(), size, s); 
+		MojErr err2 = MojByteArrayToHex((*i).data(), size, s);
 		MojErrCheck(err2);
 		if (size > 16)	// if the object-id is in key
 			strncat(s, (char *)((*i).data()) + (size - 17), 16);

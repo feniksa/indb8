@@ -21,7 +21,8 @@
 
 #include <leveldb/db.h>
 #include "db/MojDbDefs.h"
-#include "db/MojDbStorageEngine.h"
+#include "db/MojDbStorageDatabase.h"
+#include "core/MojString.h"
 
 class MojDbLevelEngine;
 class MojDbLevelItem;

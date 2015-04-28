@@ -24,6 +24,8 @@
 #include "db/MojDbStorageQuery.h"
 #include "db/MojDbStorageSeq.h"
 #include "db/MojDbStorageTxn.h"
+#include "db/MojDbStorageIndex.h"
+#include "db/MojDbStorageDatabase.h"
 #include "core/MojHashMap.h"
 
 class MojDbTestStorageEngine : public MojDbStorageEngine

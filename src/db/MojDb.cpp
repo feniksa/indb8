@@ -27,6 +27,7 @@
 #include "db/MojDbStorageQuery.h"
 #include "db/MojDbStorageSeq.h"
 #include "db/MojDbObjectHeader.h"
+#include "db/MojDbStorageDatabase.h"
 #include "core/MojJson.h"
 #include "core/MojObject.h"
 #include "core/MojObjectBuilder.h"
