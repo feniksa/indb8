@@ -29,6 +29,8 @@ option(WEBOS_ENGINE_BERKELEY "Build berkeley engine"     OFF)
 
 include(FindPkgConfig)
 
+add_definitions(-std=c++11 -Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
+
 # -- check for glib 2.0
 pkg_check_modules(GLIB2 REQUIRED glib-2.0)
 include_directories(${GLIB2_INCLUDE_DIRS})
@@ -57,7 +59,6 @@ if (BUILD_LS2)
 	add_definitions(${LS2_CFLAGS_OTHER})
 endif()
 
-add_definitions(-std=c++11 -Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
 if (WEBOS_ENGINE_SANDWICH)
 	add_definitions(-DMOJ_USE_SANDWICH)
 endif()

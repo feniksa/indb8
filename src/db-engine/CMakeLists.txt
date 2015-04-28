@@ -19,39 +19,38 @@ if (WEBOS_ENGINE_BERKELEY)
 		berkeley/MojDbBerkeleyFactory.cpp
 		berkeley/MojDbBerkeleyQuery.cpp
 	)
-
-	add_definitions ("-DMOJ_USE_BDB")
 	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} db)
-elseif(WEBOS_ENGINE_LEVELDB)
+endif()
+if(WEBOS_ENGINE_LEVELDB)
 	message (STATUS "Use database frontend: leveldb")
 
-    # -- check for LevelDB backend
-    find_library(LDB NAMES leveldb ${WEBOS_INSTALL_ROOT}/lib)
-    if(LDB STREQUAL "LDB-NOTFOUND")
-        message(FATAL_ERROR "Failed to find LevelDB libaries. Please install.")
-    endif()
+	# -- check for LevelDB backend
+	find_library(LDB NAMES leveldb ${WEBOS_INSTALL_ROOT}/lib)
+	if(LDB STREQUAL "LDB-NOTFOUND")
+		message(FATAL_ERROR "Failed to find LevelDB libaries. Please install.")
+	endif()
 
-    set(DB_BACKEND_WRAPPER_SOURCES
+	set(DB_BACKEND_WRAPPER_SOURCES
 		${DB_BACKEND_WRAPPER_SOURCES}
-         leveldb/defs.cpp
-         leveldb/MojDbLevelEngine.cpp
-         leveldb/MojDbLevelFactory.cpp
-         leveldb/MojDbLevelDatabase.cpp
-         leveldb/MojDbLevelQuery.cpp
-         leveldb/MojDbLevelTxn.cpp
-         leveldb/MojDbLevelSeq.cpp
-         leveldb/MojDbLevelCursor.cpp
-         leveldb/MojDbLevelEnv.cpp
-         leveldb/MojDbLevelIndex.cpp
-         leveldb/MojDbLevelItem.cpp
-         leveldb/MojDbLevelTxnIterator.cpp
-         leveldb/MojDbLevelIterator.cpp
-         leveldb/MojDbLevelContainerIterator.cpp
-   )
+		leveldb/defs.cpp
+		leveldb/MojDbLevelEngine.cpp
+		leveldb/MojDbLevelFactory.cpp
+		leveldb/MojDbLevelDatabase.cpp
+		leveldb/MojDbLevelQuery.cpp
+		leveldb/MojDbLevelTxn.cpp
+		leveldb/MojDbLevelSeq.cpp
+		leveldb/MojDbLevelCursor.cpp
+		leveldb/MojDbLevelEnv.cpp
+		leveldb/MojDbLevelIndex.cpp
+		leveldb/MojDbLevelItem.cpp
+		leveldb/MojDbLevelTxnIterator.cpp
+		leveldb/MojDbLevelIterator.cpp
+		leveldb/MojDbLevelContainerIterator.cpp
+	)
 
-   add_definitions ("-DMOJ_USE_LDB")
-   set (DB_BACKEND_LIB ${DB_BACKEND_LIB} leveldb)
-elseif (WEBOS_ENGINE_SANDWICH)
+	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} leveldb)
+endif()
+if (WEBOS_ENGINE_SANDWICH)
 	message (STATUS "Use database frontend: sandwich")
 
 	# -- check for LevelDB backend
@@ -73,10 +72,7 @@ elseif (WEBOS_ENGINE_SANDWICH)
 		sandwich/MojDbSandwichItem.cpp
 		sandwich/MojDbSandwichLazyUpdater.cpp
 	)
-	add_definitions ("-DMOJ_USE_SANDWICH")
 	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} leveldb)
-else()
-    message(FATAL_ERROR "Please, set one of supported engine. For available engines, see ROOT CMakeLists.txt")
 endif ()
 
 add_library(mojodbengine SHARED ${DB_BACKEND_WRAPPER_SOURCES})
