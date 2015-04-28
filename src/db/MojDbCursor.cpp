@@ -22,6 +22,7 @@
 #include "db/MojDb.h"
 #include "db/MojDbIndex.h"
 #include "db/MojDbStorageItem.h"
+#include "db/MojDbStorageQuery.h"
 
 MojDbCursor::MojDbCursor()
 : m_ownTxn(true),

@@ -24,6 +24,7 @@
 #include "db/MojDbKind.h"
 #include "db/MojDbReq.h"
 #include "db/MojDbServiceDefs.h"
+#include "db/MojDbStorageQuery.h"
 #include "db/MojDbObjectHeader.h"
 #include "core/MojJson.h"
 #include "core/MojObject.h"

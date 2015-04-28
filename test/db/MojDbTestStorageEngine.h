@@ -21,6 +21,7 @@
 #define MOJDBTESTSTORAGEENGINE_H_
 
 #include "db/MojDbStorageEngine.h"
+#include "db/MojDbStorageQuery.h"
 #include "core/MojHashMap.h"
 
 class MojDbTestStorageEngine : public MojDbStorageEngine

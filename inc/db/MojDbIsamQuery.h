@@ -21,8 +21,9 @@
 #define MOJDBISAMQUERY_H_
 
 #include "db/MojDbDefs.h"
-#include "db/MojDbStorageEngine.h"
 #include "db/MojDbObjectItem.h"
+#include "db/MojDbStorageQuery.h"
+#include "db/MojDbQueryPlan.h"
 
 class MojDbIsamQuery : public MojDbStorageQuery
 {
@@ -36,7 +37,7 @@ public:
 	virtual MojErr count(MojUInt32& countOut);
 	virtual MojErr nextPage(MojDbQuery::Page& pageOut);
 	virtual MojUInt32 groupCount() const;
-	
+
 
 protected:
 

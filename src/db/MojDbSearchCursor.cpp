@@ -22,6 +22,7 @@
 #include "db/MojDbIndex.h"
 #include "db/MojDbKind.h"
 #include "db/MojDb.h"
+#include "db/MojDbStorageQuery.h"
 
 MojDbSearchCursor::MojDbSearchCursor(MojString localeStr)
 : m_limit(0),
