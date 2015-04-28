@@ -29,7 +29,7 @@
 
 #include <core/MojString.h>
 #include <core/MojErr.h>
-#include <db/MojDbStorageEngine.h>
+#include <db/MojDbStorageTxn.h>
 
 namespace leveldb
 {

@@ -23,6 +23,7 @@
 #include "db/MojDbDefs.h"
 #include "db/MojDbExtractor.h"
 #include "db/MojDbStorageEngine.h"
+#include "db/MojDbStorageTxn.h"
 #include "db/MojDbWatcher.h"
 #include "core/MojSet.h"
 #include "core/MojThread.h"

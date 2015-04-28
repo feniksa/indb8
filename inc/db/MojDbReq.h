@@ -22,13 +22,14 @@
 
 #include "db/MojDbDefs.h"
 #include "core/MojString.h"
+#include "db/MojDbStorageTxn.h"
 
 struct MojDbReqRef
 {
 	explicit MojDbReqRef(MojDbReq& req) : m_req(req) {}
 	MojDbReq* operator->() { return &m_req; }
 	operator MojDbReq&() { return m_req; }
-	
+
 	MojDbReq& m_req;
 };
 
@@ -64,7 +65,7 @@ public:
 	bool verifymode() {return m_vmode;}
 	MojInt32 batchsize() {return m_batchSize;}
 	operator MojDbReqRef() { return MojDbReqRef(*this); }
-	
+
 
 
 private:
@@ -78,7 +79,7 @@ private:
 	MojDb* m_db;
 	bool m_admin;
 	bool m_batch;
-	bool m_schemaLocked;	
+	bool m_schemaLocked;
 	bool m_vmode;
 	bool m_fixmode;
 	MojInt32 m_batchSize;
