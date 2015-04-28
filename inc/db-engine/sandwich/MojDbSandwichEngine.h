@@ -20,6 +20,7 @@
 #define MOJDBLEVELENGINE_H_
 
 #include <leveldb/db.h>
+#include "core/MojThread.h"
 #include "db/MojDbDefs.h"
 #include "db/MojDbStorageEngine.h"
 

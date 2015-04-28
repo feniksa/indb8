@@ -21,6 +21,7 @@
 
 #include "db/MojDbStorageEngine.h"
 #include "MojDbSandwichDatabase.h"
+#include "db/MojDbStorageIndex.h"
 
 class MojDbSandwichIndex : public MojDbStorageIndex
 {

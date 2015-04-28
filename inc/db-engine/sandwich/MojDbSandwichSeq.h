@@ -21,6 +21,7 @@
 
 #include "MojDbSandwichDatabase.h"
 #include "MojDbSandwichItem.h"
+#include "db/MojDbStorageSeq.h"
 
 class MojDbSandwichSeq : public MojDbStorageSeq
 {

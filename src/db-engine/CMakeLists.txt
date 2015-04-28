@@ -1,35 +1,34 @@
 if (WEBOS_ENGINE_BERKELEY)
-    # -- check for BerkeleyDB
-    # (add an alternate standard path in case building BDB locally: does not override)
-    find_library(BDB NAMES db-4.8 PATH /usr/local/BerkeleyDB.4.8/lib)
-    if(BDB STREQUAL "BDB-NOTFOUND")
-        MESSAGE(FATAL_ERROR "Failed to find BerkleyDB libaries. Please install.")
-    endif()
+	# -- check for BerkeleyDB
+	# (add an alternate standard path in case building BDB locally: does not override)
+	find_library(BDB NAMES db-4.8)
+	if(BDB STREQUAL "BDB-NOTFOUND")
+		message(FATAL_ERROR "Failed to find BerkleyDB libaries. Please install.")
+	endif()
 
-    find_path(BDB_INC db.h
-              PATHS /usr/local/BerkeleyDB.4.8/include
-              PATH_SUFFIXES db4.8)
-    if(BDB_INC STREQUAL "BDB_INC-NOTFOUND")
-        MESSAGE(FATAL_ERROR "Failed to find BerkleyDB includes. Please install.")
-    endif()
+	find_path(BDB_INC db.h
+				PATHS /usr/local/BerkeleyDB.4.8/include
+				PATH_SUFFIXES db4.8)
+	if(BDB_INC STREQUAL "BDB_INC-NOTFOUND")
+		message(FATAL_ERROR "Failed to find BerkleyDB includes. Please install.")
+	endif()
 
-    set(DB_BACKEND_WRAPPER_SOURCES
+	set(DB_BACKEND_WRAPPER_SOURCES
 		${DB_BACKEND_WRAPPER_SOURCES}
-         berkeley/MojDbBerkeleyEngine.cpp
-         berkeley/MojDbBerkeleyFactory.cpp
-         berkeley/MojDbBerkeleyQuery.cpp
-    )
+		berkeley/MojDbBerkeleyEngine.cpp
+		berkeley/MojDbBerkeleyFactory.cpp
+		berkeley/MojDbBerkeleyQuery.cpp
+	)
 
-    add_definitions ("-DMOJ_USE_BDB")
+	add_definitions ("-DMOJ_USE_BDB")
 	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} db)
-endif()
-if (WEBOS_ENGINE_LEVELDB)
+elseif(WEBOS_ENGINE_LEVELDB)
 	message (STATUS "Use database frontend: leveldb")
 
     # -- check for LevelDB backend
     find_library(LDB NAMES leveldb ${WEBOS_INSTALL_ROOT}/lib)
     if(LDB STREQUAL "LDB-NOTFOUND")
-        MESSAGE(FATAL_ERROR "Failed to find LevelDB libaries. Please install.")
+        message(FATAL_ERROR "Failed to find LevelDB libaries. Please install.")
     endif()
 
     set(DB_BACKEND_WRAPPER_SOURCES
@@ -77,7 +76,7 @@ elseif (WEBOS_ENGINE_SANDWICH)
 	add_definitions ("-DMOJ_USE_SANDWICH")
 	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} leveldb)
 else()
-    message(FATAL_ERROR "WEBOS_DB8_BACKEND: unsuported value '${WEBOS_DB8_BACKEND}' ")
+    message(FATAL_ERROR "Please, set one of supported engine. For available engines, see ROOT CMakeLists.txt")
 endif ()
 
 add_library(mojodbengine SHARED ${DB_BACKEND_WRAPPER_SOURCES})
