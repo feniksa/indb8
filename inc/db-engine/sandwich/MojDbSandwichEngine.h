@@ -33,7 +33,7 @@ class MojDbSandwichEnv;
 class MojDbSandwichSeq;
 class MojDbSandwichLazyUpdater;
 
-class MojDbSandwichEngine : public MojDbStorageEngine
+class MojDbSandwichEngine final : public MojDbStorageEngine
 {
 public:
     typedef leveldb::SandwichDB<leveldb::BottomDB> BackendDb;

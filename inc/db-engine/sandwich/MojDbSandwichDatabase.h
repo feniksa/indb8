@@ -24,7 +24,6 @@
 #include "db/MojDbStorageDatabase.h"
 #include "MojDbSandwichEngine.h"
 
-class MojDbSandwichEngine;
 class MojDbSandwichItem;
 class MojDbSandwichEnvTxn;
 
@@ -55,7 +54,7 @@ public:
     MojErr get(MojDbSandwichItem& key, MojDbStorageTxn* txn, bool forUpdate, MojDbSandwichItem& valOut, bool& foundOut);
     void   compact();
 
-    MojErr delPrefix(MojDbSandwichEnvTxn &txn, leveldb::Slice prefix = {});
+    MojErr delPrefix(MojDbSandwichEnvTxn &txn, leveldb::Slice prefix);
     MojErr stats(MojDbSandwichEnvTxn* txn, MojSize &countOut, MojSize &sizeOut, leveldb::Slice prefix);
 
     MojDbSandwichEngine::BackendDb::Part& impl() { return m_db; }
