@@ -106,7 +106,7 @@ function(install_ls2_roles path role)
 	endforeach()
 endfunction()
 
-function(install_ls2_service role)
+function(install_ls2_service path role)
 	file(GLOB files "${path}/*.service.${role}.in")
 	foreach(file ${files})
 		get_filename_component(filename ${file} NAME)
