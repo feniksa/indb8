@@ -33,7 +33,7 @@ public:
     static MojErr createEngine(const MojChar* name, MojRefCountedPtr<MojDbStorageEngine>& engineOut);
     static MojErr createEnv(MojRefCountedPtr<MojDbEnv>& envOut) { return m_factory->createEnv(envOut); };
     static MojErr setEngineFactory(MojDbStorageEngineFactory* factory);
-    static const MojDbStorageEngineFactory* engineFactory() {return m_factory.get();};
+    static const MojDbStorageEngineFactory* engineFactory() { return m_factory.get(); };
 
     virtual ~MojDbStorageEngine() {}
     virtual MojErr configure(const MojObject& config) = 0;

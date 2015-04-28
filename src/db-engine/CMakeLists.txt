@@ -1,4 +1,4 @@
-if (WEBOS_ENGINE_BERKELEY)
+if (BUILD_ENGINE_BERKELEY)
 	# -- check for BerkeleyDB
 	# (add an alternate standard path in case building BDB locally: does not override)
 	find_library(BDB NAMES db-4.8)
@@ -21,7 +21,7 @@ if (WEBOS_ENGINE_BERKELEY)
 	)
 	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} db)
 endif()
-if(WEBOS_ENGINE_LEVELDB)
+if(BUILD_ENGINE_LEVELDB)
 	message (STATUS "Use database frontend: leveldb")
 
 	# -- check for LevelDB backend
@@ -50,7 +50,7 @@ if(WEBOS_ENGINE_LEVELDB)
 
 	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} leveldb)
 endif()
-if (WEBOS_ENGINE_SANDWICH)
+if (BUILD_ENGINE_SANDWICH)
 	message (STATUS "Use database frontend: sandwich")
 
 	# -- check for LevelDB backend

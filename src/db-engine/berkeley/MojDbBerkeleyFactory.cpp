@@ -35,4 +35,4 @@ MojErr MojDbBerkeleyFactory::createEnv(MojRefCountedPtr<MojDbEnv>& envOut) const
 	return MojErrNone;
 }
 
-const MojChar* MojDbBerkeleyFactory::name() const {return _T("bdb");};
+const MojChar* MojDbBerkeleyFactory::name() const { return _T("bdb"); };
