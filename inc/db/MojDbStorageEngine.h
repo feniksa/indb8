@@ -21,8 +21,6 @@
 #define MOJDBSTORAGEENGINE_H_
 
 #include "db/MojDbDefs.h"
-#include "db/MojDbWatcher.h"
-#include "db/MojDbQuotaEngine.h"
 #include "core/MojAutoPtr.h"
 #include "core/MojObject.h"
 #include "core/MojVector.h"

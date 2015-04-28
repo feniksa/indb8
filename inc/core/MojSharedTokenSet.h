@@ -24,7 +24,6 @@
 #include "core/MojObject.h"
 #include "core/MojThread.h"
 #include "core/MojVector.h"
-#include "db/MojDbStorageEngine.h"
 
 class MojSharedTokenSet : public MojRefCounted
 {

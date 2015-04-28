@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2013-2014 LG Electronics, Inc.
+* Copyright (c) 2013-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 
 #include <leveldb/db.h>
 #include "db/MojDbDefs.h"
-#include "db/MojDbStorageEngine.h"
+#include "db/MojDbStorageDatabase.h"
 #include "MojDbSandwichEngine.h"
 
 class MojDbSandwichEngine;

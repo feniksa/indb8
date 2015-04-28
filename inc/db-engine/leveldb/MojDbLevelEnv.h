@@ -20,10 +20,10 @@
 #define MOJDBLEVELENV_H
 
 #include <leveldb/db.h>
-#include "db/MojDbStorageEngine.h"
 #include "db/MojDbDefs.h"
 #include "db/MojDbEnv.h"
 #include "core/MojFile.h"
+#include "core/MojString.h"
 
 class MojDbLevelEnv : public MojDbEnv
 {

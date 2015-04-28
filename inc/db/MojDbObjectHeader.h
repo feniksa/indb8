@@ -23,6 +23,7 @@
 #include "core/MojNoCopy.h"
 #include "core/MojObject.h"
 #include "core/MojObjectSerialization.h"
+#include "db/MojDbKindEngine.h"
 
 class MojDbObjectHeader : private MojNoCopy
 {
@@ -49,7 +50,7 @@ private:
 	MojErr readHeader();
 	MojErr readRev();
 	MojErr readSize();
-	
+
 	MojObjectReader m_reader;
 	MojObject m_id;
 	MojString m_kindId;
