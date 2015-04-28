@@ -1,29 +1,28 @@
-#if (WEBOS_DB8_BACKEND STREQUAL "berkeleydb")
+if (WEBOS_ENGINE_BERKELEY)
     # -- check for BerkeleyDB
     # (add an alternate standard path in case building BDB locally: does not override)
-    #find_library(BDB NAMES db-4.8 PATH /usr/local/BerkeleyDB.4.8/lib)
-    #if(BDB STREQUAL "BDB-NOTFOUND")
-        #MESSAGE(FATAL_ERROR "Failed to find BerkleyDB libaries. Please install.")
-    #endif()
+    find_library(BDB NAMES db-4.8 PATH /usr/local/BerkeleyDB.4.8/lib)
+    if(BDB STREQUAL "BDB-NOTFOUND")
+        MESSAGE(FATAL_ERROR "Failed to find BerkleyDB libaries. Please install.")
+    endif()
 
-    #find_path(BDB_INC db.h
-              #PATHS /usr/local/BerkeleyDB.4.8/include
-              #PATH_SUFFIXES db4.8)
-    #if(BDB_INC STREQUAL "BDB_INC-NOTFOUND")
-     #   MESSAGE(FATAL_ERROR "Failed to find BerkleyDB includes. Please install.")
-    #endif()
+    find_path(BDB_INC db.h
+              PATHS /usr/local/BerkeleyDB.4.8/include
+              PATH_SUFFIXES db4.8)
+    if(BDB_INC STREQUAL "BDB_INC-NOTFOUND")
+        MESSAGE(FATAL_ERROR "Failed to find BerkleyDB includes. Please install.")
+    endif()
 
-    #set (DB_BACKEND_INCLUDES "${BDB_INC}")
-    #set (DB_BACKEND_LIB "${BDB}")
+    set(DB_BACKEND_WRAPPER_SOURCES
+		${DB_BACKEND_WRAPPER_SOURCES}
+         berkeley/MojDbBerkeleyEngine.cpp
+         berkeley/MojDbBerkeleyFactory.cpp
+         berkeley/MojDbBerkeleyQuery.cpp
+    )
 
-    #set(DB_BACKEND_WRAPPER_SOURCES
-         #MojDbBerkeleyEngine.cpp
-         #MojDbBerkeleyFactory.cpp
-         #MojDbBerkeleyQuery.cpp
-    #)
-
-    #set (DB_BACKEND_WRAPPER_CFLAGS "-DMOJ_USE_BDB")
-#else
+    add_definitions ("-DMOJ_USE_BDB")
+	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} db)
+endif()
 if (WEBOS_ENGINE_LEVELDB)
 	message (STATUS "Use database frontend: leveldb")
 
@@ -34,6 +33,7 @@ if (WEBOS_ENGINE_LEVELDB)
     endif()
 
     set(DB_BACKEND_WRAPPER_SOURCES
+		${DB_BACKEND_WRAPPER_SOURCES}
          leveldb/defs.cpp
          leveldb/MojDbLevelEngine.cpp
          leveldb/MojDbLevelFactory.cpp
@@ -50,8 +50,8 @@ if (WEBOS_ENGINE_LEVELDB)
          leveldb/MojDbLevelContainerIterator.cpp
    )
 
-   add_definitions (-DMOJ_USE_LDB)
-   set (DB_BACKEND_LIB leveldb)
+   add_definitions ("-DMOJ_USE_LDB")
+   set (DB_BACKEND_LIB ${DB_BACKEND_LIB} leveldb)
 elseif (WEBOS_ENGINE_SANDWICH)
 	message (STATUS "Use database frontend: sandwich")
 
@@ -62,6 +62,7 @@ elseif (WEBOS_ENGINE_SANDWICH)
 	endif()
 
 	set(DB_BACKEND_WRAPPER_SOURCES
+		${DB_BACKEND_WRAPPER_SOURCES}
 		sandwich/MojDbSandwichEngine.cpp
 		sandwich/MojDbSandwichFactory.cpp
 		sandwich/MojDbSandwichDatabase.cpp
@@ -74,7 +75,7 @@ elseif (WEBOS_ENGINE_SANDWICH)
 		sandwich/MojDbSandwichLazyUpdater.cpp
 	)
 	add_definitions ("-DMOJ_USE_SANDWICH")
-	set (DB_BACKEND_LIB leveldb)
+	set (DB_BACKEND_LIB ${DB_BACKEND_LIB} leveldb)
 else()
     message(FATAL_ERROR "WEBOS_DB8_BACKEND: unsuported value '${WEBOS_DB8_BACKEND}' ")
 endif ()

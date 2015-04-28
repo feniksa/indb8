@@ -17,8 +17,8 @@
 * LICENSE@@@ */
 
 
-#include "db-luna/MojDbBerkeleyQuery.h"
-#include "db-luna/MojDbBerkeleyEngine.h"
+#include "db-engine/berkeley/MojDbBerkeleyQuery.h"
+#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
 #include "db/MojDbQueryPlan.h"
 #include "core/MojObjectSerialization.h"
 
@@ -85,10 +85,10 @@ MojErr MojDbBerkeleyQuery::getById(const MojObject& id, MojDbStorageItem*& itemO
 		if (!foundOut) {
 			char s[1024];
 			int size = (int)primaryKey.size();
-			(void) MojByteArrayToHex(primaryKey.data(), size, s); 
+			(void) MojByteArrayToHex(primaryKey.data(), size, s);
 			MojLogDebug(MojDbBerkeleyEngine::s_log, _T("bdbq_byId_warnindex: KeySize: %d; %s ;id: %s \n"),
 								 size, s, primaryKey.data()+1);
-		
+
 			//MojErrThrow(MojErrDbInconsistentIndex);
 			MojErrThrow(MojErrInternalIndexOnFind);
 		}

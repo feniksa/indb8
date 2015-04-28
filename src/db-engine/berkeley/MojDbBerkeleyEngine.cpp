@@ -17,9 +17,9 @@
 * LICENSE@@@ */
 
 
-#include "db-luna/MojDbBerkeleyEngine.h"
-#include "db-luna/MojDbBerkeleyFactory.h"
-#include "db-luna/MojDbBerkeleyQuery.h"
+#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
+#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
+#include "db-engine/berkeley/MojDbBerkeleyQuery.h"
 #include "db/MojDbObjectHeader.h"
 #include "db/MojDbQueryPlan.h"
 #include "db/MojDb.h"
@@ -1058,7 +1058,7 @@ MojErr MojDbBerkeleyEngine::compact()
 			// Construct key to step forward by a set number of records, to select the compact window.
 			// We close the cursor after we've found the next key, so it won't keep a lock open that
 			// could disrupt the compaction. Without locking, we might miss an insertion or deletion
-			// happening between compactions, but that 
+			// happening between compactions, but that
 
 			int key_total = 0, value_total = 0; // Tracked only for debugging purposes.
 
@@ -1135,7 +1135,7 @@ MojErr MojDbBerkeleyEngine::compact()
 
 					gettimeofday(&stopTime, NULL);
 
-					elapsedStepTimeMS = (int)(stopTime.tv_sec - startTime.tv_sec) * 1000 + 
+					elapsedStepTimeMS = (int)(stopTime.tv_sec - startTime.tv_sec) * 1000 +
 							  (int)(stopTime.tv_usec - startTime.tv_usec) / 1000;
 				}
 

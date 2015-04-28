@@ -20,12 +20,12 @@
 #include "MojDbLocaleTest.h"
 #include "db/MojDb.h"
 #ifdef MOJ_USE_BDB
-#include "db-engine/MojDbBerkeleyEngine.h"
+#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
 #elif MOJ_USE_LDB
 #include "db-engine/leveldb/MojDbLevelEngine.h"
 #elif MOJ_USE_SANDWICH
 #include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else 
+#else
 #error "Specify database engine"
 #endif
 #include "MojDbTestStorageEngine.h"

@@ -22,12 +22,12 @@
 #include "db/MojDbKind.h"
 #include "db/MojDbReq.h"
 #ifdef MOJ_USE_BDB
-#include "db-engine/MojDbBerkeleyEngine.h"
+#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
 #elif MOJ_USE_LDB
 #include "db-engine/leveldb/MojDbLevelEngine.h"
 #elif MOJ_USE_SANDWICH
 #include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else 
+#else
 #error "Specify database engine"
 #endif
 
@@ -1464,7 +1464,7 @@ MojErr MojDbKindTest::testInvalidKinds()
 	err = kind.fromJson(MojTestInvalidKind2Str);
 	MojTestErrCheck(err);
 	err = db.putKind(kind);
-	// this doesn't throw an error for now - schema validation will catch this.  
+	// this doesn't throw an error for now - schema validation will catch this.
 	// adding this test just to make sure we don't crash
 	MojTestErrCheck(err);
 

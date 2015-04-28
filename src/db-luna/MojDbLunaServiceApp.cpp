@@ -23,7 +23,7 @@
 #include "db/MojDbServiceDefs.h"
 
 #ifdef MOJ_USE_BDB
-#include "db-luna/MojDbBerkeleyFactory.h"
+#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
 #elif MOJ_USE_LDB
 #include "db-engine/leveldb/MojDbLevelFactory.h"
 #elif MOJ_USE_SANDWICH

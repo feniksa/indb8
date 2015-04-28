@@ -17,8 +17,8 @@
 * LICENSE@@@ */
 
 
-#include "db-luna/MojDbBerkeleyFactory.h"
-#include "db-luna/MojDbBerkeleyEngine.h"
+#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
+#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
 
 MojErr MojDbBerkeleyFactory::create(MojRefCountedPtr<MojDbStorageEngine>& engineOut) const
 {

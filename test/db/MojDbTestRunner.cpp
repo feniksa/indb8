@@ -45,7 +45,7 @@
 #include "MojDbCursorTxnTest.h"
 
 #ifdef MOJ_USE_BDB
-#include "db-engine/MojDbBerkeleyFactory.h"
+#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
 #elif MOJ_USE_LDB
 #include "db-engine/leveldb/MojDbLevelFactory.h"
 #elif MOJ_USE_SANDWICH

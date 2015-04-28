@@ -21,7 +21,7 @@
 #define MOJDBBERKELEYQUERY_H_
 
 #include "db/MojDbDefs.h"
-#include "db-luna/MojDbBerkeleyEngine.h"
+#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
 #include "db/MojDbIsamQuery.h"
 
 class MojDbBerkeleyQuery : public MojDbIsamQuery

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -22,8 +22,14 @@
 
 #include "db.h"
 #include "db/MojDbDefs.h"
+#include "db/MojDbEnv.h"
 #include "db/MojDbObjectHeader.h"
 #include "db/MojDbStorageEngine.h"
+#include "db/MojDbStorageDatabase.h"
+#include "db/MojDbStorageIndex.h"
+#include "db/MojDbStorageItem.h"
+#include "db/MojDbStorageSeq.h"
+#include "db/MojDbStorageTxn.h"
 #include "core/MojBuffer.h"
 #include "core/MojFile.h"
 
