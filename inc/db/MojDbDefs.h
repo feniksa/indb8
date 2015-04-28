@@ -49,6 +49,7 @@ class MojDbTextCollator;
 class MojDbTextTokenizer;
 class MojDbWatcher;
 
+class MojDbStorageEngineFactory;
 class MojDbStorageCursor;
 class MojDbStorageCollection;
 class MojDbStorageDatabase;
