@@ -112,7 +112,7 @@ function(install_ls2_service role)
 		get_filename_component(filename ${file} NAME)
 		string(REGEX REPLACE ".${role}.in" "" dst_filename ${filename})
 		configure_file(${file} "files/sysbus/${role}/${dst_filename}")
-		install(FILES "${CMAKE_CURRENT_BINARY_DIR}/files/sysbus/${role}/${dst_filename}" DESTINATION "/usr/share/dbus-1/system-services")
+		install(FILES "${CMAKE_CURRENT_BINARY_DIR}/files/sysbus/${role}/${dst_filename}" DESTINATION "usr/share/dbus-1/system-services")
 	endforeach()
 endfunction()
 
