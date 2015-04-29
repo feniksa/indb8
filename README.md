@@ -9,32 +9,32 @@ InDB8 is a userspace service that provides access to the webOS database.  Access
 
 Major changes
 ----------
-No dependecy from openwebos cmake module
-Removed dependency from media stuff
-Add compatibility with other services
-Remove pmloglib logging engine, use only internal engine
-Move bug-fixes from db8 repository
+* No dependecy from openwebos components
+* Removed dependency from media services
+* Remove pmloglib logging engine, use only internal indb8 logging engine
+* Port some bug-fixes from db8 upstream repository
+* Add support for getting list of registered kinds
+* Refactoring C++ and CMakeLists
 
 How to Build on Linux
 =====================
 
 ## Building for OpenWebOS
 
-For building under webos, you can follow the same steps as for db8 (original fork). See: http://github.com/openwebos/db8
+For building under webos, you can follow the same steps as for db8 upstream. See: http://github.com/openwebos/db8
 
 ### Dependencies
 
 Below are the tools and libraries (and their minimum versions) required to build this package:
 
 * cmake (version required by openwebos/cmake-modules-webos)
-* libdb-4.8-dev
-* libicu-dev
+* libdb-4.8 (if compile with berkeleydb support)
+* libicu
 * glib-2.0
 * gthread-2.0
 * openwebos/luna-service2
 * leveldb
 * leveldb-tl (https://github.com/ony/leveldb-tl)
-* berkeleydb
 
 ## Building for Gentoo
 
@@ -62,24 +62,24 @@ Once you have downloaded the source, execute the following to build it (after ch
 
 ### Configure database backend
 
-InDB8 support different database backends. To select db8 backend, set <tt>cmake</tt> variable <tt>WEBOS_DB8_BACKEND</tt> to one of supported database
+InDB8 support different database backends. To select backend, trigger any available option to true:
 backends. Currently support database backends are:
 
-* leveldb
-* berkeleydb
-* sandwich
+* BUILD_ENGINE_SANDWICH for leveldb with txn support
+* BUILD_ENGINE_LEVELDB  for leveldb without txn support
+* BUILD_ENGINE_BERKELEY for berkeleydb support
 
 For example: 
 
-    $ cmake -D WEBOS_INSTALL_ROOT:PATH=$HOME/projects/openwebos -D WEBOS_DB8_BACKEND:STRING=leveldb ..
+    $ cmake -D BUILD_ENGINE_SANDWICH:BOOL=true ..
 
 By default, db8 compiles with sandwich database backend.
 
 ### Enable unit tests
 
-To build the unit tests for db8, specify a true value for `WEBOS_CONFIG_BUILD_TESTS` on the cmake command line. For example:
+To build the unit tests for db8, specify a true value for `BUILD_TESTS` on the cmake command line. For example:
 
-    $ cmake -D WEBOS_CONFIG_BUILD_TESTS:BOOL=TRUE
+    $ cmake -D BUILD_TESTS:BOOL=true
 
 ### Debug build
 
@@ -153,7 +153,7 @@ To change loggin level,  modify mojodb.conf (maindb.conf) and set log -> level p
 # Copyright and License Information
 
 All content, including all source code files and documentation files in this repository are:
- Copyright (c) 2009-2014 LG Electronics, Inc.
+ Copyright (c) 2009-2015 LG Electronics, Inc.
 
 All content, including all source code files and documentation files in this repository are:
 Licensed under the Apache License, Version 2.0 (the "License");
