@@ -15,13 +15,14 @@ public:
 	MojDbPropExtractor();
 	void collator(MojDbTextCollator* collator) { m_collator.reset(collator); }
 	MojErr prop(const MojString& name);
+
 	MojErr fromObject(const MojObject& obj, const MojChar* locale) override;
 	MojErr updateLocale(const MojChar* locale) override;
 	MojErr vals(const MojObject& obj, KeySet& valsOut) const override { return valsImpl(obj, valsOut, 0); }
 
 private:
 	friend class MojDbMultiExtractor;
-	typedef MojVector<MojString> StringVec;
+	using StringVec = MojVector<MojString>;
 
 	static const MojChar PropComponentSeparator;
 	static const MojChar* const WildcardKey;

@@ -47,7 +47,6 @@ MojErr MojDbIsamQuery::open(MojAutoPtr<MojDbQueryPlan> plan, MojDbStorageTxn* tx
 	m_txn = txn;
 	m_endKey.clear();
     m_distinct = m_plan->query().distinct();
-    m_ignoreInactiveShards = m_plan->query().ignoreInactiveShards();
 
 	return MojErrNone;
 }
@@ -202,6 +201,8 @@ MojErr MojDbIsamQuery::getImpl(MojDbStorageItem*& itemOut, bool& foundOut, bool 
 		}
 		MojErrCheck(err);
 	}
+
+	// TODO: Check this... Is DISTINCT works fine?
 	if (foundOut) {
         //If distinct query is, We need to check that field is duplicated or not
         //In case of duplication, count will not incremented,

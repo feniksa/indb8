@@ -32,7 +32,7 @@ public:
 	static const MojChar* const CollateKey;
 	static const MojChar* const NameKey;
 
-	typedef MojSet<MojDbKey> KeySet;
+	using KeySet = MojSet<MojDbKey>;
 
 	MojDbExtractor() : m_collation(MojDbCollationInvalid) {}
 	virtual ~MojDbExtractor() {}
