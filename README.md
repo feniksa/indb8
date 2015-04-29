@@ -39,7 +39,7 @@ Below are the tools and libraries (and their minimum versions) required to build
 ## Building for Gentoo
 
 Current InDB8 supported by gentoo WebOS layer.
-To install it via layman, add WebOS layer: 
+To install it via layman, add WebOS layer:
     
     # layman -A webos
 
@@ -48,6 +48,8 @@ And install from layman:
     # emerge -av indb8
 
 Gentoo will automatically install indb8 upstart script and all required dependency.
+
+URL for ebuild for non layman users: https://github.com/feniksa/webos-overlay/tree/master/dev-db/indb8
 
 ## Building Standalone
 
