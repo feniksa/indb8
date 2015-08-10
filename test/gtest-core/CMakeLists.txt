@@ -20,6 +20,7 @@
 project(gtest_core CXX)
 
 add_definitions(-Wall -std=c++0x -Wno-deprecated -pthread)
+add_definitions(-DDEFAULT_SETTINGS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/defaultSettingsObfuscated.json")
 
 add_executable(gtest_core
                Runner.cpp

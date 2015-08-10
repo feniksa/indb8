@@ -1,7 +1,7 @@
 /****************************************************************
  * @@@LICENSE
  *
- * Copyright (c) 2015 LG Electronics, Inc.
+ * Copyright (c) 2013-2015 LG Electronics, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,108 @@
  * LICENSE@@@
  ****************************************************************/
 
-#include <core/MojJsonParser.h>
+
+#include "gtest/gtest.h"
+
+#include "db/MojDb.h"
+#include "core/MojUtil.h"
+#include "core/MojJson.h"
+#include "core/MojObjectBuilder.h"
 
 #include "Runner.h"
 
-namespace
-{
+static const MojChar* const MojDefaultSettingsFileName = DEFAULT_SETTINGS_PATH;
 
-struct MojJsonSuite : public ::testing::Test
+#include <iostream>
+#include <list>
+using namespace std;
+
+struct JsonSuite : public ::testing::Test
 {
+	void SetUp()
+	{
+		MojStatT mojStatFile;
+		MojErr err = MojStat(MojDefaultSettingsFileName, &mojStatFile);
+		MojAssertNoErr(err);
+	}
+
+	void TearDown()
+	{
+	}
 };
 
-TEST_F(MojJsonSuite, parse)
+/**
+ * Load MojDefaultSettingsFileName and just parse it.
+ */
+TEST_F(JsonSuite, paser_json_withoutobj)
 {
+	MojErr err;
+	MojFile file;
+
+	MojJsonParser parser;
+	parser.begin();
+	MojSize bytesRead = 0;
+	MojObjectEater visitor;
+
+	MojAssertNoErr(file.open(MojDefaultSettingsFileName, 0));
+
+	unsigned int parsedChunks = 0;
+	do {
+		MojChar buf[MojFile::MojFileBufSize];
+		err = file.read(buf, sizeof(buf), bytesRead);
+		MojAssertNoErr(err);
+
+		const MojChar* parseEnd = buf;
+		while (parseEnd < (buf + bytesRead)) {
+			err = parser.parseChunk(visitor, parseEnd, bytesRead - (parseEnd - buf), parseEnd);
+
+			++parsedChunks;
+
+			MojAssertNoErr(err);
+			if (parser.finished()) {
+				parser.begin();
+				visitor.reset();
+			}
+		}
+	} while (bytesRead > 0);
+
+	cout << "Parsed chunks: " << parsedChunks << endl;
 }
 
-} // end of namespace
+/**
+ * Load MojDefaultSettingsFileName, parse json file and build MojObject
+ */
+TEST_F(JsonSuite, paser_json_withobj)
+{
+	MojErr err;
+	MojFile file;
+
+	MojJsonParser parser;
+	parser.begin();
+	MojSize bytesRead = 0;
+	MojObjectBuilder visitor;
+
+	MojAssertNoErr(file.open(MojDefaultSettingsFileName, 0));
+
+	unsigned int parsedChunks = 0;
+	do {
+		MojChar buf[MojFile::MojFileBufSize];
+		err = file.read(buf, sizeof(buf), bytesRead);
+		MojAssertNoErr(err);
+
+		const MojChar* parseEnd = buf;
+		while (parseEnd < (buf + bytesRead)) {
+			err = parser.parseChunk(visitor, parseEnd, bytesRead - (parseEnd - buf), parseEnd);
+
+			++parsedChunks;
+
+			MojAssertNoErr(err);
+			if (parser.finished()) {
+				parser.begin();
+				visitor.reset();
+			}
+		}
+	} while (bytesRead > 0);
+
+	cout << "Parsed chunks: " << parsedChunks << endl;
+}

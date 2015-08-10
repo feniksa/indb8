@@ -27,7 +27,6 @@ add_definitions(-Wall -ansi -Wno-deprecated -pthread --std=c++0x)
 add_executable(gtest_db
 			   BatchTest.cpp
                Runner.cpp
-               JsonTest.cpp
                DumpLoadTest.cpp
                ReqTest.cpp
                QuotaTest.cpp
@@ -36,8 +35,6 @@ add_executable(gtest_db
                IdGeneratorTest.cpp
                ../db/MojDbTestStorageEngine.cpp
                )
-
-add_definitions(-DDEFAULT_SETTINGS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/defaultSettingsObfuscated.json")
 
 target_link_libraries(gtest_db
                       mojocore

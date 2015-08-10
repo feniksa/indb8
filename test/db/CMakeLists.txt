@@ -58,7 +58,7 @@ add_executable(test_db_core ${DB_TEST_SOURCES})
 target_link_libraries(test_db_core
                       mojocore
                       mojodb
-                      mojodbengine                      
+                      mojodbengine
 )
 install( TARGETS test_db_core
     RUNTIME DESTINATION usr/lib/indb8/tests
