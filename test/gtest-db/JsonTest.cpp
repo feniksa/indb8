@@ -34,7 +34,7 @@
 
 #include "Runner.h"
 
-static const MojChar* const MojDefaultSettingsFileName = _T("/etc/palm/defaultSettings.json");
+static const MojChar* const MojDefaultSettingsFileName = DEFAULT_SETTINGS_PATH;
 
 #include <iostream>
 #include <list>

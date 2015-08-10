@@ -1,6 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (c) 2013 LG Electronics, Inc.
+# Copyright (c) 2013-2015 LG Electronics, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ add_executable(gtest_db
                ../db/MojDbTestStorageEngine.cpp
                )
 
+add_definitions(-DDEFAULT_SETTINGS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/defaultSettingsObfuscated.json")
+
 target_link_libraries(gtest_db
                       mojocore
                       mojodb
@@ -47,6 +49,6 @@ target_link_libraries(gtest_db
 install( TARGETS gtest_db
     RUNTIME DESTINATION usr/lib/indb8/tests
 )
-                     
+
 add_test(NAME gtest_db COMMAND gtest_db)
 

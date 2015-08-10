@@ -40,18 +40,18 @@
 const char *tempFolder;
 
 int main(int argc, char **argv) {
+	// set up engine
+#ifdef MOJ_USE_BDB
+	MojDbStorageEngine::setEngineFactory(new MojDbBerkeleyFactory());
+#elif MOJ_USE_LDB
+	MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
+#elif MOJ_USE_SANDWICH
+	MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
+#endif
+
     char buf[128] = "/tmp/mojodb-test-dir-XXXXXX";
     tempFolder = mkdtemp(buf);
     if (!tempFolder) tempFolder = "/tmp/mojodb-test-dir"; // fallback
-
-   // set up engine
-#ifdef MOJ_USE_BDB
-   MojDbStorageEngine::setEngineFactory(new MojDbBerkeleyFactory());
-#elif MOJ_USE_LDB
-   MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
-#elif MOJ_USE_LDB
-   MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
-#endif
 
     // stup and run tests
     testing::InitGoogleTest(&argc, argv);

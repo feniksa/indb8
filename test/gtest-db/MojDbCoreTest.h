@@ -29,6 +29,16 @@
 
 #include "Runner.h"
 
+#ifdef MOJ_USE_BDB
+#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
+#elif MOJ_USE_LDB
+#include "db-engine/leveldb/MojDbLevelFactory.h"
+#elif MOJ_USE_SANDWICH
+#include "db-engine/sandwich/MojDbSandwichFactory.h"
+#else
+#error "Set database type"
+#endif
+
 struct MojDbCoreTest : public ::testing::Test
 {
     MojDb db;
@@ -36,6 +46,17 @@ struct MojDbCoreTest : public ::testing::Test
 
     void SetUp()
     {
+		// set up db first
+		#ifdef MOJ_USE_BDB
+		MojDbStorageEngine::setEngineFactory(new MojDbBerkeleyFactory());
+		#elif MOJ_USE_LDB
+		MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
+		#elif MOJ_USE_SANDWICH
+		MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
+		#else
+		#error "Database not set"
+		#endif
+
         const ::testing::TestInfo* const test_info =
           ::testing::UnitTest::GetInstance()->current_test_info();
 
