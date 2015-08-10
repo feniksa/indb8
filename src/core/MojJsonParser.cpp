@@ -78,7 +78,7 @@ MojErr MojJsonParser::end(MojObjectVisitor& visitor)
     return MojErrNone;
 }
 
-bool MojJsonParser::finished() const 
+bool MojJsonParser::finished() const
 {
     return (state() == State::Finish && m_depth == 0);
 }
@@ -149,7 +149,7 @@ Redo:   switch (state()) {
                 goto Redo;
             case '"':
                 state() = State::String;
-                m_str.clear();
+                sclear();
                 break;
             case 't':
             case 'f':
@@ -170,7 +170,7 @@ Redo:   switch (state()) {
             case '9':
             case '-':
                 state() = State::Number;
-                m_str.clear();
+                sclear();
                 m_isDecimal = false;
                 goto Redo;
             case '\0':
@@ -237,7 +237,7 @@ Redo:   switch (state()) {
                 savedState() = State::String;
                 state() = State::StringEscape;
             } else {
-                err = m_str.append(c);
+                err = sappend(c);
                 MojErrCheck(err);
             }
             break;
@@ -273,7 +273,7 @@ Redo:   switch (state()) {
                 default:
                     MojErrThrowMsg(MojErrJsonParseEscape, _T("json: error parsing string at %d:%d"), m_line, m_col);
                 }
-                err = m_str.append(escapeChar);
+				err = sappend(escapeChar);
                 MojErrCheck(err);
                 state() = savedState();
             }
@@ -301,7 +301,7 @@ Redo:   switch (state()) {
                         utfOut[2] = (MojChar) (0x80 | (m_ucsChar & 0x3f));
                         utfLen = 3;
                     }
-                    err = m_str.append(utfOut, utfLen);
+                    err = sappend(utfOut, utfLen);
                     MojErrCheck(err);
                     state() = savedState();
                 }
@@ -339,7 +339,7 @@ Redo:   switch (state()) {
             case '9':
             case '+':
             case '-': {
-                err = m_str.append(c);
+                err = sappend(c);
                 MojErrCheck(err);
                 break;
             }
@@ -400,7 +400,7 @@ Redo:   switch (state()) {
                 savedState() = State::Finish;
                 state() = State::EatWhitespace;
             } else if (c == '"') {
-                m_str.clear();
+				sclear();
                 state() = State::ObjField;
             } else {
                 MojErrThrowMsg(MojErrJsonParsePropName, _T("json: error parsing prop name at %d:%d"), m_line, m_col);
@@ -417,7 +417,7 @@ Redo:   switch (state()) {
                 savedState() = State::ObjField;
                 state() = State::StringEscape;
             } else {
-                err = m_str.append(c);
+                err = sappend(c);
                 MojErrCheck(err);
             }
             break;

@@ -20,6 +20,7 @@
 
 #include "core/MojCoreDefs.h"
 #include "core/MojObject.h"
+#include <string>
 
 class MojJsonParser
 {
@@ -70,6 +71,7 @@ public:
 
 private:
     static const MojSize MaxDepth = 32;
+	static const MojUInt32 ReserveSize = 1024;
 
     inline State& state() { return m_stack[m_depth].m_state; }
     inline const State& state() const { return m_stack[m_depth].m_state; }
@@ -78,6 +80,10 @@ private:
     inline const State& savedState() const { return m_stack[m_depth].m_savedState; }
 
     inline int hexDigit(MojChar c) { return (c <= _T('9')) ? c - _T('0') : (c & 7) + 9; }
+
+	inline MojErr sappend(MojChar c);
+	inline MojErr sappend(const MojChar* chars, MojSize len);
+	inline void sclear();
 
     MojErr push();
     void resetRec();
@@ -92,4 +98,36 @@ private:
     MojString m_str;
     StackRec m_stack[MaxDepth];
 };
+
+MojErr MojJsonParser::sappend(MojChar c)
+{
+	MojErr err;
+
+	if (m_str.empty()) {
+		err = m_str.reserve(ReserveSize);
+		MojErrCheck(err);
+	}
+
+	err = m_str.append(c);
+	MojErrCheck(err);
+
+	return err;
+}
+
+MojErr MojJsonParser::sappend(const MojChar *chars, MojSize len)
+{
+	MojErr err;
+
+	err = m_str.append(chars, len);
+	MojErrCheck(err);
+
+	return err;
+}
+
+void MojJsonParser::sclear()
+{
+	m_str.clear();
+}
+
+
 
