@@ -22,6 +22,8 @@
 
 #include "db/MojDbDefs.h"
 #include "db-engine/berkeley/MojDbBerkeleyEngine.h"
+#include "db-engine/berkeley/MojDbBerkeleyCursor.h"
+#include "db-engine/berkeley/MojDbBerkeleyItem.h"
 #include "db/MojDbIsamQuery.h"
 
 class MojDbBerkeleyQuery : public MojDbIsamQuery

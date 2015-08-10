@@ -19,6 +19,7 @@
 
 #include "db-engine/berkeley/MojDbBerkeleyQuery.h"
 #include "db-engine/berkeley/MojDbBerkeleyEngine.h"
+#include "db-engine/berkeley/MojDbBerkeleyDatabase.h"
 #include "db/MojDbQueryPlan.h"
 #include "core/MojObjectSerialization.h"
 
