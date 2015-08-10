@@ -399,8 +399,10 @@ MojErr MojDbSearchCursor::distinct()
 	MojAssert(!m_items.empty());
 
 	ItemComp itemComp;
-	int idx = 0;
-	int itemSize = m_items.size();
+	MojSize idx = 0;
+	MojSize itemSize = m_items.size();
+	if (itemSize == 0)
+		return MojErrNone;
 	while(idx < itemSize-1) {
 		if(itemComp(m_items[idx],m_items[idx+1]) == 0) {
 			m_items.erase(idx+1);
