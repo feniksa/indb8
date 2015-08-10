@@ -141,7 +141,7 @@ TEST_F(JsonSuite, paser_json_withobj)
 /**
  * Load data from MojDefaultSettingsFileName, parse it and store to database
  */
-TEST_F(JsonSuite, paser_loaddefault)
+/*TEST_F(JsonSuite, paser_loaddefault)
 {
     MojDb db;
     MojUInt32 count = 0;
@@ -165,4 +165,4 @@ TEST_F(JsonSuite, paser_loaddefault)
     MojAssertNoErr( db.load(MojDefaultSettingsFileName, count) );
 
     db.close();
-}
+}*/

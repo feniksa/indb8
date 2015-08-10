@@ -6,6 +6,7 @@ include_directories(${Boost_INCLUDE_DIR})
 
 set (CXX_SOURCRES
 	JsonObfuscator.cpp
+	main.cpp
 )
 
 add_executable(${PROJECT_NAME} ${CXX_SOURCRES})
