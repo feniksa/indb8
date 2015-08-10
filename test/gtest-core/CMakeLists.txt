@@ -26,6 +26,7 @@ add_executable(gtest_core
                AtomicIntTest.cpp
                DecimalTest.cpp
                NumberTest.cpp
+               MojJsonTest.cpp
                )
 
 target_link_libraries(gtest_core mojocore)

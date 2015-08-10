@@ -18,6 +18,7 @@
 
 
 #include "MojDbRevisionSetTest.h"
+#include "db/MojDbPropExtractor.h"
 #include "db/MojDb.h"
 #include "db/MojDbRevisionSet.h"
 

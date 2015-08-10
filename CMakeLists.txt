@@ -22,7 +22,7 @@ project(INDB8 CXX)
 
 # Build options
 option(BUILD_LS2             "Build Mojo Luna interface" ON )
-option(TESTS                 "Build tests"               ON )
+option(BUILD_TESTING         "Build tests"               ON )
 option(BUILD_ENGINE_SANDWICH "Build sandwich engine"     ON )
 option(BUILD_ENGINE_LEVELDB  "Build leveldb  engine"     OFF)
 option(BUILD_ENGINE_BERKELEY "Build berkeley engine"     OFF)
