@@ -23,55 +23,62 @@
 
 class MojJsonParser
 {
+	enum class State {
+		EatWhitespace,
+		Start,
+		Finish,
+		Null,
+		CommentStart,
+		Comment,
+		CommentEol,
+		CommentEnd,
+		String,
+		StringEscape,
+		EscapeUnicode,
+		Bool,
+		Number,
+		Array,
+		ArraySep,
+		ObjFieldStart,
+		ObjField,
+		ObjFieldEnd,
+		ObjValue,
+		ObjSep
+	};
+
+	struct StackRec
+	{
+		State m_state;
+		State m_savedState;
+	};
+
 public:
     MojJsonParser();
     ~MojJsonParser();
 
     void begin();
     MojErr end(MojObjectVisitor& visitor);
-    bool finished();
+
+	bool finished() const;
+
     static MojErr parse(MojObjectVisitor& visitor, const MojChar* str) { return parse(visitor, str, MojSizeMax); }
     static MojErr parse(MojObjectVisitor& visitor, const MojChar* chars, MojSize len);
     MojErr parseChunk(MojObjectVisitor& visitor, const MojChar* chars, MojSize len, const MojChar*& parseEnd);
 
-    MojUInt32 line() { return m_line; }
-    MojUInt32 column() { return m_col; }
+    inline MojUInt32 line() const { return m_line; }
+    inline MojUInt32 column() const { return m_col; }
 
 private:
     static const MojSize MaxDepth = 32;
 
-    typedef enum {
-        StateEatWhitespace,
-        StateStart,
-        StateFinish,
-        StateNull,
-        StateCommentStart,
-        StateComment,
-        StateCommentEol,
-        StateCommentEnd,
-        StateString,
-        StateStringEscape,
-        StateEscapeUnicode,
-        StateBool,
-        StateNumber,
-        StateArray,
-        StateArraySep,
-        StateObjFieldStart,
-        StateObjField,
-        StateObjFieldEnd,
-        StateObjValue,
-        StateObjSep
-    } State;
+    inline State& state() { return m_stack[m_depth].m_state; }
+    inline const State& state() const { return m_stack[m_depth].m_state; }
 
-    struct StackRec
-    {
-        State m_state;
-        State m_savedState;
-    };
+    inline State& savedState() { return m_stack[m_depth].m_savedState; }
+    inline const State& savedState() const { return m_stack[m_depth].m_savedState; }
 
-    State& state() { return m_stack[m_depth].m_state; }
-    State& savedState() { return m_stack[m_depth].m_savedState; }
-    int hexDigit(MojChar c) { return (c <= _T('9')) ? c - _T('0') : (c & 7) + 9; }
+    inline int hexDigit(MojChar c) { return (c <= _T('9')) ? c - _T('0') : (c & 7) + 9; }
+
     MojErr push();
     void resetRec();
 

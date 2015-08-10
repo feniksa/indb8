@@ -78,9 +78,9 @@ MojErr MojJsonParser::end(MojObjectVisitor& visitor)
     return MojErrNone;
 }
 
-bool MojJsonParser::finished()
+bool MojJsonParser::finished() const 
 {
-    return (state() == StateFinish && m_depth == 0);
+    return (state() == State::Finish && m_depth == 0);
 }
 
 MojErr MojJsonParser::parse(MojObjectVisitor& visitor, const MojChar* chars, MojSize len)
@@ -118,42 +118,42 @@ MojErr MojJsonParser::parseChunk(MojObjectVisitor& visitor, const MojChar* chars
         }
 
 Redo:   switch (state()) {
-        case StateEatWhitespace:
+        case State::EatWhitespace:
             if (MojIsSpace(c)) {
                 /* okay */
             } else if (c == '/') {
-                state() = StateCommentStart;
+                state() = State::CommentStart;
             } else {
                 state() = savedState();
                 goto Redo;
             }
             break;
 
-        case StateStart:
+		case State::Start:
             switch (c) {
             case '{':
-                state() = StateEatWhitespace;
-                savedState() = StateObjFieldStart;
+                state() = State::EatWhitespace;
+                savedState() = State::ObjFieldStart;
                 err = visitor.beginObject();
                 MojErrCheck(err);
                 break;
             case '[':
-                state() = StateEatWhitespace;
-                savedState() = StateArray;
+                state() = State::EatWhitespace;
+                savedState() = State::Array;
                 err = visitor.beginArray();
                 MojErrCheck(err);
                 break;
             case 'n':
-                state() = StateNull;
+                state() = State::Null;
                 m_strPos = 0;
                 goto Redo;
             case '"':
-                state() = StateString;
+                state() = State::String;
                 m_str.clear();
                 break;
             case 't':
             case 'f':
-                state() = StateBool;
+                state() = State::Bool;
                 m_strPos = 0;
                 m_matchStr = (c == 't') ? MojJsonTrueString : MojJsonFalseString;
                 goto Redo;
@@ -169,7 +169,7 @@ Redo:   switch (state()) {
             case '8':
             case '9':
             case '-':
-                state() = StateNumber;
+                state() = State::Number;
                 m_str.clear();
                 m_isDecimal = false;
                 goto Redo;
@@ -180,73 +180,73 @@ Redo:   switch (state()) {
             }
             break;
 
-        case StateFinish:
+			case State::Finish:
             if (m_depth == 0)
                 goto Done;
             m_depth--;
             goto Redo;
 
-        case StateNull:
+			case State::Null:
             if (c != MojJsonNullString[m_strPos])
                 MojErrThrowMsg(MojErrJsonParseNull, _T("json: error parsing null at %d:%d"), m_line, m_col);
             if (MojJsonNullString[++m_strPos] == _T('\0')) {
                 err = visitor.nullValue();
                 MojErrCheck(err);
-                savedState() = StateFinish;
-                state() = StateEatWhitespace;
+                savedState() = State::Finish;
+                state() = State::EatWhitespace;
             }
             break;
 
-        case StateCommentStart:
+		case State::CommentStart:
             if (c == '*') {
-                state() = StateComment;
+                state() = State::Comment;
             } else if (c == '/') {
-                state() = StateCommentEol;
+                state() = State::CommentEol;
             } else {
                 MojErrThrow(MojErrJsonParseComment);
             }
             break;
 
-        case StateComment:
+		case State::Comment:
             if (c == '*')
-                state() = StateCommentEnd;
+                state() = State::CommentEnd;
             break;
 
-        case StateCommentEol:
+		case State::CommentEol:
             if (c == '\n') {
-                state() = StateEatWhitespace;
+                state() = State::EatWhitespace;
             }
             break;
 
-        case StateCommentEnd:
+		case State::CommentEnd:
             if (c == '/') {
-                state() = StateEatWhitespace;
+                state() = State::EatWhitespace;
             } else {
-                state() = StateComment;
+                state() = State::Comment;
                 goto Redo;
             }
             break;
 
-        case StateString:
+		case State::String:
             if (c == '"') {
                 err = visitor.stringValue(m_str, m_str.length());
                 MojErrCheck(err);
-                savedState() = StateFinish;
-                state() = StateEatWhitespace;
+                savedState() = State::Finish;
+                state() = State::EatWhitespace;
             } else if (c == '\\') {
-                savedState() = StateString;
-                state() = StateStringEscape;
+                savedState() = State::String;
+                state() = State::StringEscape;
             } else {
                 err = m_str.append(c);
                 MojErrCheck(err);
             }
             break;
 
-        case StateStringEscape:
+		case State::StringEscape:
             if (c == 'u'){
                 m_ucsChar = 0;
                 m_strPos = 0;
-                state() = StateEscapeUnicode;
+                state() = State::EscapeUnicode;
             } else {
                 MojChar escapeChar;
                 switch (c) {
@@ -279,7 +279,7 @@ Redo:   switch (state()) {
             }
             break;
 
-        case StateEscapeUnicode:
+		case State::EscapeUnicode:
             if (MojIsHexDigit(c)) {
                 m_ucsChar += ((MojUInt32) hexDigit(c) << ((3 - m_strPos++) * 4));
                 if (m_strPos == 4) {
@@ -310,18 +310,18 @@ Redo:   switch (state()) {
             }
             break;
 
-        case StateBool:
+		case State::Bool:
             if (c != m_matchStr[m_strPos])
                 MojErrThrowMsg(MojErrJsonParseBool, _T("json: error parsing bool at %d:%d"), m_line, m_col);
             if (m_matchStr[++m_strPos] == _T('\0')) {
                 err = visitor.boolValue(m_matchStr == MojJsonTrueString);
                 MojErrCheck(err);
-                savedState() = StateFinish;
-                state() = StateEatWhitespace;
+                savedState() = State::Finish;
+                state() = State::EatWhitespace;
             }
             break;
 
-        case StateNumber:
+		case State::Number:
             switch (c) {
             case '.':
             case 'e':
@@ -358,95 +358,95 @@ Redo:   switch (state()) {
                     if (numberEnd != m_str.end())
                         MojErrThrowMsg(MojErrJsonParseInt, _T("json: error parsing int at %d:%d"), m_line, m_col);
                 }
-                savedState() = StateFinish;
-                state() = StateEatWhitespace;
+                savedState() = State::Finish;
+                state() = State::EatWhitespace;
                 goto Redo;
             }
             }
             break;
 
-        case StateArray:
+			case State::Array:
             if (c == ']') {
                 err = visitor.endArray();
                 MojErrCheck(err);
-                savedState() = StateFinish;
-                state() = StateEatWhitespace;
+                savedState() = State::Finish;
+                state() = State::EatWhitespace;
             } else {
-                state() = StateArraySep;
+                state() = State::ArraySep;
                 err = push();
                 MojErrCheck(err);
                 goto Redo;
             }
             break;
 
-        case StateArraySep:
+		case State::ArraySep:
             if (c == ']') {
                 err = visitor.endArray();
                 MojErrCheck(err);
-                savedState() = StateFinish;
-                state() = StateEatWhitespace;
+                savedState() = State::Finish;
+                state() = State::EatWhitespace;
             } else if (c == ',') {
-                savedState() = StateArray;
-                state() = StateEatWhitespace;
+                savedState() = State::Array;
+                state() = State::EatWhitespace;
             } else {
                 MojErrThrowMsg(MojErrJsonParseArray, _T("json: error parsing array at %d:%d"), m_line, m_col);
             }
             break;
 
-        case StateObjFieldStart:
+		case State::ObjFieldStart:
             if (c == '}') {
                 err = visitor.endObject();
                 MojErrCheck(err);
-                savedState() = StateFinish;
-                state() = StateEatWhitespace;
+                savedState() = State::Finish;
+                state() = State::EatWhitespace;
             } else if (c == '"') {
                 m_str.clear();
-                state() = StateObjField;
+                state() = State::ObjField;
             } else {
                 MojErrThrowMsg(MojErrJsonParsePropName, _T("json: error parsing prop name at %d:%d"), m_line, m_col);
             }
             break;
 
-        case StateObjField:
+		case State::ObjField:
             if (c == '"') {
                 err = visitor.propName(m_str, m_str.length());
                 MojErrCheck(err);
-                savedState() = StateObjFieldEnd;
-                state() = StateEatWhitespace;
+                savedState() = State::ObjFieldEnd;
+                state() = State::EatWhitespace;
             } else if (c == '\\') {
-                savedState() = StateObjField;
-                state() = StateStringEscape;
+                savedState() = State::ObjField;
+                state() = State::StringEscape;
             } else {
                 err = m_str.append(c);
                 MojErrCheck(err);
             }
             break;
 
-        case StateObjFieldEnd:
+		case State::ObjFieldEnd:
             if (c == ':') {
-                savedState() = StateObjValue;
-                state() = StateEatWhitespace;
+                savedState() = State::ObjValue;
+                state() = State::EatWhitespace;
             } else {
                 MojErrThrowMsg(MojErrJsonParsePropName, _T("json: error parsing prop name at %d:%d"), m_line, m_col);
             }
             break;
 
-        case StateObjValue:
-            savedState() = StateObjSep;
-            state() = StateEatWhitespace;
+        case State::ObjValue:
+            savedState() = State::ObjSep;
+            state() = State::EatWhitespace;
             err = push();
             MojErrCheck(err);
             goto Redo;
 
-        case StateObjSep:
+        case State::ObjSep:
             if (c == '}') {
                 err = visitor.endObject();
                 MojErrCheck(err);
-                savedState() = StateFinish;
-                state() = StateEatWhitespace;
+                savedState() = State::Finish;
+                state() = State::EatWhitespace;
             } else if (c == ',') {
-                savedState() = StateObjFieldStart;
-                state() = StateEatWhitespace;
+                savedState() = State::ObjFieldStart;
+                state() = State::EatWhitespace;
             } else {
                 MojErrThrowMsg(MojErrJsonParseValueSep, _T("json: error parsing value separator at %d:%d"), m_line, m_col);
             }
@@ -475,6 +475,6 @@ MojErr MojJsonParser::push()
 
 void MojJsonParser::resetRec()
 {
-    state() = StateEatWhitespace;
-    savedState() = StateStart;
+    state() = State::EatWhitespace;
+    savedState() = State::Start;
 }
