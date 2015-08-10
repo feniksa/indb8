@@ -20,7 +20,7 @@
 
 #include "core/MojCoreDefs.h"
 #include "core/MojObject.h"
-#include <string>
+#include "core/MojStdString.h"
 
 class MojJsonParser
 {
@@ -95,7 +95,7 @@ private:
     MojUInt32 m_ucsChar;
     const MojChar* m_matchStr;
     bool m_isDecimal;
-    MojString m_str;
+    MojStdString m_str;
     StackRec m_stack[MaxDepth];
 };
 
