@@ -23,6 +23,7 @@ project(INDB8 CXX)
 # Build options
 option(BUILD_LS2             "Build Mojo Luna interface" ON )
 option(BUILD_TESTING         "Build tests"               ON )
+option(BUILD_TOOL_JSONOBFUSCATE "Build obfuscate tool"   OFF)
 option(BUILD_ENGINE_SANDWICH "Build sandwich engine"     ON )
 option(BUILD_ENGINE_LEVELDB  "Build leveldb  engine"     OFF)
 option(BUILD_ENGINE_BERKELEY "Build berkeley engine"     OFF)
@@ -152,3 +153,8 @@ install(FILES files/conf/maindb.conf DESTINATION etc/indb8)
 install(FILES files/conf/tempdb.conf DESTINATION etc/indb8)
 
 install(DIRECTORY inc DESTINATION usr/include/mojodb)
+
+if (BUILD_TOOL_JSONOBFUSCATE)
+	message(STATUS "Build json obfuscate tool")
+	add_subdirectory(tool/JsonObfuscator)
+endif()
