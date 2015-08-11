@@ -158,3 +158,5 @@ if (BUILD_TOOL_JSONOBFUSCATE)
 	message(STATUS "Build json obfuscate tool")
 	add_subdirectory(tool/JsonObfuscator)
 endif()
+
+add_subdirectory(tool/View)

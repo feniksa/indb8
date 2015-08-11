@@ -13,16 +13,16 @@ public:
 	~MojDbBerkeleyDatabase();
 
 	MojErr open(const MojChar* dbName, MojDbBerkeleyEngine* env, bool& createdOut, MojDbStorageTxn* txn);
-	virtual MojErr close();
-	virtual MojErr drop(MojDbStorageTxn* txn);
-	virtual MojErr stats(MojDbStorageTxn* txn, MojSize& countOut, MojSize& sizeOut);
-	virtual MojErr insert(const MojObject& id, MojBuffer& val, MojDbStorageTxn* txn);
-	virtual MojErr update(const MojObject& id, MojBuffer& val, MojDbStorageItem* oldVal, MojDbStorageTxn* txn);
-	virtual MojErr del(const MojObject& id, MojDbStorageTxn* txn, bool& foundOut);
-	virtual MojErr get(const MojObject& id, MojDbStorageTxn* txn, bool forUpdate, MojRefCountedPtr<MojDbStorageItem>& itemOut);
-	virtual MojErr find(MojAutoPtr<MojDbQueryPlan> plan, MojDbStorageTxn* txn, MojRefCountedPtr<MojDbStorageQuery>& queryOut);
-	virtual MojErr beginTxn(MojRefCountedPtr<MojDbStorageTxn>& txnOut);
-	virtual MojErr openIndex(const MojObject& id, MojDbStorageTxn* txn, MojRefCountedPtr<MojDbStorageIndex>& indexOut);
+	MojErr close() override;
+	MojErr drop(MojDbStorageTxn* txn) override;
+	MojErr stats(MojDbStorageTxn* txn, MojSize& countOut, MojSize& sizeOut) override;
+	MojErr insert(const MojObject& id, MojBuffer& val, MojDbStorageTxn* txn) override;
+	MojErr update(const MojObject& id, MojBuffer& val, MojDbStorageItem* oldVal, MojDbStorageTxn* txn) override;
+	MojErr del(const MojObject& id, MojDbStorageTxn* txn, bool& foundOut) override;
+	MojErr get(const MojObject& id, MojDbStorageTxn* txn, bool forUpdate, MojRefCountedPtr<MojDbStorageItem>& itemOut) override;
+	MojErr find(MojAutoPtr<MojDbQueryPlan> plan, MojDbStorageTxn* txn, MojRefCountedPtr<MojDbStorageQuery>& queryOut) override;
+	MojErr beginTxn(MojRefCountedPtr<MojDbStorageTxn>& txnOut) override;
+	MojErr openIndex(const MojObject& id, MojDbStorageTxn* txn, MojRefCountedPtr<MojDbStorageIndex>& indexOut) override;
 
 	// work-around - specific for BDB only
 	virtual MojErr mutexStats(int* total_mutexes, int* mutexes_free, int* mutexes_used, int* mutexes_used_highwater, int* mutex_regionsize);
