@@ -139,12 +139,7 @@ configure_file(files/pkgconfig/indb8.pc.in
 	${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
-	    DESTINATION usr/lib/pkgconfig/indb8.pc)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
-	    DESTINATION usr/lib/pkgconfig/db8.pc)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
-	    DESTINATION usr/lib/pkgconfig/mojodb.pc)
-
+	    DESTINATION usr/lib/pkgconfig)
 
 install(DIRECTORY inc DESTINATION usr/include/mojodb)
 
