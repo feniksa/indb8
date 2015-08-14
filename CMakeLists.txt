@@ -28,7 +28,10 @@ option(BUILD_ENGINE_SANDWICH "Build sandwich engine"     ON )
 option(BUILD_ENGINE_LEVELDB  "Build leveldb  engine"     OFF)
 option(BUILD_ENGINE_BERKELEY "Build berkeley engine"     OFF)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 include(FindPkgConfig)
+include(InstallLS2)
 
 add_definitions(-std=c++11 -Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
 
@@ -96,26 +99,6 @@ include_directories(inc)
 add_subdirectory(src/core)
 add_subdirectory(src/db)
 add_subdirectory(src/db-engine)
-
-function(install_ls2_roles path role)
-	file(GLOB files "${path}/*.json.${role}.in")
-	foreach(file ${files})
-		get_filename_component(filename ${file} NAME)
-		string(REGEX REPLACE ".${role}.in" "" dst_filename ${filename})
-		configure_file(${file} "files/sysbus/${role}/${dst_filename}")
-		install(FILES "${CMAKE_CURRENT_BINARY_DIR}/files/sysbus/${role}/${dst_filename}" DESTINATION "usr/share/ls2/roles/${role}")
-	endforeach()
-endfunction()
-
-function(install_ls2_service path role)
-	file(GLOB files "${path}/*.service.${role}.in")
-	foreach(file ${files})
-		get_filename_component(filename ${file} NAME)
-		string(REGEX REPLACE ".${role}.in" "" dst_filename ${filename})
-		configure_file(${file} "files/sysbus/${role}/${dst_filename}")
-		install(FILES "${CMAKE_CURRENT_BINARY_DIR}/files/sysbus/${role}/${dst_filename}" DESTINATION "usr/share/dbus-1/system-services")
-	endforeach()
-endfunction()
 
 if (BUILD_LS2)
 	add_subdirectory(src/luna)
