@@ -1,6 +1,6 @@
 {
     "role": {
-        "exeName":"/usr/lib/db8/tests/test_luna_service",
+        "exeName":"/usr/share/indb8/tests/test_luna_service",
         "type": "regular",
         "allowedNames": ["com.palm.mojlstest", "com.palm.mojlstest.client"]
     },
