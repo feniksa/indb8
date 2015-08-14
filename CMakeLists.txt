@@ -152,6 +152,17 @@ endif()
 install(FILES files/conf/maindb.conf DESTINATION etc/indb8)
 install(FILES files/conf/tempdb.conf DESTINATION etc/indb8)
 
+configure_file(files/pkgconfig/db8.pc.in
+	${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/db8.pc @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
+	    DESTINATION usr/lib/pkgconfig/db8.pc)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
+	    DESTINATION usr/lib/pkgconfig/mojodb.pc)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
+	    DESTINATION usr/lib/pkgconfig/indb8.pc)
+
+
 install(DIRECTORY inc DESTINATION usr/include/mojodb)
 
 if (BUILD_TOOL_JSONOBFUSCATE)
