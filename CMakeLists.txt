@@ -141,7 +141,7 @@ configure_file(files/pkgconfig/indb8.pc.in
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
 	    DESTINATION usr/lib/pkgconfig)
 
-install(DIRECTORY inc DESTINATION usr/include/mojodb)
+install(DIRECTORY inc/ DESTINATION usr/include/mojodb)
 
 if (BUILD_TOOL_JSONOBFUSCATE)
 	message(STATUS "Build json obfuscate tool")
