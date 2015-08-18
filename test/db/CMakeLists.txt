@@ -61,7 +61,7 @@ target_link_libraries(test_db_core
                       mojodbengine
 )
 install( TARGETS test_db_core
-    RUNTIME DESTINATION usr/lib/indb8/tests
+    RUNTIME DESTINATION usr/share/indb8/tests
 )
 add_test(test_db_core test_db_core)
 
@@ -85,7 +85,7 @@ target_link_libraries(test_db_performance
                       mojodbengine
 )
 install( TARGETS test_db_performance
-    RUNTIME DESTINATION usr/lib/indb8/tests
+    RUNTIME DESTINATION usr/share/indb8/tests
 )
 
 # --------------------------------
@@ -103,5 +103,5 @@ target_link_libraries(test_db_stress
                       mojodbengine
 )
 install( TARGETS test_db_stress
-    RUNTIME DESTINATION usr/lib/indb8/tests
+    RUNTIME DESTINATION usr/share/indb8/tests
 )

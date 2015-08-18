@@ -28,7 +28,7 @@ target_link_libraries(test_dbclient
 )
 
 install( TARGETS test_dbclient
-    RUNTIME DESTINATION usr/lib/indb8/tests
+    RUNTIME DESTINATION usr/share/indb8/tests
 )
 
 add_test(test_dbclient test_dbclient)
