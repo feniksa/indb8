@@ -1,6 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (c) 2013 LG Electronics
+# Copyright (c) 2013-2015 LG Electronics
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,4 +30,4 @@ install( TARGETS test_luna_service
     RUNTIME DESTINATION usr/share/indb8/tests
 )
 
-add_test(NAME test_luna_service COMMAND test_luna_service)
+add_test(NAME "luna-service/test_luna_service" COMMAND test_luna_service)

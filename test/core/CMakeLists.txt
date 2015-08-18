@@ -44,7 +44,7 @@ foreach(test
      MojVector
 )
 
-    add_test(NAME ${test} COMMAND test_core ${test})
+    add_test(NAME "core/${test}" COMMAND test_core ${test})
     set(TEST_SOURCES ${TEST_SOURCES} ${test}Test.cpp)
 endforeach()
 
@@ -53,4 +53,4 @@ target_link_libraries(test_core mojocore)
 
 install( TARGETS test_core
     RUNTIME DESTINATION usr/share/indb8/tests
-) 
+)

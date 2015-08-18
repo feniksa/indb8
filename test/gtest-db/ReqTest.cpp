@@ -34,7 +34,7 @@ const char* const MojKindStr =
     _T("\"indexes\":[{\"name\":\"foo\",\"props\":[{\"name\":\"foo\"}]},{\"name\":\"barfoo\",\"props\":[{\"name\":\"bar\"},{\"name\":\"foo\"}]}]}");
 }
 
-struct ReqSuite : public ::testing::Test
+struct ReqTest : public ::testing::Test
 {
     MojDb db;
     std::string path;
@@ -147,7 +147,7 @@ struct ReqSuite : public ::testing::Test
     }
 };
 
-TEST_F(ReqSuite, verifySample)
+TEST_F(ReqTest, verifySample)
 {
     buildSample();
     mark1();
@@ -156,7 +156,7 @@ TEST_F(ReqSuite, verifySample)
     checkMarkWithUpdate(50ul, -2);
 }
 
-TEST_F(ReqSuite, visibility)
+TEST_F(ReqTest, visibility)
 {
     buildSample();
     mark1();
@@ -173,7 +173,7 @@ TEST_F(ReqSuite, visibility)
     checkMarkWithUpdate(50ul, -2, req);
 }
 
-TEST_F(ReqSuite, updateRollback)
+TEST_F(ReqTest, updateRollback)
 {
     buildSample();
     mark1();
@@ -194,7 +194,7 @@ TEST_F(ReqSuite, updateRollback)
     checkMarkWithUpdate(0ul, -2);
 }
 
-TEST_F(ReqSuite, deleteRollback)
+TEST_F(ReqTest, deleteRollback)
 {
     buildSample();
     mark1();
@@ -213,7 +213,7 @@ TEST_F(ReqSuite, deleteRollback)
     checkMarkWithUpdate(50ul, -1);
 }
 
-TEST_F(ReqSuite, deleteUpdateRollback)
+TEST_F(ReqTest, deleteUpdateRollback)
 {
     buildSample();
     mark1();
@@ -241,7 +241,7 @@ TEST_F(ReqSuite, deleteUpdateRollback)
     checkMarkWithUpdate(0ul, -3);
 }
 
-TEST_F(ReqSuite, originalEq)
+TEST_F(ReqTest, originalEq)
 {
     buildSample();
     mark1();
@@ -278,7 +278,7 @@ TEST_F(ReqSuite, originalEq)
 
 }
 
-TEST_F(ReqSuite, original)
+TEST_F(ReqTest, original)
 {
     buildSample();
     mark1();

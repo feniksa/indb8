@@ -50,7 +50,7 @@ foreach(test
         MojDbTxn
         MojDbCursorTxn
         )
-    add_test(NAME ${test} COMMAND test_db_core ${test})
+    add_test(NAME "db/${test}" COMMAND test_db_core ${test})
     set(DB_TEST_SOURCES ${DB_TEST_SOURCES} ${test}Test.cpp)
 endforeach()
 
@@ -63,7 +63,6 @@ target_link_libraries(test_db_core
 install( TARGETS test_db_core
     RUNTIME DESTINATION usr/share/indb8/tests
 )
-add_test(test_db_core test_db_core)
 
 # --------------------------------
 # performance test target
