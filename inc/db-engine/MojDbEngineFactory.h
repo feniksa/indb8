@@ -8,9 +8,9 @@
 
 class MojDbEngineFactory
 {
-	using FactoryType = std::vector<MojRefCountedPtr<MojDbStorageEngineFactory>>;
-
 public:
+    using FactoriesContainer = std::vector<MojRefCountedPtr<MojDbStorageEngineFactory>>;
+
 	MojDbEngineFactory();
 
 	MojErr init();
@@ -19,14 +19,14 @@ public:
 	MojErr createEnv(const MojChar* name, MojRefCountedPtr<MojDbEnv>& engineOut);
 	MojErr createEngine(const MojChar* name, MojRefCountedPtr<MojDbStorageEngine>& engineOut);
 
-	MojErr supportedEngines(const FactoryType*& factoryList) const;
+    MojErr supportedEngines(const FactoriesContainer*& factoryList) const;
 
 	MojErr addEngineFactory(MojDbStorageEngineFactory* factory);
 private:
-	MojErr getFactory(const MojChar* name, MojRefCountedPtr<MojDbStorageEngineFactory>& engineOut);
+	MojErr getFactory(const MojChar* name, MojRefCountedPtr<MojDbStorageEngineFactory>& engineOut) const;
 
 	MojRefCountedPtr<MojDbStorageEngineFactory> m_defaultFactory;
-	FactoryType m_factory;
+    FactoriesContainer m_factories;
 	bool m_init;
 
 	static MojLogger s_log;

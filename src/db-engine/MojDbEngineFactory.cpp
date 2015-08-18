@@ -12,6 +12,8 @@
 	#include "db-engine/sandwich/MojDbSandwichFactory.h"
 #endif
 
+#include <algorithm>
+
 MojLogger MojDbEngineFactory::s_log(_T("db-factory.factory"));
 
 MojDbEngineFactory::MojDbEngineFactory()
@@ -46,17 +48,21 @@ MojErr MojDbEngineFactory::init()
 	return MojErrNone;
 }
 
-MojErr MojDbEngineFactory::getFactory(const MojChar* name, MojRefCountedPtr<MojDbStorageEngineFactory>& engineOut)
+MojErr MojDbEngineFactory::getFactory(const MojChar* name, MojRefCountedPtr<MojDbStorageEngineFactory>& engineOut) const
 {
-	for (FactoryType::iterator i = m_factory.begin(); i != m_factory.end(); ++i) {
-		if (MojStrCmp(i->get()->name(), name) == 0)
-		{
-			MojLogDebug(s_log, "Found engine in factory: %s", name);
+    MojLogTrace(s_log);
+    MojAssert(name);
 
-			engineOut = *i;
-			return MojErrNone;
-		}
-	}
+    auto iter = std::find_if(m_factories.begin(), m_factories.end(), [name](const FactoriesContainer::value_type& iter) {
+        return (MojStrCmp(iter->name(), name) == 0);
+    });
+
+    if (iter != m_factories.end()) {
+        MojLogDebug(s_log, "Found engine in factory: %s", name);
+
+        engineOut = *iter;
+        return MojErrNone;
+    }
 
 	MojErrThrowMsg(MojErrDbStorageEngineNotFound, _T("Storage Factory not found: '%s'"), name);
 }
@@ -79,11 +85,11 @@ MojErr MojDbEngineFactory::createEngine(const MojChar* name, MojRefCountedPtr<Mo
 	return MojErrNone;
 }
 
-MojErr MojDbEngineFactory::supportedEngines(const FactoryType*& factoryList) const
+MojErr MojDbEngineFactory::supportedEngines(const FactoriesContainer*& factoryList) const
 {
 	MojLogTrace(s_log);
 
-	factoryList = &m_factory;
+	factoryList = &m_factories;
 	return MojErrNone;
 }
 
@@ -103,52 +109,22 @@ MojErr MojDbEngineFactory::createEnv(const MojChar* name, MojRefCountedPtr<MojDb
 	return MojErrNone;
 }
 
-#include <algorithm>
-
 MojErr MojDbEngineFactory::addEngineFactory(MojDbStorageEngineFactory* factory)
 {
 	MojLogTrace(s_log);
 	MojAssert(factory);
 
-	std::find_if(m_factory.begin(),m_factory.end(), [](FactoryType::value_type) { return true; });
+    auto iter = std::find_if(m_factories.begin(), m_factories.end(), [factory](const FactoriesContainer::value_type& iter) {
+        return (MojStrCmp(iter->name(), factory->name()) == 0);
+    });
 
-	for (FactoryType::iterator i = m_factory.begin(); i != m_factory.end(); ++i) {
-		if (MojStrCmp(i->get()->name(), factory->name()) == 0) {
-			if (i->get() != factory)
-				*i = factory;
-
-			return MojErrNone;
-		}
-	}
-
-	m_factory.push_back(factory);
+    if (iter != m_factories.end()) {
+        *iter = factory;
+        return MojErrNone;
+    } else {
+        m_factories.push_back(factory);
+        return MojErrNone;
+    }
 
 	return MojErrNone;
 }
-
-/*
-MojErr openDB(const MojChar* path, const MojChar* engineName, const MojObject* engineConf, MojDb* resultDb)
-{
-
-	MojRefCountedPtr<MojDbStorageEngine> engineOut;
-
-	if (engineName) {
-		err = MojDbEngineFactory::createEngine(engineName, engineOut);
-		MojErrCheck(err);
-	} else {
-		err = MojDbEngineFactory::createDefaultEngine(engineOut);
-		MojErrCheck(err);
-	}
-
-	MojAssert(engineOut.get());
-
-	if (engineConf) {
-		err = engineOut->configure(*engineConf);
-		MojErrCheck(err);
-	}
-
-	err = engineOut->open(path);
-	MojErrCheck(err);
-
-	return MojErrNone;
-}*/
