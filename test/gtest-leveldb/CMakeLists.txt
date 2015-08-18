@@ -39,7 +39,7 @@ target_link_libraries(gtest_leveldb
                       )
 
 install( TARGETS gtest_leveldb
-    RUNTIME DESTINATION usr/lib/indb8/tests
+    RUNTIME DESTINATION usr/share/indb8/tests
 )
 
 add_test(NAME gtest_leveldb COMMAND gtest_leveldb)

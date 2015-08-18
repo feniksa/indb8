@@ -22,12 +22,16 @@ project(INDB8 CXX)
 
 # Build options
 option(BUILD_LS2             "Build Mojo Luna interface" ON )
-option(TESTS                 "Build tests"               ON )
+option(BUILD_TESTING         "Build tests"               ON )
+option(BUILD_TOOL_JSONOBFUSCATE "Build obfuscate tool"   OFF)
 option(BUILD_ENGINE_SANDWICH "Build sandwich engine"     ON )
 option(BUILD_ENGINE_LEVELDB  "Build leveldb  engine"     OFF)
 option(BUILD_ENGINE_BERKELEY "Build berkeley engine"     OFF)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 include(FindPkgConfig)
+include(InstallLS2)
 
 add_definitions(-std=c++11 -Wall -fPIC -Wconversion -frename-registers -DMOJ_LINUX -fno-strict-aliasing -DMOJ_INTERNAL -D_REENTRANT)
 
@@ -96,26 +100,6 @@ add_subdirectory(src/core)
 add_subdirectory(src/db)
 add_subdirectory(src/db-engine)
 
-function(install_ls2_roles path role)
-	file(GLOB files "${path}/*.json.${role}.in")
-	foreach(file ${files})
-		get_filename_component(filename ${file} NAME)
-		string(REGEX REPLACE ".${role}.in" "" dst_filename ${filename})
-		configure_file(${file} "files/sysbus/${role}/${dst_filename}")
-		install(FILES "${CMAKE_CURRENT_BINARY_DIR}/files/sysbus/${role}/${dst_filename}" DESTINATION "usr/share/ls2/roles/${role}")
-	endforeach()
-endfunction()
-
-function(install_ls2_service path role)
-	file(GLOB files "${path}/*.service.${role}.in")
-	foreach(file ${files})
-		get_filename_component(filename ${file} NAME)
-		string(REGEX REPLACE ".${role}.in" "" dst_filename ${filename})
-		configure_file(${file} "files/sysbus/${role}/${dst_filename}")
-		install(FILES "${CMAKE_CURRENT_BINARY_DIR}/files/sysbus/${role}/${dst_filename}" DESTINATION "usr/share/dbus-1/system-services")
-	endforeach()
-endfunction()
-
 if (BUILD_LS2)
 	add_subdirectory(src/luna)
 	add_subdirectory(src/db-luna)
@@ -131,7 +115,11 @@ if (BUILD_TESTING)
 
 	add_subdirectory(test/core)
 	add_subdirectory(test/db)
-	add_subdirectory(test/dbclient)
+	add_subdirectory(test/gtest-core)
+	add_subdirectory(test/gtest-db)
+	if (WEBOS_ENGINE_LEVELDB)
+		add_subdirectory(test/gtest-leveldb)
+	endif ()
 	if (BUILD_LS2)
 		add_subdirectory(test/luna-service)
 
@@ -139,16 +127,23 @@ if (BUILD_TESTING)
 		install_ls2_roles("test/files/sysbus" "pub")
 		install_ls2_service("test/files/sysbus" "prv")
 		install_ls2_service("test/files/sysbus" "pub")
-	endif()
 
-	add_subdirectory(test/gtest-core)
-	add_subdirectory(test/gtest-db)
-	if (WEBOS_ENGINE_LEVELDB)
-		add_subdirectory(test/gtest-leveldb)
-	endif ()
+		add_subdirectory(test/dbclient)
+	endif()
 endif()
 
 install(FILES files/conf/maindb.conf DESTINATION etc/indb8)
 install(FILES files/conf/tempdb.conf DESTINATION etc/indb8)
 
-install(DIRECTORY inc DESTINATION usr/include/mojodb)
+configure_file(files/pkgconfig/indb8.pc.in
+	${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
+	    DESTINATION usr/lib/pkgconfig)
+
+install(DIRECTORY inc/ DESTINATION usr/include/mojodb)
+
+if (BUILD_TOOL_JSONOBFUSCATE)
+	message(STATUS "Build json obfuscate tool")
+	add_subdirectory(tool/JsonObfuscator)
+endif()

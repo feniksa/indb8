@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@
 * LICENSE@@@ */
 
 
-#ifndef MOJDBISAMQUERY_H_
-#define MOJDBISAMQUERY_H_
+#pragma once
 
 #include "db/MojDbDefs.h"
 #include "db/MojDbObjectItem.h"
@@ -31,12 +30,12 @@ public:
 	typedef MojVector<MojString> StringVec;
 
 	virtual ~MojDbIsamQuery();
-	virtual MojErr close();
-	virtual MojErr get(MojDbStorageItem*& itemOut, bool& foundOut);
-	virtual MojErr getId(MojObject& idOut, MojUInt32& groupOut, bool& foundOut);
-	virtual MojErr count(MojUInt32& countOut);
-	virtual MojErr nextPage(MojDbQuery::Page& pageOut);
-	virtual MojUInt32 groupCount() const;
+	MojErr close() override;
+	MojErr get(MojDbStorageItem*& itemOut, bool& foundOut) override;
+	MojErr getId(MojObject& idOut, MojUInt32& groupOut, bool& foundOut) override;
+	MojErr count(MojUInt32& countOut) override;
+	MojErr nextPage(MojDbQuery::Page& pageOut) override;
+	MojUInt32 groupCount() const override;
 
 
 protected:
@@ -79,8 +78,5 @@ protected:
 	MojAutoPtr<MojDbQueryPlan> m_plan;
     MojString m_distinct;
     MojRefCountedPtr<MojDbObjectItem> m_lastItem;
-    bool m_ignoreInactiveShards;
-
 };
 
-#endif /* MOJDBISAMQUERY_H_ */

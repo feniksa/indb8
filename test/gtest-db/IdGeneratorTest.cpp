@@ -65,28 +65,3 @@ struct IdGeneratorTest : public ::testing::Test
         MojAssertNoErr( idObj.stringValue(id) );
     }
 };
-
-/**
- * @test Test generation of short _id when shard genId is set to main shard or
- * omitted In this case length should be ceil(64/8 * 4/3) = 11
- */
-TEST_F(IdGeneratorTest, shortId_length)
-{
-    MojString x;
-
-    genId(x);
-    EXPECT_EQ( ShortIdChars, x.length() );
-}
-
-/**
- * @test Test generation of short _id when shard genId is not a main shard In this
- * case length should be ceil((32+64)/8 * 4/3) = 16
- */
-TEST_F(IdGeneratorTest, longId_length)
-{
-    MojString x;
-
-    genId(x);
-    EXPECT_EQ( LongIdChars, x.length() );
-    printf(">> %s\n", x.begin());
-}

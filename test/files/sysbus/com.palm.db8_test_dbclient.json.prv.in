@@ -1,6 +1,6 @@
 {
     "role": {
-        "exeName":"/usr/lib/db8/tests/test_dbclient",
+        "exeName":"/usr/share/db8/tests/test_dbclient",
         "type": "regular",
         "allowedNames": ["mojodbclient-test"]
     },

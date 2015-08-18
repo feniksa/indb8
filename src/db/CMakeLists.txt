@@ -12,10 +12,12 @@ set(MOJ_DB_SOURCES
     MojDbKindEngine.cpp
     MojDbKindIdList.cpp
     MojDbKindState.cpp
+    MojDbMultiExtractor.cpp
     MojDbObjectHeader.cpp
     MojDbObjectItem.cpp
     MojDbPermissionEngine.cpp
     MojDbPutHandler.cpp
+    MojDbPropExtractor.cpp
     MojDbQuery.cpp
     MojDbQueryFilter.cpp
     MojDbQueryParser.cpp

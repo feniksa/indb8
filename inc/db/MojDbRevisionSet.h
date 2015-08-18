@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ class MojDbRevisionSet : public MojRefCounted
 {
 public:
 	static const MojChar* const PropsKey;  // props
-	static const MojChar* const NameKey;  // name
+	static const MojChar* const NameKey;   // name
 
 	MojDbRevisionSet();
 
@@ -38,8 +38,8 @@ public:
 	MojErr update(MojObject* newObj, const MojObject* oldObj) const;
 
 private:
-	typedef MojSet<MojDbKey> KeySet;
-	typedef MojVector<MojRefCountedPtr<MojDbPropExtractor> > PropVec;
+	using KeySet = MojSet<MojDbKey>;
+	using PropVec = MojVector<MojRefCountedPtr<MojDbPropExtractor>>;
 
 	MojErr diff(MojObject& newObj, const MojObject& oldObj) const;
 	MojErr updateRev(MojObject& obj) const;

@@ -20,19 +20,21 @@
 project(gtest_core CXX)
 
 add_definitions(-Wall -std=c++0x -Wno-deprecated -pthread)
+add_definitions(-DDEFAULT_SETTINGS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/defaultSettingsObfuscated.json")
 
 add_executable(gtest_core
                Runner.cpp
                AtomicIntTest.cpp
                DecimalTest.cpp
                NumberTest.cpp
+               MojJsonTest.cpp
                )
 
 target_link_libraries(gtest_core mojocore)
 
 target_link_libraries(gtest_core gtest gtest_main)
 install( TARGETS gtest_core
-    RUNTIME DESTINATION usr/lib/indb8/tests
+    RUNTIME DESTINATION usr/share/indb8/tests
 )
 
 add_test(NAME gtest_core COMMAND gtest_core)

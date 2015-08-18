@@ -19,6 +19,7 @@
 
 #include "db-engine/berkeley/MojDbBerkeleyFactory.h"
 #include "db-engine/berkeley/MojDbBerkeleyEngine.h"
+#include "db-engine/berkeley/MojDbBerkeleyEnv.h"
 
 MojErr MojDbBerkeleyFactory::create(MojRefCountedPtr<MojDbStorageEngine>& engineOut) const
 {

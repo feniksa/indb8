@@ -17,5 +17,5 @@
 # LICENSE@@@
 [D-BUS Service]
 Name=com.palm.mojlstest
-Exec=/usr/lib/indb8/tests/test_luna_service
+Exec=/usr/share/indb8/tests/test_luna_service
 Type=static

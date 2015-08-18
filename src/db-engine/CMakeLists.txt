@@ -15,7 +15,15 @@ if (BUILD_ENGINE_BERKELEY)
 
 	set(DB_BACKEND_WRAPPER_SOURCES
 		${DB_BACKEND_WRAPPER_SOURCES}
+		berkeley/MojDbBerkeleyCursor.cpp
+		berkeley/MojDbBerkeleyDatabase.cpp
+		berkeley/MojDbBerkeleyDefs.cpp
 		berkeley/MojDbBerkeleyEngine.cpp
+		berkeley/MojDbBerkeleyEnv.cpp
+		berkeley/MojDbBerkeleyIndex.cpp
+		berkeley/MojDbBerkeleyItem.cpp
+		berkeley/MojDbBerkeleySeq.cpp
+		berkeley/MojDbBerkeleyTxn.cpp
 		berkeley/MojDbBerkeleyFactory.cpp
 		berkeley/MojDbBerkeleyQuery.cpp
 	)

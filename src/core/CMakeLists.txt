@@ -9,6 +9,8 @@ set (MOJ_CORE_SOURCES
     MojGmainReactor.cpp
     MojHashBase.cpp
     MojJson.cpp
+    MojJsonParser.cpp
+    MojJsonWriter.cpp
     MojList.cpp
     MojLog.cpp
     MojLogEngine.cpp

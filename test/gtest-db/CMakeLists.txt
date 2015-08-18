@@ -1,6 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (c) 2013 LG Electronics, Inc.
+# Copyright (c) 2013-2015 LG Electronics, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ add_definitions(-Wall -ansi -Wno-deprecated -pthread --std=c++0x)
 add_executable(gtest_db
 			   BatchTest.cpp
                Runner.cpp
-               JsonTest.cpp
                DumpLoadTest.cpp
                ReqTest.cpp
                QuotaTest.cpp
@@ -45,8 +44,8 @@ target_link_libraries(gtest_db
                       gtest_main
                      )
 install( TARGETS gtest_db
-    RUNTIME DESTINATION usr/lib/indb8/tests
+    RUNTIME DESTINATION usr/share/indb8/tests
 )
-                     
+
 add_test(NAME gtest_db COMMAND gtest_db)
 
