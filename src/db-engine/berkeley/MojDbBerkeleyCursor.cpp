@@ -3,6 +3,7 @@
 #include "db-engine/berkeley/MojDbBerkeleyTxn.h"
 #include "db-engine/berkeley/MojDbBerkeleyEnv.h"
 #include "db-engine/berkeley/MojDbBerkeleyItem.h"
+#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
 
 MojDbBerkeleyCursor::MojDbBerkeleyCursor()
 : m_dbc(NULL),
