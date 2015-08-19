@@ -51,24 +51,20 @@ static const MojChar* const TestKind3Str =
     _T ( "\"indexes\":[{\"name\":\"idxtest3\",\"props\":[{\"name\":\"data1\"}]} ]}" );
 
 MojDbCursorTxnTest::MojDbCursorTxnTest()
-    : MojTestCase ( _T ( "MojDbCursorTxnTest" ) )
+: MojDbTestEnv(_T("MojDbCursorTxnTest"))
 {
 }
 
 MojErr MojDbCursorTxnTest::run()
 {
-#ifdef MOJ_USE_BDB
-    MojDbStorageEngine::setEngineFactory ( new MojDbBerkeleyFactory );
-#elif MOJ_USE_LDB
-    MojDbStorageEngine::setEngineFactory ( new MojDbLevelFactory );
-#elif MOJ_USE_SANDWICH
-	MojDbStorageEngine::setEngineFactory ( new MojDbSandwichFactory );
-#else
-#error "Not defined engine type"
-#endif
+	MojErr err;
     MojDb db;
+
+	err = MojDbTestEnv::run();
+	MojTestErrCheck ( err );
+
     // open
-    MojErr err = db.open ( MojDbTestDir );
+    err = db.open(MojDbTestDir, env());
     MojTestErrCheck ( err );
 
     err = _execDbAndTxn ( db );

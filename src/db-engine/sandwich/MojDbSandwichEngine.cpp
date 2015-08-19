@@ -60,10 +60,11 @@ MojDbSandwichEngine::MojDbSandwichEngine()
 }
 
 MojDbSandwichEngine::MojDbSandwichEngine(MojRefCountedPtr<MojDbSandwichEnv>& env)
-: m_isOpen(false),
-  m_lazySync(false),
-  m_updater(NULL),
-  m_env(env)
+:m_env(env),
+ m_isOpen(false),
+ m_lazySync(false),
+ m_updater(NULL)
+
 {
 	m_updater = new MojDbSandwichLazyUpdater;
 }
@@ -139,70 +140,57 @@ MojErr MojDbSandwichEngine::drop(const MojChar* path, MojDbStorageTxn* txn)
 MojErr MojDbSandwichEngine::open(const MojChar* path)
 {
     MojAssert(path);
-    MojAssert(!m_env.get() && !m_isOpen);
+    MojAssert(m_env.get());
+	MojAssert(!m_isOpen);
 
-    // this is more like a placeholder
-    MojRefCountedPtr<MojDbSandwichEnv> env(new MojDbSandwichEnv);
-    MojAllocCheck(env.get());
-    MojErr err = env->open(path);
-    MojErrCheck(err);
-    err = open(path, env.get());
-    MojErrCheck(err);
-    err = m_path.assign(path);
-    MojErrCheck(err);
+	MojErr err;
 
-    if (lazySync())
-        m_updater->start();
+	err = m_path.assign(path);
+	MojErrCheck(err);
+
+	// TODO: We should get this options from ENV
+	m_db->options = MojDbSandwichEngine::getOpenOptions();
+	m_db->writeOptions = MojDbSandwichEngine::getWriteOptions();
+	m_db->readOptions = MojDbSandwichEngine::getReadOptions();
+
+	leveldb::Status status = m_db->Open(path);
+	MojLdbErrCheck(status, _T("db_create/db_open"));
+
+	// open seqence db
+	m_seqDb.reset(new MojDbSandwichDatabase(m_db.use(MojEnvSeqDbName)));
+	MojAllocCheck(m_seqDb.get());
+
+	err = m_seqDb->open(MojEnvSeqDbName, this);
+	MojErrCheck(err);
+
+	// open index db
+	m_indexDb.reset(new MojDbSandwichDatabase(m_db.use(MojEnvIndexDbName)));
+	MojAllocCheck(m_indexDb.get());
+
+	err = m_indexDb->open(MojEnvIndexDbName, this);
+	MojErrCheck(err);
+
+	m_isOpen = true;
+
+	if (lazySync())
+		m_updater->start();
 
     return MojErrNone;
 }
 
 MojErr MojDbSandwichEngine::open(const MojChar* path, MojDbEnv* env)
 {
+	MojAssert(env);
+
+	MojErr err;
+
     MojDbSandwichEnv* bEnv = static_cast<MojDbSandwichEnv *> (env);
     MojAssert(bEnv);
-    MojAssert(!m_env.get() && !m_isOpen);
 
     m_env.reset(bEnv);
-    if (path) {
-        MojErr err = m_path.assign(path);
-        MojErrCheck(err);
-        // create dir
-        err = MojCreateDirIfNotPresent(path);
-        MojErrCheck(err);
-    }
 
-    // TODO: We should get this options from ENV
-    m_db->options = MojDbSandwichEngine::getOpenOptions();
-    m_db->writeOptions = MojDbSandwichEngine::getWriteOptions();
-    m_db->readOptions = MojDbSandwichEngine::getReadOptions();
-    leveldb::Status status = m_db->Open(path);
-
-    if (status.IsCorruption()) {    // database corrupted
-        // try restore database
-        // AHTUNG! After restore database can lost some data!
-        status = leveldb::RepairDB(path, MojDbSandwichEngine::getOpenOptions());
-        MojLdbErrCheck(status, _T("db corrupted"));
-        status = m_db->Open(path);  // database restored, re-open
-    }
-
-    MojLdbErrCheck(status, _T("db_create/db_open"));
-
-    // open seqence db
-    m_seqDb.reset(new MojDbSandwichDatabase(m_db.use(MojEnvSeqDbName)));
-    MojAllocCheck(m_seqDb.get());
-    MojErr err = m_seqDb->open(MojEnvSeqDbName, this);
-    MojErrCheck(err);
-
-    // open index db
-    m_indexDb.reset(new MojDbSandwichDatabase(m_db.use(MojEnvIndexDbName)));
-    MojAllocCheck(m_indexDb.get());
-    err = m_indexDb->open(MojEnvIndexDbName, this);
-    MojErrCheck(err);
-    m_isOpen = true;
-
-    if (lazySync())
-        m_updater->start();
+	err = open(path);
+	MojErrCheck(err);
 
     return MojErrNone;
 }

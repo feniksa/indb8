@@ -16,7 +16,7 @@
 #
 # LICENSE@@@
 
-include_directories(${CMAKE_SOURCE_DIR}/inc)
+include_directories(${CMAKE_SOURCE_DIR}/inc ${CMAKE_SOURCE_DIR}/test)
 
 # --------------------------------
 # dbcore target
@@ -56,9 +56,7 @@ endforeach()
 
 add_executable(test_db_core ${DB_TEST_SOURCES})
 target_link_libraries(test_db_core
-                      mojocore
-                      mojodb
-                      mojodbengine
+                      mojotest
 )
 install( TARGETS test_db_core
     RUNTIME DESTINATION usr/share/indb8/tests

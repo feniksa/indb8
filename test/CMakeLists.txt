@@ -16,5 +16,7 @@ if (BUILD_LS2)
 	install_ls2_roles("files/sysbus" "pub")
 	install_ls2_service("files/sysbus" "prv")
 	install_ls2_service("files/sysbus" "pub")
-
 endif()
+
+add_library(mojotest MojDbTestEnv.cpp)
+target_link_libraries(mojotest mojocore mojodb mojodbengine)

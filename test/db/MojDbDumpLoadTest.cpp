@@ -38,16 +38,20 @@ static const MojChar* const MojTestStr =
 	_T("{\"_kind\":\"LoadTest:1\",\"foo\":\"hello\",\"bar\":\"world\"}");
 
 MojDbDumpLoadTest::MojDbDumpLoadTest()
-: MojTestCase(_T("MojDbDumpLoad"))
+: MojDbTestEnv(_T("MojDbDumpLoad"))
 {
 }
 
 MojErr MojDbDumpLoadTest::run()
 {
+	MojErr err;
 	MojDb db;
 
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
 	// open
-	MojErr err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// load

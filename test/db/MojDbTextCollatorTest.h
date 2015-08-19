@@ -21,8 +21,9 @@
 #define MOJDBTEXTCOLLATORTEST_H_
 
 #include "MojDbTestRunner.h"
+#include "MojDbTestEnv.h"
 
-class MojDbTextCollatorTest : public MojTestCase
+class MojDbTextCollatorTest : public MojDbTestEnv
 {
 public:
 	MojDbTextCollatorTest();

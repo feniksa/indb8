@@ -1,7 +1,7 @@
 /****************************************************************
  * @@@LICENSE
  *
- * Copyright (c) 2013 LG Electronics, Inc.
+ * Copyright (c) 2013-2015 LG Electronics, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +25,8 @@
 
 #include "db/MojDb.h"
 
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else
-#error "Specify database engine"
-#endif
-#include "MojDbTestStorageEngine.h"
-
 #include "MojDbCoreTest.h"
+#include "MojDbTestStorageEngine.h"
 
 namespace {
     const MojChar* const MojTestKind1Str1 =
@@ -104,6 +94,10 @@ struct QuotaTest : public MojDbCoreTest
         MojAssertNoErr( obj.fromJson(MojTestKind1Str1) );
         MojAssertNoErr( db.putKind(obj) );
     }
+
+    void TearDown() {
+		MojDbCoreTest::TearDown();
+	}
 
     void put(MojDb& db, const MojChar* objJson)
     {
@@ -388,13 +382,9 @@ TEST_F(QuotaTest, error)
     MojAssertNoErr( obj.fromJson(_T("{\"owner\":\"com.foo.*\",\"size\":1000}")) );
     MojExpectNoErr( db.putQuotas(&obj, &obj + 1) );
 
-#ifdef MOJ_USE_BDB
-    MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbBerkeleyEngine());
-#elif MOJ_USE_LDB
-    MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbLevelEngine());
-#elif MOJ_USE_SANDWICH
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbSandwichEngine());
-#endif
+	MojRefCountedPtr<MojDbStorageEngine> engine;
+	MojAssertNoErr(env->openStorage(engine));
+
     EXPECT_TRUE( engine.get() ) << "Engine should be created successfully";
     MojRefCountedPtr<MojDbTestStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
     EXPECT_TRUE( testEngine.get() ) << "TestEngine should be created successfully";

@@ -69,14 +69,19 @@ static const MojChar* const MojSearchTestObjects2[] = {
 
 
 MojDbSearchTest::MojDbSearchTest()
-: MojTestCase(_T("MojDbSearch"))
+: MojDbTestEnv(_T("MojDbSearch"))
 {
 }
 
 MojErr MojDbSearchTest::run()
 {
+	MojErr err;
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// add kind

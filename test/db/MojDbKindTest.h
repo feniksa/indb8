@@ -21,8 +21,9 @@
 #define MOJDBKINDTEST_H_
 
 #include "MojDbTestRunner.h"
+#include "MojDbTestEnv.h"
 
-class MojDbKindTest : public MojTestCase
+class MojDbKindTest : public MojDbTestEnv
 {
 public:
 	MojDbKindTest();

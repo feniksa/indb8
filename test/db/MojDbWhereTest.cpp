@@ -37,17 +37,21 @@ static const MojChar* const TestJson3 =
 	_T("{\"_kind\":\"Test:1\",\"data1\":3000,\"data2\":3100,\"data3\":3200}");
 
 MojDbWhereTest::MojDbWhereTest()
-: MojTestCase(_T("MojDbWhere"))
+: MojDbTestEnv(_T("MojDbWhere"))
 {
 }
 
 MojErr MojDbWhereTest::run()
 {
+	MojErr err;
 	MojByte success = 1;
 	MojDb db;
 
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
 	// open
-	MojErr err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// add type

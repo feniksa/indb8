@@ -21,15 +21,6 @@
 #include "db/MojDb.h"
 #include "db/MojDbKind.h"
 #include "db/MojDbReq.h"
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else
-#error "Specify database engine"
-#endif
 
 #include "MojDbTestStorageEngine.h"
 #include "db/MojDbServiceDefs.h"
@@ -160,13 +151,18 @@ static const MojChar* const MojTestKindIndexNameInvalidChars =
 	_T("\"indexes\":[{\"name\":\"123*abc\",\"props\":[{\"name\":\"_id\"}],\"incDel\":true}]}");
 
 MojDbKindTest::MojDbKindTest()
-: MojTestCase(_T("MojDbKind"))
+: MojDbTestEnv(_T("MojDbKind"))
 {
 }
 
 MojErr MojDbKindTest::run()
 {
-	MojErr err = testIds();
+	MojErr err;
+
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
+	err = testIds();
 	MojTestErrCheck(err);
 	err = testUpdate();
 	MojTestErrCheck(err);
@@ -225,7 +221,7 @@ MojErr MojDbKindTest::testIds()
 MojErr MojDbKindTest::testUpdate()
 {
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+	MojErr err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// put obj w/o kind
@@ -398,7 +394,7 @@ MojErr MojDbKindTest::testUpdate()
 MojErr MojDbKindTest::testUpdateWithObjects()
 {
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+ 	MojErr err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// put kind
@@ -641,20 +637,16 @@ MojErr MojDbKindTest::testPermissions()
 
 MojErr MojDbKindTest::testPutKind()
 {
+	MojErr err;
+
 	//setup the test storage engine
-#ifdef MOJ_USE_BDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbBerkeleyEngine());
-#elif MOJ_USE_LDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbLevelEngine());
-#elif MOJ_USE_SANDWICH
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbSandwichEngine());
-#else
     MojRefCountedPtr<MojDbStorageEngine> engine;
-#endif
+	err = env()->openStorage(engine);
+
 	MojAllocCheck(engine.get());
 	MojRefCountedPtr<MojDbStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
 	MojAllocCheck(testEngine.get());
-	MojErr err = testEngine->open(MojDbTestDir);
+	err = testEngine->open(MojDbTestDir);
 	MojTestErrCheck(err);
 
 	MojDb db;
@@ -759,21 +751,17 @@ MojErr MojDbKindTest::testPutKind()
 
 MojErr MojDbKindTest::testDelKind()
 {
+	MojErr err;
+
 	//setup the test storage engine
-#ifdef MOJ_USE_BDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbBerkeleyEngine());
-#elif MOJ_USE_LDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbLevelEngine());
-#elif MOJ_USE_SANDWICH
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbSandwichEngine());
-#else
-    MojRefCountedPtr<MojDbStorageEngine> engine;
-#endif
+	MojRefCountedPtr<MojDbStorageEngine> engine;
+	err = env()->openStorage(engine);
+
 	MojAllocCheck(engine.get());
 	MojRefCountedPtr<MojDbStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
 	MojAllocCheck(testEngine.get());
-	MojErr err = testEngine->open(MojDbTestDir);
-	MojErrCheck(err);
+	err = testEngine->open(MojDbTestDir);
+	MojTestErrCheck(err);
 
 	MojDb db;
 	err = db.open(MojDbTestDir, testEngine.get());
@@ -910,7 +898,7 @@ MojErr MojDbKindTest::testDelKind()
 MojErr MojDbKindTest::testReparent()
 {
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+ 	MojErr err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// create Kind1 with index on foo
@@ -1388,7 +1376,7 @@ MojErr MojDbKindTest::testPutBuiltInKinds()
 
 	err = db.configure(conf);
 	MojTestErrCheck(err);
-	err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	MojDbReq contactInfo(false);
@@ -1456,7 +1444,7 @@ MojErr MojDbKindTest::testPutBuiltInKinds()
 MojErr MojDbKindTest::testInvalidKinds()
 {
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+	MojErr err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// put kind
@@ -1528,7 +1516,7 @@ MojErr MojDbKindTest::testObjectPermissions()
 
 	err = db.configure(conf);
 	MojTestErrCheck(err);
-	err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// del everything so we start fresh

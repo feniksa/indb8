@@ -48,15 +48,19 @@ static const MojChar* const MojDistinctTestObjects[] = {
 };
 
 MojDbDistinctTest::MojDbDistinctTest()
-: MojTestCase(_T("MojDbDistinct"))
+: MojDbTestEnv(_T("MojDbDistinct"))
 {
 }
 
 MojErr MojDbDistinctTest::run()
 {
-	// TODO : description, youngseung.ji
+	MojErr err;
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// add kind

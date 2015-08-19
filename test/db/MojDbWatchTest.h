@@ -21,8 +21,9 @@
 #define MOJDBWATCHTEST_H_
 
 #include "MojDbTestRunner.h"
+#include "MojDbTestEnv.h"
 
-class MojDbWatchTest : public MojTestCase
+class MojDbWatchTest : public MojDbTestEnv
 {
 public:
 	MojDbWatchTest();

@@ -21,8 +21,9 @@
 #define MOJDBQUOTATEST_H_
 
 #include "MojDbTestRunner.h"
+#include "MojDbTestEnv.h"
 
-class MojDbQuotaTest : public MojTestCase
+class MojDbQuotaTest : public MojDbTestEnv
 {
 public:
 	MojDbQuotaTest();

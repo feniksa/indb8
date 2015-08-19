@@ -27,8 +27,9 @@
 #define MOJDBBULKTEST_H_
 
 #include "MojDbTestRunner.h"
+#include "MojDbTestEnv.h"
 
-class MojDbBulkTest : public MojTestCase
+class MojDbBulkTest : public MojDbTestEnv
 {
 public:
 	MojDbBulkTest();

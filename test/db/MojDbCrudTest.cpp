@@ -46,16 +46,19 @@ static const MojChar* const MojKindStrArrayDefaults =
 	_T("\"\\u00d4\\u001d\\u008c\\u00d9\\u008f\\u0000\\u00b2\\u0004\\u00e9\\u0080\t\\u0098\\u00ec\\u00f8B~\",\"type\":\"PhoneNumber\"}]}");*/
 
 MojDbCrudTest::MojDbCrudTest()
-: MojTestCase(_T("MojDbCrud"))
+: MojDbTestEnv(_T("MojDbCrud"))
 {
 }
 
 MojErr MojDbCrudTest::run()
 {
+	MojErr err;
 	MojDb db;
 
-	// open
-	MojErr err = db.open(MojDbTestDir);
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 	// add type
 	MojObject obj;
@@ -106,8 +109,8 @@ MojErr MojDbCrudTest::lockTest()
 {
 	MojDb db;
 
-	MojErr err = db.open(MojDbTestDir);
-	MojTestErrExpected(err, MojErrLocked);
+	MojErr err = db.open(MojDbTestDir, env());
+	MojTestErrExpected(err, MojErrDbIO);
 
 	return MojErrNone;
 }
@@ -941,7 +944,7 @@ MojErr MojDbCrudTest::persistenceTest()
 {
 	// open
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+	MojErr err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 	// add type
 	MojObject kind;
@@ -963,7 +966,7 @@ MojErr MojDbCrudTest::persistenceTest()
 	// reopen
 	err = db.close();
 	MojTestErrCheck(err);
-	err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 	// get
 	MojObject obj2;
@@ -1108,7 +1111,7 @@ MojErr MojDbCrudTest::largeObjectTest(MojDb& db)
 	err = db.close();
 	MojTestErrCheck(err);
 
-	err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	err = obj.putString(_T("test"), _T("val"));

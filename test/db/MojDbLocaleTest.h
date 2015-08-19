@@ -21,8 +21,9 @@
 #define MOJDBLOCALETEST_H_
 
 #include "MojDbTestRunner.h"
+#include "MojDbTestEnv.h"
 
-class MojDbLocaleTest : public MojTestCase
+class MojDbLocaleTest : public MojDbTestEnv
 {
 public:
 	MojDbLocaleTest();

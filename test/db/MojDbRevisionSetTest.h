@@ -21,8 +21,9 @@
 #define MOJDBREVISIONSETTEST_H_
 
 #include "MojDbTestRunner.h"
+#include "MojDbTestEnv.h"
 
-class MojDbRevisionSetTest : public MojTestCase
+class MojDbRevisionSetTest : public MojDbTestEnv
 {
 public:
 	MojDbRevisionSetTest();

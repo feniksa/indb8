@@ -84,7 +84,7 @@ static const MojChar* MojTestKind3Objects[] = {
 };
 
 MojDbQuotaTest::MojDbQuotaTest()
-: MojTestCase(_T("MojDbQuota"))
+: MojDbTestEnv(_T("MojDbQuota"))
 {
 }
 
@@ -95,8 +95,13 @@ void MojDbQuotaTest::cleanup()
 
 MojErr MojDbQuotaTest::run()
 {
+	MojErr err;
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 	MojObject obj;
 	err = obj.fromJson(MojTestKind1Str1);
@@ -362,19 +367,16 @@ MojErr MojDbQuotaTest::testEnforce(MojDb& db)
 
 MojErr MojDbQuotaTest::testErrors()
 {
-#ifdef MOJ_USE_BDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbBerkeleyEngine());
-#elif MOJ_USE_LDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbLevelEngine());
-#elif MOJ_USE_SANDWICH
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbSandwichEngine());
-#else
+	MojErr err;
     MojRefCountedPtr<MojDbStorageEngine> engine;
-#endif
+
+	err = env()->openStorage(engine);
+	MojTestErrCheck(err);
+
 	MojAllocCheck(engine.get());
 	MojRefCountedPtr<MojDbTestStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
 	MojAllocCheck(testEngine.get());
-	MojErr err = testEngine->open(MojDbTestDir);
+	err = testEngine->open(MojDbTestDir);
 	MojTestErrCheck(err);
 
 	MojDb db;

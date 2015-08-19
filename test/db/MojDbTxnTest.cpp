@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2013 LG Electronics, Inc.
+*      Copyright (c) 2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -29,16 +29,20 @@ const char* const MojKindStr =
 
 
 MojDbTxnTest::MojDbTxnTest()
-: MojTestCase(_T("MojDbTxn"))
+: MojDbTestEnv(_T("MojDbTxn"))
 {
 }
 
 MojErr MojDbTxnTest::run()
 {
+	MojErr err;
     MojDb db;
 
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
     // open
-    MojErr err = db.open(MojDbTestDir);
+    err = db.open(MojDbTestDir, env());
     MojTestErrCheck(err);
 
     // add type

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -47,14 +47,19 @@ public:
 int TestWatcher::s_instanceCount = 0;
 
 MojDbWatchTest::MojDbWatchTest()
-: MojTestCase(_T("MojDbWatch"))
+: MojDbTestEnv(_T("MojDbWatch"))
 {
 }
 
 MojErr MojDbWatchTest::run()
 {
+	MojErr err;
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 	MojObject type;
 	err = type.fromJson(MojKindStr);

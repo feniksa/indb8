@@ -27,8 +27,9 @@
 #define MOJDBCONCURRENCYTEST_H_
 
 #include "MojDbTestRunner.h"
+#include "MojDbTestEnv.h"
 
-class MojDbConcurrencyTest : public MojTestCase
+class MojDbConcurrencyTest : public MojDbTestEnv
 {
 public:
 	MojDbConcurrencyTest();

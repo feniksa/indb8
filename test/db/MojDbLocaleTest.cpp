@@ -19,15 +19,6 @@
 
 #include "MojDbLocaleTest.h"
 #include "db/MojDb.h"
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else
-#error "Specify database engine"
-#endif
 #include "MojDbTestStorageEngine.h"
 
 static const MojChar* const MojTestKindStr =
@@ -44,14 +35,19 @@ static const MojChar* MojTestObjects[] = {
 };
 
 MojDbLocaleTest::MojDbLocaleTest()
-: MojTestCase(_T("MojDbLocale"))
+: MojDbTestEnv(_T("MojDbLocale"))
 {
 }
 
 MojErr MojDbLocaleTest::run()
 {
+	MojErr err;
+
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// put kind
@@ -93,15 +89,11 @@ MojErr MojDbLocaleTest::run()
 	// close and reopen with test engine
 	err = db.close();
 	MojTestErrCheck(err);
-#ifdef MOJ_USE_BDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbBerkeleyEngine());
-#elif MOJ_USE_LDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbLevelEngine());
-#elif MOJ_USE_SANDWICH
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbSandwichEngine());
-#else
-#error No engine
-#endif
+
+	//setup the test storage engine
+	MojRefCountedPtr<MojDbStorageEngine> engine;
+	err = env()->openStorage(engine);
+
 	MojAllocCheck(engine.get());
 	MojRefCountedPtr<MojDbTestStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
 	MojAllocCheck(testEngine.get());

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -34,14 +34,19 @@ static const MojChar* const MojTestObjStr5 =
 	_T("{\"_kind\":\"RevTest:1\",\"_del\":false}");
 
 MojDbRevTest::MojDbRevTest()
-: MojTestCase(_T("MojDbRev"))
+: MojDbTestEnv(_T("MojDbRev"))
 {
 }
 
 MojErr MojDbRevTest::run()
 {
+	MojErr err;
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// put type

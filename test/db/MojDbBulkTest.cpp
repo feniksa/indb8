@@ -32,7 +32,7 @@ static const MojChar* const MojKindStr =
 	_T("\"indexes\":[{\"name\":\"foo\",\"props\":[{\"name\":\"foo\"}]},{\"name\":\"barfoo\",\"props\":[{\"name\":\"bar\"},{\"name\":\"foo\"}]}]}");
 
 MojDbBulkTest::MojDbBulkTest()
-: MojTestCase(_T("MojDbBulk"))
+: MojDbTestEnv(_T("MojDbBulk"))
 {
 }
 
@@ -54,10 +54,15 @@ MojDbBulkTest::MojDbBulkTest()
 **/
 MojErr MojDbBulkTest::run()
 {
+	MojErr err;
+
 	MojDb db;
 
+	err = MojDbTestEnv::run();
+	MojTestErrCheck(err);
+
 	// open
-	MojErr err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 	// add type
 	MojObject obj;
