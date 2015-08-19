@@ -37,7 +37,7 @@ foreach(test
 	set(TEST_SOURCES ${TEST_SOURCES} ${test}Test.cpp)
 endforeach()
 
-add_executable(gtest_db  ${TEST_SOURCES} ../db/MojDbTestStorageEngine.cpp Runner.cpp)
+add_executable(gtest_db  ${TEST_SOURCES} ../db/MojDbTestStorageEngine.cpp Runner.cpp MojDbCoreTest.cpp)
 
 target_link_libraries(gtest_db
 	mojocore

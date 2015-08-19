@@ -27,28 +27,10 @@
 
 #include "core/MojUtil.h"
 
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelFactory.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichFactory.h"
-#else
-#error "Database Engine doesn't set. See README.txt"
-#endif
-
 const char *tempFolder;
 
-int main(int argc, char **argv) {
-	// set up engine
-#ifdef MOJ_USE_BDB
-	MojDbStorageEngine::setEngineFactory(new MojDbBerkeleyFactory());
-#elif MOJ_USE_LDB
-	MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
-#elif MOJ_USE_SANDWICH
-	MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
-#endif
-
+int main(int argc, char **argv)
+{
     char buf[128] = "/tmp/mojodb-test-dir-XXXXXX";
     tempFolder = mkdtemp(buf);
     if (!tempFolder) tempFolder = "/tmp/mojodb-test-dir"; // fallback

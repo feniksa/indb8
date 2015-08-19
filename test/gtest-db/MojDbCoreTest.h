@@ -22,8 +22,7 @@
  *  @file MojDbCoreTest.h
  ****************************************************************/
 
-#ifndef __MOJDBCORETEST_H
-#define __MOJDBCORETEST_H
+#pragma once
 
 #include "db/MojDb.h"
 #include "db/MojDbEnv.h"
@@ -38,32 +37,7 @@ struct MojDbCoreTest : public ::testing::Test
     MojDb db;
     std::string path;
 
-    void SetUp()
-    {
-		MojErr err;
-
-        const ::testing::TestInfo* const test_info =
-          ::testing::UnitTest::GetInstance()->current_test_info();
-
-        path = std::string(tempFolder) + '/'
-             + test_info->test_case_name() + '-' + test_info->name();
-
-		err = factory.init();
-		MojAssertNoErr(err);
-
-		err = factory.createEnv("sandwich", env);
-		MojAssertNoErr(err);
-
-        // open
-		err = db.open(path.c_str(), env.get());
-		MojAssertNoErr(err);
-    }
-
-    void TearDown()
-    {
-        // TODO: clean DB
-        MojExpectNoErr( db.close() );
-    }
+    void SetUp();
+    void TearDown();
 };
 
-#endif
