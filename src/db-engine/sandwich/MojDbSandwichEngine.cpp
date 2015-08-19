@@ -59,6 +59,15 @@ MojDbSandwichEngine::MojDbSandwichEngine()
     m_updater = new MojDbSandwichLazyUpdater;
 }
 
+MojDbSandwichEngine::MojDbSandwichEngine(MojRefCountedPtr<MojDbSandwichEnv>& env)
+: m_isOpen(false),
+  m_lazySync(false),
+  m_updater(NULL),
+  m_env(env)
+{
+	m_updater = new MojDbSandwichLazyUpdater;
+}
+
 
 MojDbSandwichEngine::~MojDbSandwichEngine()
 {
@@ -163,7 +172,7 @@ MojErr MojDbSandwichEngine::open(const MojChar* path, MojDbEnv* env)
         MojErrCheck(err);
     }
 
-    // TODO: consider moving to configure
+    // TODO: We should get this options from ENV
     m_db->options = MojDbSandwichEngine::getOpenOptions();
     m_db->writeOptions = MojDbSandwichEngine::getWriteOptions();
     m_db->readOptions = MojDbSandwichEngine::getReadOptions();

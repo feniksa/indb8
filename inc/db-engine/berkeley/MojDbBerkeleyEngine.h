@@ -17,8 +17,7 @@
 * LICENSE@@@ */
 
 
-#ifndef MOJDBBERKELEYENGINE_H_
-#define MOJDBBERKELEYENGINE_H_
+#pragma once
 
 #include "db.h"
 #include "db/MojDbDefs.h"
@@ -43,6 +42,7 @@ public:
 	static MojLogger s_log;
 
 	MojDbBerkeleyEngine();
+	MojDbBerkeleyEngine(MojRefCountedPtr<MojDbBerkeleyEnv>& env);
 	~MojDbBerkeleyEngine();
 
 	virtual MojErr configure(const MojObject& conf);
@@ -76,8 +76,3 @@ private:
 	SequenceVec m_seqs;
 	bool m_isOpen;
 };
-
-
-
-
-#endif /* MOJDBBERKELEYENGINE_H_ */

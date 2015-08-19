@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*  Copyright (c) 2009-2013 LG Electronics, Inc.
+*  Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -33,6 +33,14 @@ MojDbLevelEnv::~MojDbLevelEnv()
 {
     MojLogTrace(MojDbLevelEngine::s_log);
     close();
+}
+
+MojErr MojDbLevelEnv::openStorage(MojRefCountedPtr<MojDbStorageEngine>& storage)
+{
+	MojRefCountedPtr<MojDbLevelEnv> thiz(this);
+	storage.reset(new MojDbLevelEngine(thiz));
+
+	return MojErrNone;
 }
 
 MojErr MojDbLevelEnv::configure(const MojObject& conf)

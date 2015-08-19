@@ -22,7 +22,6 @@ endif()
 
 set (CXX_SOURCRES
 	MojDbEngineFactory.cpp
-	MojDbEngineEnvSingle.cpp
 )
 
 add_library(mojodbengine SHARED ${CXX_SOURCRES})

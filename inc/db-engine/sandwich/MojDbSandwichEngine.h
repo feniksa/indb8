@@ -38,6 +38,7 @@ class MojDbSandwichEngine final : public MojDbStorageEngine
 public:
     typedef leveldb::SandwichDB<leveldb::BottomDB> BackendDb;
     MojDbSandwichEngine();
+	MojDbSandwichEngine(MojRefCountedPtr<MojDbSandwichEnv>& env);
     ~MojDbSandwichEngine();
 
     virtual MojErr configure(const MojObject& config);

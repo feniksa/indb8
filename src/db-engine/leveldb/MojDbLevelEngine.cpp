@@ -58,6 +58,11 @@ MojDbLevelEngine::MojDbLevelEngine()
     MojLogTrace(s_log);
 }
 
+MojDbLevelEngine::MojDbLevelEngine(MojRefCountedPtr<MojDbLevelEnv>& env)
+: m_env(env)
+{
+	MojLogTrace(s_log);
+}
 
 MojDbLevelEngine::~MojDbLevelEngine()
 {

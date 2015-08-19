@@ -43,6 +43,13 @@ MojDbBerkeleyEngine::MojDbBerkeleyEngine()
 	MojLogTrace(s_log);
 }
 
+MojDbBerkeleyEngine::MojDbBerkeleyEngine(MojRefCountedPtr<MojDbBerkeleyEnv>& env)
+: m_env(env),
+  m_isOpen(false)
+{
+	MojLogTrace(s_log);
+}
+
 MojDbBerkeleyEngine::~MojDbBerkeleyEngine()
 {
 	MojLogTrace(s_log);

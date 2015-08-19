@@ -17,8 +17,7 @@
 * LICENSE@@@ */
 
 
-#ifndef MOJDBSTORAGEENGINE_H_
-#define MOJDBSTORAGEENGINE_H_
+#pragma once
 
 #include "db/MojDbDefs.h"
 #include "core/MojAutoPtr.h"
@@ -51,6 +50,3 @@ protected:
 	static MojRefCountedPtr<MojDbStorageEngineFactory> m_factory;
 
 };
-
-
-#endif /* MOJDBSTORAGEENGINE_H_ */

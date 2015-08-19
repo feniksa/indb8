@@ -65,6 +65,7 @@ public:
 	MojErr configure(const MojObject& conf);
 	MojErr drop(const MojChar* path);
 	MojErr open(const MojChar* path, MojDbStorageEngine* engine = NULL);
+	MojErr open(const MojChar* path, MojDbEnv* env);
 	MojErr close();
 	MojErr stats(MojObject& objOut, MojDbReqRef req = MojDbReq(), bool verify = false, MojString *pKind = NULL);
 	MojErr quotaStats(MojObject& objOut, MojDbReqRef req = MojDbReq());
