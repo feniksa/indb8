@@ -52,7 +52,6 @@ std::string getTestDir()
     else return std::string(buf, n);
 }
 const std::string mojDbTestDirString = getTestDir();
-
 const MojChar* const MojDbTestDir = mojDbTestDirString.c_str();
 
 int main(int argc, char** argv)

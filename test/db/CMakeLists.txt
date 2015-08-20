@@ -65,17 +65,20 @@ install( TARGETS test_db_core
 # --------------------------------
 # performance test target
 # ---------------------------------
-set (DB_PERF_TEST_SOURCES
-     MojDbPerfTestRunner.cpp
-     MojDbPerfTest.cpp
-     MojDbPerfIndexTest.cpp
-     MojDbPerfCreateTest.cpp
-     MojDbPerfDeleteTest.cpp
-     MojDbPerfReadTest.cpp
-     MojDbPerfUpdateTest.cpp
-)
 
-add_executable(test_db_performance ${DB_PERF_TEST_SOURCES})
+foreach(test
+     MojDbPerf
+     MojDbPerfIndex
+     MojDbPerfCreate
+     MojDbPerfDelete
+     MojDbPerfRead
+     MojDbPerfUpdate
+	)
+	#add_test(NAME "db/perf/${test}" COMMAND test_db_performance ${test})
+	set(DB_PERF_TEST_SOURCES ${DB_PERF_TEST_SOURCES} ${test}Test.cpp)
+endforeach()
+
+add_executable(test_db_performance ${DB_PERF_TEST_SOURCES} MojDbTestEnv.cpp MojDbPerfTestRunner.cpp)
 target_link_libraries(test_db_performance
                       mojocore
                       mojodb

@@ -125,10 +125,11 @@ MojErr MojDbTxnTest::run()
             MojTestAssert(count == 50);
         }
 
-#ifdef MOJ_USE_LDB
+
         // With BerkeleyDB parallel transaction is locked
 
         // invisible outside of transaction
+        if (engineName().compare(_T("leveldb")) == 0)
         {
             MojDbQuery query;
             err = query.from(_T("Test:1"));
@@ -145,7 +146,6 @@ MojErr MojDbTxnTest::run()
             MojTestErrCheck(err);
             MojTestAssert(count == 0);
         }
-#endif
     }
 
     // invisible after aborted transaction
@@ -203,10 +203,11 @@ MojErr MojDbTxnTest::run()
             MojTestAssert(count == 33);
         }
 
-#ifdef MOJ_USE_LDB
+
         // With BerkeleyDB parallel transaction is locked
 
         // invisible outside of transaction
+        if (engineName().compare(_T("leveldb")) == 0)
         {
             MojDbQuery query;
             err = query.from(_T("Test:1"));
@@ -223,7 +224,6 @@ MojErr MojDbTxnTest::run()
             MojTestErrCheck(err);
             MojTestAssert(count == 83);
         }
-#endif
     }
 
     // invisible after aborted transaction

@@ -26,6 +26,9 @@ MojErr MojDbTestEnv::run(const MojChar* path)
 	err = m_env->open(path);
 	MojErrCheck(err);
 
+	err = m_engineName.assign(engine);
+	MojErrCheck(err);
+
 	return MojErrNone;
 }
 

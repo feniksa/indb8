@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #include "MojDbPerfTest.h"
 #include "db/MojDb.h"
 #include "core/MojTime.h"
+extern const MojChar* const MojDbTestDir;
 
 const MojChar* MojDbPerfTest::s_lastNames[] = {
 	_T("Smith"), _T("Johnson"), _T("Williams"), _T("Jones"), _T("Brown"),
@@ -134,7 +135,7 @@ const MojChar* const MojDbPerfTest::MojPerfLgArrayKindExtraIndex =
                 _T("{\"name\":\"timestamp\",\"props\":[{\"name\":\"timestamp\"}]}");
 
 MojDbPerfTest::MojDbPerfTest(const MojChar* name)
-: MojTestCase(name)
+: MojDbTestEnv(name)
 {
 }
 
@@ -238,7 +239,7 @@ MojErr MojDbPerfTest::delKinds(MojDb& db)
 	MojTestErrCheck(err);
 
 	MojString kind2Id;
-   err = kind2Id.assign(MojPerfMedKindId);
+	err = kind2Id.assign(MojPerfMedKindId);
 	MojTestErrCheck(err);
 	err = db.delKind(kind2Id, found);
 	MojTestErrCheck(err);

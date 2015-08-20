@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -49,8 +49,11 @@ MojErr MojDbPerfUpdateTest::run()
 	err = fileWrite(file, buf);
 	MojTestErrCheck(err);
 
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck(err);
+
 	MojDb db;
-	err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	err = testPut(db);

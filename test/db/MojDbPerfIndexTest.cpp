@@ -88,19 +88,7 @@ each time.
 #include "MojDbPerfIndexTest.h"
 #include "db/MojDb.h"
 #include "core/MojTime.h"
-
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
-#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelFactory.h"
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichFactory.h"
-#include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else
-    #error "Doesn't specified database type. See macro MOJ_USE_BDB and MOJ_USE_LDB"
-#endif
+extern const MojChar* const MojDbTestDir;
 
 static const MojChar* const TestKind1Str =
 	_T("{\"id\":\"Test1:1\",")
@@ -137,31 +125,24 @@ static const MojChar* const Monthes[] = { _T("Jan"), _T("Feb"), _T("Mar"), _T("A
 static const MojChar* const Description = _T("Mary had a little lamb, its fleece was white as snow");
 
 MojDbPerfIndexTest::MojDbPerfIndexTest()
-: MojTestCase(_T("MojDbPerfIndex"))
+: MojDbTestEnv(_T("MojDbPerfIndex"))
 {
 	srand( time(NULL) + getpid());
 }
 
 MojErr MojDbPerfIndexTest::run()
 {
-	//setup the test storage engine
-#ifdef MOJ_USE_BDB
-    MojDbStorageEngine::setEngineFactory (new MojDbBerkeleyFactory);
-#elif MOJ_USE_LDB
-	MojDbStorageEngine::setEngineFactory (new MojDbLevelFactory);
-#elif MOJ_USE_SANDWICH
-	MojDbStorageEngine::setEngineFactory (new MojDbSandwichFactory);
-#else
-    #error "Not defined engine type"
-#endif
-
+	MojErr err;
 	MojDb db;
 
 	//_displayMessage("\n<<< Please, cleanup folder %s before this test! >>>\n", MojDbTestDir);
 	cleanup();
 
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck(err);
+
 	// open
-	MojErr err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// add type

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ static const MojUInt64 numUpdateKindIterations = 50;
 const MojChar* const DeleteTestFileName = _T("MojDbPerfDeleteTest.csv");
 static MojTime totalTestTime;
 static MojFile file;
+extern const MojChar* const MojDbTestDir;
 
 MojDbPerfDeleteTest::MojDbPerfDeleteTest()
 : MojDbPerfTest(_T("MojDbPerfDelete"))
@@ -48,6 +49,9 @@ MojErr MojDbPerfDeleteTest::run()
 	err = buf.format("MojoDb Delete Performance Test,,,,,\n\nOperation,Kind,Total Time,Time Per Iteration,Time Per Object\n");
 	MojTestErrCheck(err);
 	err = fileWrite(file, buf);
+	MojTestErrCheck(err);
+
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojTestErrCheck(err);
 
 	err = testDelete();
@@ -78,7 +82,7 @@ MojErr MojDbPerfDeleteTest::testDelete()
 	MojTestErrCheck(err);
 
 	MojDb db;
-	err = db.open(MojDbTestDir);
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	err = delObjects(db, MojPerfSmKindId, &MojDbPerfTest::createSmallObj);
