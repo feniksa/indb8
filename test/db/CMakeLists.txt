@@ -1,6 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (c) 2013 LG Electronics, Inc.
+# Copyright (c) 2013-2015 LG Electronics, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -54,9 +54,9 @@ foreach(test
     set(DB_TEST_SOURCES ${DB_TEST_SOURCES} ${test}Test.cpp)
 endforeach()
 
-add_executable(test_db_core ${DB_TEST_SOURCES})
+add_executable(test_db_core ${DB_TEST_SOURCES} MojDbTestEnv.cpp)
 target_link_libraries(test_db_core
-                      mojotest
+                      mojocore mojodb mojodbengine
 )
 install( TARGETS test_db_core
     RUNTIME DESTINATION usr/share/indb8/tests

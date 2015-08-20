@@ -1,3 +1,5 @@
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+
 add_subdirectory(core)
 add_subdirectory(db)
 add_subdirectory(gtest-core)
@@ -17,6 +19,3 @@ if (BUILD_LS2)
 	install_ls2_service("files/sysbus" "prv")
 	install_ls2_service("files/sysbus" "pub")
 endif()
-
-add_library(mojotest MojDbTestEnv.cpp)
-target_link_libraries(mojotest mojocore mojodb mojodbengine)

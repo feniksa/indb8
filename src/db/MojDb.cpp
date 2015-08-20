@@ -132,10 +132,10 @@ MojErr MojDb::drop(const MojChar* path)
 	return MojErrNone;
 }
 
-MojErr MojDb::open(const MojChar* path, MojDbEnv* env)
+MojErr MojDb::open(const MojChar* path, MojRefCountedPtr<MojDbEnv>& env)
 {
 	MojAssert(path);
-	MojAssert(env);
+	MojAssert(env.get());
 	MojLogTrace(s_log);
 
 	MojErr err = requireNotOpen();
@@ -318,6 +318,7 @@ MojErr MojDb::close()
 			MojErrAccumulate(err, errClose);
 			m_storageEngine.reset();
 		}
+
 		m_isOpen = false;
         MojLogDebug(s_log, _T("close completed"));
 	}
