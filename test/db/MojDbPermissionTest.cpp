@@ -64,7 +64,7 @@ MojErr MojDbPermissionTest::run()
 {
 	MojErr err;
 
-	err = MojDbTestEnv::run();
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojErrCheck(err);
 
 	MojDb db;

@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,19 +21,6 @@
 
 #include "MojDbCursorTxnTest.h"
 #include "db/MojDb.h"
-
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
-#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelFactory.h"
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichFactory.h"
-#include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else
-#error "Doesn't specified database type. See macro MOJ_USE_BDB and MOJ_USE_LDB"
-#endif
 
 static const MojChar* const TestKind1Str =
     _T ( "{\"id\":\"Test1:1\"," )
@@ -60,7 +47,7 @@ MojErr MojDbCursorTxnTest::run()
 	MojErr err;
     MojDb db;
 
-	err = MojDbTestEnv::run();
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojTestErrCheck ( err );
 
     // open

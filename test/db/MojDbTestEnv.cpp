@@ -3,7 +3,7 @@
 #include "MojTestDefs.h"
 #include <stdlib.h>
 
-MojErr MojDbTestEnv::run()
+MojErr MojDbTestEnv::run(const MojChar* path)
 {
 	MojErr err;
 
@@ -21,6 +21,9 @@ MojErr MojDbTestEnv::run()
 	MojObject conf;
 
 	err = m_env->configure(conf);
+	MojErrCheck(err);
+
+	err = m_env->open(path);
 	MojErrCheck(err);
 
 	return MojErrNone;

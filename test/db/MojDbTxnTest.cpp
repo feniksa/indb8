@@ -38,7 +38,7 @@ MojErr MojDbTxnTest::run()
 	MojErr err;
     MojDb db;
 
-	err = MojDbTestEnv::run();
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojTestErrCheck(err);
 
     // open

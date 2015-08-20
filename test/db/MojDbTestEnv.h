@@ -9,7 +9,7 @@ class MojDbTestEnv : public MojTestCase
 public:
 	using MojTestCase::MojTestCase;
 
-	MojErr run();
+	MojErr run(const MojChar* path);
 
 	MojRefCountedPtr<MojDbEnv>& env();
 

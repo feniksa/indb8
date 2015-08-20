@@ -43,7 +43,7 @@ MojErr MojDbLocaleTest::run()
 {
 	MojErr err;
 
-	err = MojDbTestEnv::run();
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojTestErrCheck(err);
 
 	MojDb db;

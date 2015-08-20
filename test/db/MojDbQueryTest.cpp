@@ -139,7 +139,7 @@ MojErr MojDbQueryTest::basicTest()
 	MojErr err;
 	MojDb db;
 
-	err = MojDbTestEnv::run();
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojTestErrCheck(err);
 
 	err = db.open(MojDbTestDir, env());

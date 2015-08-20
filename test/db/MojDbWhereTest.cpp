@@ -47,7 +47,7 @@ MojErr MojDbWhereTest::run()
 	MojByte success = 1;
 	MojDb db;
 
-	err = MojDbTestEnv::run();
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojTestErrCheck(err);
 
 	// open

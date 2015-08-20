@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -19,15 +19,6 @@
 
 #include "MojDbQuotaTest.h"
 #include "db/MojDb.h"
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else
-#error "Specify database engine"
-#endif
 #include "MojDbTestStorageEngine.h"
 
 static const MojChar* const MojTestKind1Str1 =
@@ -98,7 +89,7 @@ MojErr MojDbQuotaTest::run()
 	MojErr err;
 	MojDb db;
 
-	err = MojDbTestEnv::run();
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojTestErrCheck(err);
 
 	err = db.open(MojDbTestDir, env());

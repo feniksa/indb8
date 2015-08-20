@@ -46,7 +46,7 @@ MojErr MojDbRevisionSetTest::run()
 {
 	MojErr err;
 
-	err = MojDbTestEnv::run();
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojTestErrCheck(err);
 
 	err = standAloneTest();
