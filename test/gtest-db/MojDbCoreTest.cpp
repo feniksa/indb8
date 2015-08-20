@@ -21,6 +21,13 @@ void MojDbCoreTest::SetUp()
 	err = factory.createEnv(engine, env);
 	MojAssertNoErr(err);
 
+	MojObject conf;
+	err = env->configure(conf);
+	MojAssertNoErr(err);
+
+	err = env->open(path.c_str());
+	MojAssertNoErr(err);
+
 	// open
 	err = db.open(path.c_str(), env);
 	MojAssertNoErr(err);
