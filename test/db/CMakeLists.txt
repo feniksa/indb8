@@ -50,7 +50,12 @@ foreach(test
         MojDbTxn
         MojDbCursorTxn
         )
-    add_test(NAME "db/${test}" COMMAND test_db_core ${test})
+
+        foreach (engine ${MOJO_ENGINES})
+			add_test(NAME "${engine}/db/${test}" 
+                     COMMAND env MOJO_ENGINE=${engine} ${CMAKE_CURRENT_BINARY_DIR}/test_db_core ${test}
+            )
+		endforeach()
     set(DB_TEST_SOURCES ${DB_TEST_SOURCES} ${test}Test.cpp)
 endforeach()
 
