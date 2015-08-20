@@ -11,7 +11,7 @@ public:
 
 	MojErr run();
 
-	MojDbEnv* env() { MojAssert(m_env.get()); return m_env.get(); }
+	MojRefCountedPtr<MojDbEnv>& env();
 
 private:
 	MojDbEngineFactory m_factory;

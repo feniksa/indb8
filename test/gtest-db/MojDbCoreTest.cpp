@@ -1,4 +1,6 @@
 #include "MojDbCoreTest.h"
+#include "MojTestDefs.h"
+#include <stdlib.h>
 
 void MojDbCoreTest::SetUp()
 {
@@ -13,11 +15,14 @@ void MojDbCoreTest::SetUp()
 	err = factory.init();
 	MojAssertNoErr(err);
 
-	err = factory.createEnv("sandwich", env);
+	const char* engine = getenv(EngineName);
+	ASSERT_TRUE(engine) << EngineErrText;
+
+	err = factory.createEnv(engine, env);
 	MojAssertNoErr(err);
 
 	// open
-	err = db.open(path.c_str(), env.get());
+	err = db.open(path.c_str(), env);
 	MojAssertNoErr(err);
 }
 
