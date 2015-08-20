@@ -1,3 +1,4 @@
+message (STATUS "Use database frontend: berkeley")
 # -- check for BerkeleyDB
 # (add an alternate standard path in case building BDB locally: does not override)
 find_library(BDB NAMES db-4.8)

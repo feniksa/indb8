@@ -31,15 +31,13 @@ foreach(test
 		Quota
 		Search
 		TextCollator
-		IdGenerator
 	)
-        foreach (engine ${MOJO_ENGINES})
-           message(STATUS "Add test ${test} for engine ${engine}")
-           add_test(NAME "${engine}/gtest-db/${test}" 
-                    COMMAND env MOJO_ENGINE="${engine}" ${CMAKE_CURRENT_BINARY_DIR}/gtest_core --gtest_filter="${test}.*")
-        endforeach()
+	foreach (engine ${MOJO_ENGINES})
+		add_test(NAME "${engine}/gtest-db/${test}"
+		         COMMAND env MOJO_ENGINE=${engine} ${CMAKE_CURRENT_BINARY_DIR}/gtest_db --gtest_filter="${test}Test.*")
+	endforeach()
 
-		set(TEST_SOURCES ${TEST_SOURCES} ${test}Test.cpp)
+	set(TEST_SOURCES ${TEST_SOURCES} ${test}Test.cpp)
 endforeach()
 
 add_executable(gtest_db  ${TEST_SOURCES} ../db/MojDbTestStorageEngine.cpp Runner.cpp MojDbCoreTest.cpp)
