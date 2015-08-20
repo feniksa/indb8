@@ -31,17 +31,20 @@ MojErr MojDbEngineFactory::init()
 
 	MojErr err;
 #ifdef MOJ_USE_BDB
-	err = addEngineFactory(new MojDbBerkeleyFactory());
+	MojRefCountedPtr<MojDbStorageEngineFactory> berkeleyFactory(new MojDbBerkeleyFactory());
+	err = addEngineFactory(berkeleyFactory);
 	MojErrCheck(err);
 #endif
 
 #ifdef MOJ_USE_LDB
-	err = addEngineFactory(new MojDbLevelFactory());
+	MojRefCountedPtr<MojDbStorageEngineFactory> leveldbFactory(new MojDbLevelFactory());
+	err = addEngineFactory(leveldbFactory);
 	MojErrCheck(err);
 #endif
 
 #ifdef MOJ_USE_SANDWICH
-	err = addEngineFactory(new MojDbSandwichFactory());
+	MojRefCountedPtr<MojDbStorageEngineFactory> sandwichFactory(new MojDbSandwichFactory());
+	err = addEngineFactory(sandwichFactory);
 	MojErrCheck(err);
 #endif
 
@@ -51,7 +54,9 @@ MojErr MojDbEngineFactory::init()
 MojErr MojDbEngineFactory::getFactory(const MojChar* name, MojRefCountedPtr<MojDbStorageEngineFactory>& engineOut) const
 {
     MojLogTrace(s_log);
-    MojAssert(name);
+    if (!name) {
+		MojErrThrowMsg(MojErrDbStorageEngineNotFound, _T("Engine name is null"));
+	}
 
     auto iter = std::find_if(m_factories.begin(), m_factories.end(), [name](const FactoriesContainer::value_type& iter) {
         return (MojStrCmp(iter->name(), name) == 0);
@@ -109,21 +114,21 @@ MojErr MojDbEngineFactory::createEnv(const MojChar* name, MojRefCountedPtr<MojDb
 	return MojErrNone;
 }
 
-MojErr MojDbEngineFactory::addEngineFactory(MojDbStorageEngineFactory* factory)
+MojErr MojDbEngineFactory::addEngineFactory(MojRefCountedPtr<MojDbStorageEngineFactory>& factory)
 {
 	MojLogTrace(s_log);
-	MojAssert(factory);
+	MojAssert(factory.get());
 
     auto iter = std::find_if(m_factories.begin(), m_factories.end(), [factory](const FactoriesContainer::value_type& iter) {
         return (MojStrCmp(iter->name(), factory->name()) == 0);
     });
 
     if (iter != m_factories.end()) {
-        *iter = factory;
-        return MojErrNone;
+		if (*iter != factory) {
+			*iter = factory;
+		}
     } else {
         m_factories.push_back(factory);
-        return MojErrNone;
     }
 
 	return MojErrNone;

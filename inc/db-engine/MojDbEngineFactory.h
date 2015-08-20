@@ -21,7 +21,7 @@ public:
 
     MojErr supportedEngines(const FactoriesContainer*& factoryList) const;
 
-	MojErr addEngineFactory(MojDbStorageEngineFactory* factory);
+	MojErr addEngineFactory(MojRefCountedPtr<MojDbStorageEngineFactory>& factory);
 private:
 	MojErr getFactory(const MojChar* name, MojRefCountedPtr<MojDbStorageEngineFactory>& engineOut) const;
 
