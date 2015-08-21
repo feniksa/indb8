@@ -43,14 +43,21 @@
 #include "MojDbWatchTest.h"
 #include "MojDbTxnTest.h"
 #include "MojDbCursorTxnTest.h"
+#include <sstream>
 
 std::string getTestDir()
 {
-    char buf[128];
-    size_t n = snprintf(buf, sizeof(buf)-1, "/tmp/mojodb-test-dir-%d", time(0));
-    if (n < 0) return "/tmp/mojodb-test-dir"; // fallback
-    else return std::string(buf, n);
+	struct timespec spec;
+
+	if (clock_gettime(CLOCK_REALTIME, &spec) != 0)
+		throw std::exception();
+
+	std::stringstream stream;
+	stream << "/tmp/mojodb-test-dir-" << spec.tv_sec << "-" << spec.tv_nsec;
+
+	return stream.str();
 }
+
 const std::string mojDbTestDirString = getTestDir();
 const MojChar* const MojDbTestDir = mojDbTestDirString.c_str();
 
