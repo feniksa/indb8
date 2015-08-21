@@ -672,18 +672,6 @@ MojErr MojDb::watch(const MojDbQuery& query, MojDbCursor& cursor, WatchSignal::S
 	return MojErrNone;
 }
 
-MojErr MojDb::createEngine()
-{
-	if (m_engineName.empty()) {
-		MojErr err = MojDbStorageEngine::createDefaultEngine(m_storageEngine);
-		MojErrCheck(err);
-	} else {
-		MojErr err = MojDbStorageEngine::createEngine(m_engineName, m_storageEngine);
-		MojErrCheck(err);
-	}
-	return MojErrNone;
-}
-
 MojErr MojDb::requireOpen()
 {
     if (!m_isOpen) {

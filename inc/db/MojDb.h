@@ -132,7 +132,6 @@ private:
 	void writeLock() { m_schemaLock.writeLock(); }
 	void unlock() { m_schemaLock.unlock(); }
 
-	MojErr createEngine();
 	MojErr requireOpen();
 	MojErr requireNotOpen();
 	MojErr mergeInto(MojObject& dest, const MojObject& obj, const MojObject& prev);

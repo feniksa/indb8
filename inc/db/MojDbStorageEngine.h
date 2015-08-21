@@ -28,12 +28,6 @@
 class MojDbStorageEngine : public MojRefCounted
 {
 public:
-    static MojErr createDefaultEngine(MojRefCountedPtr<MojDbStorageEngine>& engineOut);
-    static MojErr createEngine(const MojChar* name, MojRefCountedPtr<MojDbStorageEngine>& engineOut);
-    static MojErr createEnv(MojRefCountedPtr<MojDbEnv>& envOut) { return m_factory->createEnv(envOut); };
-    static MojErr setEngineFactory(MojDbStorageEngineFactory* factory);
-    static const MojDbStorageEngineFactory* engineFactory() { return m_factory.get(); };
-
     virtual ~MojDbStorageEngine() {}
     virtual MojErr configure(const MojObject& config) = 0;
     virtual MojErr drop(const MojChar* path, MojDbStorageTxn* txn) = 0;
@@ -44,9 +38,4 @@ public:
     virtual MojErr beginTxn(MojRefCountedPtr<MojDbStorageTxn>& txnOut) = 0;
     virtual MojErr openDatabase(const MojChar* name, MojDbStorageTxn* txn, MojRefCountedPtr<MojDbStorageDatabase>& dbOut) = 0;
     virtual MojErr openSequence(const MojChar* name, MojDbStorageTxn* txn,  MojRefCountedPtr<MojDbStorageSeq>& seqOut) = 0;
-
-protected:
-	MojDbStorageEngine();
-	static MojRefCountedPtr<MojDbStorageEngineFactory> m_factory;
-
 };
