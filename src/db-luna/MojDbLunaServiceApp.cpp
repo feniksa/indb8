@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -22,16 +22,6 @@
 #include "db/MojDbEnv.h"
 #include "db/MojDbServiceDefs.h"
 
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelFactory.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichFactory.h"
-#else
-#error "Set database type"
-#endif
-
 #ifndef MOJ_VERSION_STRING
 #define MOJ_VERSION_STRING NULL
 #endif
@@ -49,16 +39,6 @@ MojDbLunaServiceApp::MojDbLunaServiceApp()
 : MojReactorApp<MojGmainReactor>(MajorVersion, MinorVersion, VersionString)
 , m_mainService(m_dispatcher)
 {
-   // set up db first
-#ifdef MOJ_USE_BDB
-   MojDbStorageEngine::setEngineFactory(new MojDbBerkeleyFactory());
-#elif MOJ_USE_LDB
-   MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
-#elif MOJ_USE_SANDWICH
-   MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
-#else
-  #error "Database not set"
-#endif
    MojLogTrace(s_log);
 }
 
@@ -73,9 +53,6 @@ MojErr MojDbLunaServiceApp::init()
 
 	MojErr err = Base::init();
 	MojErrCheck(err);
-
-    MojDbStorageEngine::createEnv(m_env);
-    MojAllocCheck(m_env.get());
 
     m_internalHandler.reset(new MojDbServiceHandlerInternal(m_mainService.db(), m_reactor, m_mainService.service()));
     MojAllocCheck(m_internalHandler.get());
@@ -93,27 +70,14 @@ MojErr MojDbLunaServiceApp::configure(const MojObject& conf)
 	MojErr err = Base::configure(conf);
 	MojErrCheck(err);
 
-    MojObject engineConf;
+	m_conf = conf;
 
-	conf.get(MojDbStorageEngine::engineFactory()->name(), engineConf);
-	err = m_env->configure(engineConf);
     MojErrCheck(err);
-    err = m_mainService.db().configure(conf);
+    err = m_mainService.configure(conf);
     MojErrCheck(err);
-	m_conf = engineConf;
-
-	MojObject dbConf;
-	err = conf.getRequired("db", dbConf);
-	MojErrCheck(err);
-
-	MojObject dbPath;
-	err = dbConf.getRequired("path", dbPath);
-	MojErrCheck(err);
-	err = dbPath.stringValue(m_dbDir);
-	MojErrCheck(err);
 
 	MojObject serviceName;
-	err = dbConf.getRequired("service_name", serviceName);
+	err = conf.getRequired("service_name", serviceName);
 	MojErrCheck(err);
 	err = serviceName.stringValue(m_serviceName);
 	MojErrCheck(err);
@@ -135,13 +99,9 @@ MojErr MojDbLunaServiceApp::open()
 
 	// open db env
 	bool dbOpenFailed = false;
-	err = m_env->open(m_dbDir);
-	MojErrCatchAll(err) {
-		dbOpenFailed = true;
-	}
 
 	// open db services
-	err = m_mainService.open(m_reactor, m_env.get(), m_serviceName, m_dbDir, m_conf);
+	err = m_mainService.open(m_reactor, m_serviceName);
 	MojErrCatchAll(err) {
 		dbOpenFailed = true;
 	}

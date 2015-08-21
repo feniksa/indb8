@@ -56,9 +56,9 @@ private:
     MojDbLunaServiceDb m_mainService;
 
     MojMessageDispatcher m_dispatcher;
-    MojRefCountedPtr<MojDbEnv> m_env;
     MojRefCountedPtr<MojDbServiceHandlerInternal> m_internalHandler;
     MojObject m_conf;
+	MojString m_engineName;
 };
 
 #endif /* MOJDBLUNASERVICEAPP_H_ */

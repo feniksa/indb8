@@ -21,6 +21,7 @@
 #include "db-luna/MojDbLunaServiceDb.h"
 #include "db/MojDbServiceDefs.h"
 #include "core/MojApp.h"
+#include "db/MojDbEnv.h"
 
 MojLogger MojDbLunaServiceDb::s_log(_T("db-luna.dbservice"));
 
@@ -29,18 +30,45 @@ MojDbLunaServiceDb::MojDbLunaServiceDb(MojMessageDispatcher& dispatcher)
 {
 }
 
+MojErr MojDbLunaServiceDb::configure(const MojObject& conf)
+{
+	MojErr err;
+
+	err = conf.getRequired(_T("engine"), m_engineName);
+	MojErrCheck(err);
+
+	err = conf.getRequired(m_engineName, m_envConf);
+	MojErrCheck(err);
+
+	MojObject dbConf;
+	err = conf.getRequired(_T("db"), dbConf);
+	MojErrCheck(err);
+
+	err = dbConf.getRequired(_T("path"), m_databaseDir);
+	MojErrCheck(err);
+
+	err = m_db.configure(dbConf);
+	MojErrCheck(err);
+
+	return MojErrNone;
+}
+
 MojErr MojDbLunaServiceDb::init(MojReactor& reactor)
 {
+	MojErr err;
+
     m_handler.reset(new MojDbServiceHandler(m_db, reactor));
     MojAllocCheck(m_handler.get());
+
+	err = m_engineFactory.init();
+	MojErrCheck(err);
 
     return MojErrNone;
 }
 
-MojErr MojDbLunaServiceDb::open(MojGmainReactor& reactor, MojDbEnv* env,
-                                const MojChar* serviceName, const MojChar* dir, const MojObject& conf)
+MojErr MojDbLunaServiceDb::open(MojGmainReactor& reactor, const MojChar* serviceName)
 {
-    MojAssert(serviceName && dir);
+    MojAssert(serviceName);
     MojLogTrace(s_log);
 
     // open service
@@ -54,33 +82,36 @@ MojErr MojDbLunaServiceDb::open(MojGmainReactor& reactor, MojDbEnv* env,
     err = m_service.addCategory(MojDbServiceDefs::Category, m_handler.get());
     MojErrCheck(err);
     // open db
-    err = openDb(env, dir, conf);
+    err = openDb();
     if (err != MojErrNone) {
         MojString msg;
         MojErrToString(err, msg);
-        MojLogError(s_log, _T("Error opening %s - %s (%d)"), dir, msg.data(), (int) err);
+        MojLogError(s_log, _T("Error opening %s - %s (%d)"), m_databaseDir.data(), msg.data(), (int) err);
     }
     MojErrCheck(err);
 
     return MojErrNone;
 }
 
-MojErr MojDbLunaServiceDb::openDb(MojDbEnv* env, const MojChar* dir, const MojObject& conf)
+MojErr MojDbLunaServiceDb::openDb()
 {
-    MojAssert(env && dir);
+	MojAssert(!m_env.get());
+	MojAssert(!m_databaseDir.empty());
 
     MojErr err;
-    //  MojRefCountedPtr<MojDbBerkeleyEngine> engine(new MojDbBerkeleyEngine);
-    MojRefCountedPtr<MojDbStorageEngine> engine;
-    MojDbStorageEngine::engineFactory()->create(engine);
-    MojAllocCheck(engine.get());
-    err = engine->configure(conf);
-    MojErrCheck(err);
-    err = engine->open(dir, env);
-    MojErrCheck(err);
+
+	err = m_engineFactory.createEnv(m_engineName, m_env);
+	MojErrCheck(err);
+	MojAllocCheck(m_env.get());
+
+	err = m_env->configure(m_envConf);
+	MojErrCheck(err);
+
+	err = m_env->open(m_databaseDir);
+	MojErrCheck(err);
 
     // open db
-    err = m_db.open(dir, engine.get());
+    err = m_db.open(m_databaseDir.data(), m_env);
     MojErrCheck(err);
 
     return MojErrNone;
