@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,8 +21,48 @@
 
 #define MojTestTxn(TXN) ((TXN) ? ((MojDbTestStorageTxn*)(TXN))->txn() : NULL)
 
-MojDbTestStorageEngine::MojDbTestStorageEngine(MojDbStorageEngine* engine)
-: m_engine(engine)
+MojDbTestStorageEnv::MojDbTestStorageEnv(MojRefCountedPtr<MojDbEnv>& env)
+: m_env(env)
+{
+}
+
+
+MojDbTestStorageEnv::~MojDbTestStorageEnv()
+{
+}
+
+MojErr MojDbTestStorageEnv::close()
+{
+	return MojErrNone;
+}
+
+MojErr MojDbTestStorageEnv::configure(const MojObject& conf)
+{
+	return MojErrNone;
+}
+
+MojErr MojDbTestStorageEnv::open(const MojChar* path)
+{
+	return MojErrNone;
+}
+
+MojErr MojDbTestStorageEnv::openStorage(MojRefCountedPtr< MojDbStorageEngine >& storage)
+{
+	MojErr err;
+
+	MojRefCountedPtr<MojDbStorageEngine> parentEngine;
+	err = m_env->openStorage(parentEngine);
+	MojErrCheck(err);
+
+	MojRefCountedPtr<MojDbTestStorageEnv> thiz(this);
+	storage.reset(new MojDbTestStorageEngine(thiz, parentEngine));
+
+	return MojErrNone;
+}
+
+MojDbTestStorageEngine::MojDbTestStorageEngine(MojRefCountedPtr<MojDbTestStorageEnv>& env, MojRefCountedPtr<MojDbStorageEngine>& engine)
+: m_env(env),
+  m_engine(engine)
 {
 }
 
@@ -54,7 +94,7 @@ MojErr MojDbTestStorageEngine::open(const MojChar* path)
 	MojErrCheck(err);
 
 	MojAssert(m_engine.get());
-	return m_engine->open(path);
+	return m_engine->open(path, m_env->parentEnv().get());
 }
 
 MojErr MojDbTestStorageEngine::open(const MojChar* path, MojDbEnv* env)

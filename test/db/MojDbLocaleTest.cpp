@@ -91,15 +91,9 @@ MojErr MojDbLocaleTest::run()
 	MojTestErrCheck(err);
 
 	//setup the test storage engine
-	MojRefCountedPtr<MojDbStorageEngine> engine;
-	err = env()->openStorage(engine);
+	MojRefCountedPtr<MojDbEnv> testEnv(new MojDbTestStorageEnv(env()));
 
-	MojAllocCheck(engine.get());
-	MojRefCountedPtr<MojDbTestStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
-	MojAllocCheck(testEngine.get());
-	err = testEngine->open(MojDbTestDir);
-	MojTestErrCheck(err);
-	err = db.open(MojDbTestDir, testEngine.get());
+	err = db.open(MojDbTestDir, testEnv);
 	MojTestErrCheck(err);
 
 	err = put(db);
@@ -108,6 +102,10 @@ MojErr MojDbLocaleTest::run()
 	MojTestErrCheck(err);
 
 	// fail txn commit
+
+	MojDbTestStorageEngine* testEngine = dynamic_cast<MojDbTestStorageEngine*> (db.storageEngine());
+	MojAllocCheck(testEngine);
+
 	err = testEngine->setNextError(_T("txn.commit"), MojErrDbDeadlock);
 	MojTestErrCheck(err);
 	err = db.updateLocale(_T("en_US"));

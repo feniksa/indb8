@@ -361,18 +361,14 @@ MojErr MojDbQuotaTest::testErrors()
 	MojErr err;
     MojRefCountedPtr<MojDbStorageEngine> engine;
 
-	err = env()->openStorage(engine);
-	MojTestErrCheck(err);
-
-	MojAllocCheck(engine.get());
-	MojRefCountedPtr<MojDbTestStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
-	MojAllocCheck(testEngine.get());
-	err = testEngine->open(MojDbTestDir);
-	MojTestErrCheck(err);
+	MojRefCountedPtr<MojDbEnv> testEnv(new MojDbTestStorageEnv(env()));
 
 	MojDb db;
-	err = db.open(MojDbTestDir, testEngine.get());
+	err = db.open(MojDbTestDir, testEnv);
 	MojTestErrCheck(err);
+
+	MojDbTestStorageEngine* testEngine = dynamic_cast<MojDbTestStorageEngine*> (db.storageEngine());
+	MojAllocCheck(testEngine);
 
 	// test that failed put does not affect quota
 	MojInt64 quotaUsage1 = 0;

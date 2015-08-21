@@ -360,47 +360,65 @@ TEST_F(QuotaTest, enforce)
 
 TEST_F(QuotaTest, error)
 {
+	MojErr err;
     MojObject obj;
 
     // put quota (from testUsage)
-    MojAssertNoErr( obj.fromJson(_T("{\"owner\":\"com.foo.bar\",\"size\":1000}")) );
-    MojAssertNoErr( db.putQuotas(&obj, &obj + 1) );
+	err = obj.fromJson(_T("{\"owner\":\"com.foo.bar\",\"size\":1000}"));
+    MojAssertNoErr(err);
+
+	err = db.putQuotas(&obj, &obj + 1);
+    MojAssertNoErr(err);
 
     // quota for com.foo.baz (from multipleQuotas)
-    MojAssertNoErr( obj.fromJson(_T("{\"owner\":\"com.foo.baz\",\"size\":1000}")) );
-    MojAssertNoErr( db.putQuotas(&obj, &obj + 1) );
+	err = obj.fromJson(_T("{\"owner\":\"com.foo.baz\",\"size\":1000}"));
+	MojAssertNoErr(err);
+
+	err = db.putQuotas(&obj, &obj + 1);
+    MojAssertNoErr(err);
 
     // make kind2 inherit from kind1 (from multipleQuotas)
-    MojAssertNoErr( obj.fromJson(MojTestKind2Str3) );
-    MojExpectNoErr( db.putKind(obj) );
+	err = obj.fromJson(MojTestKind2Str3);
+    MojAssertNoErr(err);
+
+	err = db.putKind(obj);
+    MojExpectNoErr(err);
 
     // kind3 (from multipleQuotas)
-    MojAssertNoErr( obj.fromJson(MojTestKind3Str1) );
-    MojExpectNoErr( db.putKind(obj) );
+	err = obj.fromJson(MojTestKind3Str1);
+    MojAssertNoErr(err);
+
+	err = db.putKind(obj);
+    MojExpectNoErr(err);
 
     // wildcard (from multipleQuotas)
-    MojAssertNoErr( obj.fromJson(_T("{\"owner\":\"com.foo.*\",\"size\":1000}")) );
-    MojExpectNoErr( db.putQuotas(&obj, &obj + 1) );
+	err = obj.fromJson(_T("{\"owner\":\"com.foo.*\",\"size\":1000}"));
+    MojAssertNoErr(err);
 
-	MojRefCountedPtr<MojDbStorageEngine> engine;
-	MojAssertNoErr(env->openStorage(engine));
+	err = db.putQuotas(&obj, &obj + 1);
+    MojExpectNoErr(err);
 
-    EXPECT_TRUE( engine.get() ) << "Engine should be created successfully";
-    MojRefCountedPtr<MojDbTestStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
-    EXPECT_TRUE( testEngine.get() ) << "TestEngine should be created successfully";
+	err = db.close();
+	MojAssertNoErr(err);
 
-    MojAssertNoErr( db.close() );
-    MojAssertNoErr( testEngine->open(path.c_str()) );
+	MojRefCountedPtr<MojDbEnv> testEnv(new MojDbTestStorageEnv(env));
 
-    MojAssertNoErr( db.open(path.c_str(), testEngine.get()) );
+	err = db.open(path.c_str(), testEnv);
+	MojAssertNoErr(err);
+
+	MojDbTestStorageEngine* testEngine = dynamic_cast<MojDbTestStorageEngine*> (db.storageEngine());
+	ASSERT_TRUE(testEngine);
 
     // test that failed put does not affect quota
     MojInt64 quotaUsage1 = -1;
     EXPECT_NO_FATAL_FAILURE( getQuotaUsage(db, _T("com.foo.*"), quotaUsage1) );
     EXPECT_LE( 0, quotaUsage1 );
 
-    MojAssertNoErr( testEngine->setNextError(_T("txn.commit"), MojErrDbDeadlock) );
-    MojAssertNoErr( obj.fromJson(MojTestKind3Objects[1]) );
+	err = testEngine->setNextError(_T("txn.commit"), MojErrDbDeadlock);
+    MojAssertNoErr(err);
+
+	err = obj.fromJson(MojTestKind3Objects[1]);
+    MojAssertNoErr(err);
     EXPECT_EQ( MojErrDbDeadlock, db.put(obj) );
 
     MojInt64 quotaUsage2 = -1;
@@ -409,8 +427,11 @@ TEST_F(QuotaTest, error)
     EXPECT_EQ( quotaUsage1, quotaUsage2 );
 
     // test that failed putQuota has no effect
-    MojAssertNoErr( testEngine->setNextError(_T("txn.commit"), MojErrDbDeadlock) );
-    MojAssertNoErr( obj.fromJson(_T("{\"owner\":\"com.foo.boo\",\"size\":1000}")) );
+	err = testEngine->setNextError(_T("txn.commit"), MojErrDbDeadlock);
+    MojAssertNoErr(err);
+
+	err = obj.fromJson(_T("{\"owner\":\"com.foo.boo\",\"size\":1000}"));
+    MojAssertNoErr(err);
     EXPECT_EQ( MojErrDbDeadlock, db.putQuotas(&obj, &obj + 1) );
 
     MojInt64 quotaUsage3 = -1;
@@ -419,8 +440,10 @@ TEST_F(QuotaTest, error)
     EXPECT_EQ( quotaUsage1, quotaUsage3 );
 
     // test that failed putKind has no effect
-    MojAssertNoErr( testEngine->setNextError(_T("txn.commit"), MojErrDbDeadlock) );
-    MojAssertNoErr( obj.fromJson(MojTestKind3Str2) );
+	err = testEngine->setNextError(_T("txn.commit"), MojErrDbDeadlock);
+    MojAssertNoErr(err);
+	err = obj.fromJson(MojTestKind3Str2);
+    MojAssertNoErr(err);
     EXPECT_EQ( MojErrDbDeadlock, db.putKind(obj) );
 
     MojInt64 quotaUsage4 = -1;

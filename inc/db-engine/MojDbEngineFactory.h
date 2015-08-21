@@ -17,7 +17,6 @@ public:
 	MojErr open();
 
 	MojErr createEnv(const MojChar* name, MojRefCountedPtr<MojDbEnv>& envOut);
-	MojErr createEngine(const MojChar* name, MojRefCountedPtr<MojDbStorageEngine>& engineOut);
 
     MojErr supportedEngines(const FactoriesContainer*& factoryList) const;
 

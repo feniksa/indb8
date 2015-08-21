@@ -1,14 +1,14 @@
 #include "db-engine/MojDbEngineFactory.h"
 
-#ifdef MOJ_USE_BDB
+#ifdef BUILD_ENGINE_BERKELEY
 	#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
 #endif
 
-#ifdef MOJ_USE_LDB
+#ifdef BUILD_ENGINE_LEVELDB
 	#include "db-engine/leveldb/MojDbLevelFactory.h"
 #endif
 
-#ifdef MOJ_USE_SANDWICH
+#ifdef BUILD_ENGINE_SANDWICH
 	#include "db-engine/sandwich/MojDbSandwichFactory.h"
 #endif
 
@@ -30,22 +30,32 @@ MojErr MojDbEngineFactory::init()
 	m_init = true;
 
 	MojErr err;
-#ifdef MOJ_USE_BDB
+#ifdef BUILD_ENGINE_BERKELEY
+	#define HAVE_ENGINE
+
 	MojRefCountedPtr<MojDbStorageEngineFactory> berkeleyFactory(new MojDbBerkeleyFactory());
 	err = addEngineFactory(berkeleyFactory);
 	MojErrCheck(err);
 #endif
 
-#ifdef MOJ_USE_LDB
+#ifdef BUILD_ENGINE_LEVELDB
+	#define HAVE_ENGINE
+
 	MojRefCountedPtr<MojDbStorageEngineFactory> leveldbFactory(new MojDbLevelFactory());
 	err = addEngineFactory(leveldbFactory);
 	MojErrCheck(err);
 #endif
 
-#ifdef MOJ_USE_SANDWICH
+#ifdef BUILD_ENGINE_SANDWICH
+	#define HAVE_ENGINE
+
 	MojRefCountedPtr<MojDbStorageEngineFactory> sandwichFactory(new MojDbSandwichFactory());
 	err = addEngineFactory(sandwichFactory);
 	MojErrCheck(err);
+#endif
+
+#ifndef HAVE_ENGINE
+#error "MojDbEngineFactory compiled without any engine support. Please, specify what ENGINE with should use"
 #endif
 
 	return MojErrNone;
@@ -70,24 +80,6 @@ MojErr MojDbEngineFactory::getFactory(const MojChar* name, MojRefCountedPtr<MojD
     }
 
 	MojErrThrowMsg(MojErrDbStorageEngineNotFound, _T("Storage Factory not found: '%s'"), name);
-}
-
-MojErr MojDbEngineFactory::createEngine(const MojChar* name, MojRefCountedPtr<MojDbStorageEngine>& engineOut)
-{
-	MojLogTrace(s_log);
-
-	MojAssert(name);
-
-	MojErr err;
-	MojRefCountedPtr<MojDbStorageEngineFactory> factory;
-
-	err = getFactory(name, factory);
-	MojErrCheck(err);
-
-	err = factory->create(engineOut);
-	MojErrCheck(err);
-
-	return MojErrNone;
 }
 
 MojErr MojDbEngineFactory::supportedEngines(const FactoriesContainer*& factoryList) const

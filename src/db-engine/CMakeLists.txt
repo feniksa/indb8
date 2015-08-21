@@ -5,6 +5,7 @@ if (BUILD_ENGINE_SANDWICH)
 		mojodbenginesandwich
 	)
 	set (ENGINES ${ENGINES} sandwich)
+	add_definitions(-DBUILD_ENGINE_SANDWICH)
 endif()
 if (BUILD_ENGINE_LEVELDB)
 	add_subdirectory(leveldb)
@@ -13,6 +14,7 @@ if (BUILD_ENGINE_LEVELDB)
 		mojodbenginelbd
 	)
 	set (ENGINES ${ENGINES} leveldb)
+	add_definitions(-DBUILD_ENGINE_LEVELDB)
 endif()
 if (BUILD_ENGINE_BERKELEY)
 	add_subdirectory(berkeley)
@@ -21,6 +23,7 @@ if (BUILD_ENGINE_BERKELEY)
 		mojodbenginebdb
 	)
 	set (ENGINES ${ENGINES} berkeley)
+	add_definitions(-DBUILD_ENGINE_BERKELEY)
 endif()
 
 set (CXX_SOURCRES

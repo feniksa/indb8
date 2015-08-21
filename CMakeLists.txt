@@ -65,17 +65,6 @@ if (BUILD_LS2)
 	add_definitions(${LS2_CFLAGS_OTHER})
 endif()
 
-if (BUILD_ENGINE_SANDWICH)
-	add_definitions(-DMOJ_USE_SANDWICH)
-endif()
-if (BUILD_ENGINE_LEVELDB)
-	add_definitions(-DMOJ_USE_LDB)
-endif()
-if (BUILD_ENGINE_BERKELEY)
-	add_definitions(-DMOJ_USE_BDB)
-endif()
-
-
 #add_definitions("-std=c++11"
 #                "-fno-elide-constructors"
 #               "-pedantic-errors"

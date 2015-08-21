@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #ifndef MOJDBTESTSTORAGEENGINE_H_
 #define MOJDBTESTSTORAGEENGINE_H_
 
+#include "db/MojDbEnv.h"
 #include "db/MojDbStorageEngine.h"
 #include "db/MojDbStorageQuery.h"
 #include "db/MojDbStorageSeq.h"
@@ -28,11 +29,30 @@
 #include "db/MojDbStorageDatabase.h"
 #include "core/MojHashMap.h"
 
+class MojDbTestStorageEnv : public MojDbEnv
+{
+public:
+	MojDbTestStorageEnv (MojRefCountedPtr<MojDbEnv>& env);
+	~MojDbTestStorageEnv();
+	MojErr close() override;
+	MojErr configure(const MojObject& conf) override;
+	MojErr open(const MojChar* path) override;
+	MojErr openStorage(MojRefCountedPtr< MojDbStorageEngine >& storage) override;
+	MojRefCountedPtr<MojDbEnv>& parentEnv() { return m_env; }
+private:
+	MojRefCountedPtr<MojDbEnv>& m_env;
+};
+
+
 class MojDbTestStorageEngine : public MojDbStorageEngine
 {
 public:
 	typedef MojHashMap<MojString, MojErr, const MojChar*> ErrorMap;
-	MojDbTestStorageEngine(MojDbStorageEngine* engine);
+
+	MojDbTestStorageEngine(MojDbStorageEngine*) {}
+
+	MojDbTestStorageEngine(MojRefCountedPtr<MojDbTestStorageEnv>& env, MojRefCountedPtr<MojDbStorageEngine>& engine);
+
 	virtual ~MojDbTestStorageEngine();
 
 	virtual MojErr configure(const MojObject& conf);
@@ -52,6 +72,7 @@ public:
 
 private:
 	MojRefCountedPtr<MojDbStorageEngine> m_engine;
+	MojRefCountedPtr<MojDbTestStorageEnv> m_env;
 	ErrorMap m_errMap;
 };
 

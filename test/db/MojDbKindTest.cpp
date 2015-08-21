@@ -640,17 +640,13 @@ MojErr MojDbKindTest::testPutKind()
 	MojErr err;
 
 	//setup the test storage engine
-    MojRefCountedPtr<MojDbStorageEngine> engine;
-	err = env()->openStorage(engine);
+    /*MojRefCountedPtr<MojDbStorageEngine> engine;
+	err = env()->openStorage(engine);*/
 
-	MojAllocCheck(engine.get());
-	MojRefCountedPtr<MojDbStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
-	MojAllocCheck(testEngine.get());
-	err = testEngine->open(MojDbTestDir);
-	MojTestErrCheck(err);
+	MojRefCountedPtr<MojDbEnv> testEnv(new MojDbTestStorageEnv(env()));
 
 	MojDb db;
-	err = db.open(MojDbTestDir, testEngine.get());
+	err = db.open(MojDbTestDir, testEnv);
 	MojTestErrCheck(err);
 
 	MojObject kind;
@@ -753,18 +749,10 @@ MojErr MojDbKindTest::testDelKind()
 {
 	MojErr err;
 
-	//setup the test storage engine
-	MojRefCountedPtr<MojDbStorageEngine> engine;
-	err = env()->openStorage(engine);
-
-	MojAllocCheck(engine.get());
-	MojRefCountedPtr<MojDbStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
-	MojAllocCheck(testEngine.get());
-	err = testEngine->open(MojDbTestDir);
-	MojTestErrCheck(err);
+	MojRefCountedPtr<MojDbEnv> testEnv(new MojDbTestStorageEnv(env()));
 
 	MojDb db;
-	err = db.open(MojDbTestDir, testEngine.get());
+	err = db.open(MojDbTestDir, testEnv);
 	MojTestErrCheck(err);
 
 	MojObject kind;
