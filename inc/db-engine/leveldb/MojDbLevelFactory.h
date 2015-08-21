@@ -16,8 +16,7 @@
 *
 * LICENSE@@@ */
 
-#ifndef MOJDBLEVELFACTORY_H_
-#define MOJDBLEVELFACTORY_H_
+#pragma once
 
 #include "db/MojDbDefs.h"
 #include "db/MojDbEnv.h"
@@ -30,6 +29,3 @@ public:
 	MojErr createEnv(MojRefCountedPtr<MojDbEnv>& envOut) const override;
 	const MojChar* name() const;
 };
-
-#endif /* MOJDBLEVELFACTORY_H_ */
-
