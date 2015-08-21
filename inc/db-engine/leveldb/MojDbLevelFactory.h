@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -26,11 +26,9 @@
 class MojDbLevelFactory : public MojDbStorageEngineFactory
 {
 public:
-    static const MojChar* const Name;
-
-    virtual MojErr create(MojRefCountedPtr<MojDbStorageEngine>& engineOut) const;
-    virtual MojErr createEnv(MojRefCountedPtr<MojDbEnv>& envOut) const;
-    virtual const MojChar* name() const;
+	MojErr create(MojRefCountedPtr<MojDbStorageEngine>& engineOut) const override;
+	MojErr createEnv(MojRefCountedPtr<MojDbEnv>& envOut) const override;
+	const MojChar* name() const;
 };
 
 #endif /* MOJDBLEVELFACTORY_H_ */

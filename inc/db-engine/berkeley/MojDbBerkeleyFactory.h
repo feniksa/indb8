@@ -17,8 +17,7 @@
 * LICENSE@@@ */
 
 
-#ifndef MOJDBBERKELEYFACTORY_H_
-#define MOJDBBERKELEYFACTORY_H_
+#pragma once
 
 #include "db/MojDbDefs.h"
 #include "db/MojDbStorageEngine.h"
@@ -31,5 +30,3 @@ public:
 	MojErr createEnv(MojRefCountedPtr<MojDbEnv>& envOut) const override;
 	const MojChar* name() const override;
 };
-
-#endif /* MOJDBBERKELEYFACTORY_H_ */
