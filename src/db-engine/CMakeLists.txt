@@ -33,7 +33,7 @@ set (CXX_SOURCRES
 set (MOJO_ENGINES ${ENGINES} PARENT_SCOPE)
 
 add_library(mojodbengine SHARED ${CXX_SOURCRES})
-target_link_libraries(mojodbengine ${GLIB2_LDFLAGS} ${GTHREAD2_LDFLAGS} ${DB_BACKEND_LIB})
+target_link_libraries(mojodbengine mojocore mojodb ${DB_BACKEND_LIB})
 install(TARGETS mojodbengine
     LIBRARY DESTINATION usr/lib
 )
