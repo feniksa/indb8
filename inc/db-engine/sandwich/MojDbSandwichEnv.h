@@ -31,6 +31,7 @@ public:
 
     MojErr configure(const MojObject& conf) override;
     MojErr open(const MojChar* path) override;
+	MojErr openStorage(MojRefCountedPtr<MojDbStorageEngine>& storage) override;
 
 private:
     static const MojChar* const LockFileName;

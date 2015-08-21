@@ -31,6 +31,13 @@ MojDbBerkeleyEnv::~MojDbBerkeleyEnv()
 	MojErrCatchAll(err);
 }
 
+MojErr MojDbBerkeleyEnv::openStorage(MojRefCountedPtr<MojDbStorageEngine>& storage)
+{
+	MojRefCountedPtr<MojDbBerkeleyEnv> thiz(this);
+	storage.reset(new MojDbBerkeleyEngine(thiz));
+	return MojErrNone;
+}
+
 MojErr MojDbBerkeleyEnv::configure(const MojObject& conf)
 {
 	MojLogTrace(MojDbBerkeleyEngine::s_log);

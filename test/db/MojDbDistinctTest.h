@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*  Copyright (c) 2009-2013 LG Electronics, Inc.
+*  Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,8 +21,9 @@
 #define MOJDBDISTINCTTEST_H_
 
 #include "MojDbTestRunner.h"
+#include "MojDbTestEnv.h"
 
-class MojDbDistinctTest : public MojTestCase
+class MojDbDistinctTest : public MojDbTestEnv
 {
 public:
 	MojDbDistinctTest();

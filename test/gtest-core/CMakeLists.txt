@@ -1,6 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (c) 2013 LG Electronics, Inc.
+# Copyright (c) 2013-2015 LG Electronics, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,19 +22,19 @@ project(gtest_core CXX)
 add_definitions(-Wall -std=c++0x -Wno-deprecated -pthread)
 add_definitions(-DDEFAULT_SETTINGS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/defaultSettingsObfuscated.json")
 
-add_executable(gtest_core
-               Runner.cpp
-               AtomicIntTest.cpp
-               DecimalTest.cpp
-               NumberTest.cpp
-               MojJsonTest.cpp
-               )
+foreach(test
+		AtomicInt
+		Decimal
+		Number
+		Json
+	)
+	add_test(NAME "gtest-core/${test}" COMMAND gtest_core --gtest_filter="${test}.*")
+	set(TEST_SOURCES ${TEST_SOURCES} ${test}Test.cpp)
+endforeach()
 
-target_link_libraries(gtest_core mojocore)
+add_executable(gtest_core ${TEST_SOURCES} Runner.cpp)
+target_link_libraries(gtest_core gtest gtest_main mojocore)
 
-target_link_libraries(gtest_core gtest gtest_main)
 install( TARGETS gtest_core
-    RUNTIME DESTINATION usr/share/indb8/tests
+	RUNTIME DESTINATION usr/share/indb8/tests
 )
-
-add_test(NAME gtest_core COMMAND gtest_core)

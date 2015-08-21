@@ -22,30 +22,34 @@ project(gtest_db C CXX)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 include_directories(../db)
 
-add_definitions(-Wall -ansi -Wno-deprecated -pthread --std=c++0x)
+add_definitions(-Wall -ansi -Wno-deprecated -pthread --std=c++11)
 
-add_executable(gtest_db
-			   BatchTest.cpp
-               Runner.cpp
-               DumpLoadTest.cpp
-               ReqTest.cpp
-               QuotaTest.cpp
-               SearchTest.cpp
-               TextCollatorTest.cpp
-               IdGeneratorTest.cpp
-               ../db/MojDbTestStorageEngine.cpp
-               )
+foreach(test
+		Batch
+		DumpLoad
+		Req
+		Quota
+		Search
+		TextCollator
+	)
+	foreach (engine ${MOJO_ENGINES})
+		add_test(NAME "${engine}/gtest-db/${test}"
+		         COMMAND env MOJO_ENGINE=${engine} ${CMAKE_CURRENT_BINARY_DIR}/gtest_db --gtest_filter="${test}Test.*")
+	endforeach()
+
+	set(TEST_SOURCES ${TEST_SOURCES} ${test}Test.cpp)
+endforeach()
+
+add_executable(gtest_db  ${TEST_SOURCES} ../db/MojDbTestStorageEngine.cpp Runner.cpp MojDbCoreTest.cpp)
 
 target_link_libraries(gtest_db
-                      mojocore
-                      mojodb
-                      mojodbengine
-                      gtest
-                      gtest_main
-                     )
+	mojocore
+	mojodb
+	mojodbengine
+	gtest
+	gtest_main
+)
+
 install( TARGETS gtest_db
     RUNTIME DESTINATION usr/share/indb8/tests
 )
-
-add_test(NAME gtest_db COMMAND gtest_db)
-

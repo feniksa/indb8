@@ -45,7 +45,7 @@ static const MojChar* const MojTestStr =
 	_T("{\"_kind\":\"LoadTest:1\",\"foo\":\"hello\",\"bar\":\"world\"}")
 	_T("{\"_kind\":\"LoadTest:1\",\"foo\":\"hello\",\"bar\":\"world\"}");
 
-struct DatabaseSuite : public MojDbCoreTest
+struct DumpLoadTest : public MojDbCoreTest
 {
     MojString kindId;
 
@@ -78,7 +78,7 @@ struct DatabaseSuite : public MojDbCoreTest
     }
 };
 
-TEST_F(DatabaseSuite, dump_and_load)
+TEST_F(DumpLoadTest, dump_and_load)
 {
 
     // load

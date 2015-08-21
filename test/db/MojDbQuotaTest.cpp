@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -19,15 +19,6 @@
 
 #include "MojDbQuotaTest.h"
 #include "db/MojDb.h"
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else
-#error "Specify database engine"
-#endif
 #include "MojDbTestStorageEngine.h"
 
 static const MojChar* const MojTestKind1Str1 =
@@ -84,7 +75,7 @@ static const MojChar* MojTestKind3Objects[] = {
 };
 
 MojDbQuotaTest::MojDbQuotaTest()
-: MojTestCase(_T("MojDbQuota"))
+: MojDbTestEnv(_T("MojDbQuota"))
 {
 }
 
@@ -95,8 +86,13 @@ void MojDbQuotaTest::cleanup()
 
 MojErr MojDbQuotaTest::run()
 {
+	MojErr err;
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 	MojObject obj;
 	err = obj.fromJson(MojTestKind1Str1);
@@ -362,24 +358,17 @@ MojErr MojDbQuotaTest::testEnforce(MojDb& db)
 
 MojErr MojDbQuotaTest::testErrors()
 {
-#ifdef MOJ_USE_BDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbBerkeleyEngine());
-#elif MOJ_USE_LDB
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbLevelEngine());
-#elif MOJ_USE_SANDWICH
-	MojRefCountedPtr<MojDbStorageEngine> engine(new MojDbSandwichEngine());
-#else
+	MojErr err;
     MojRefCountedPtr<MojDbStorageEngine> engine;
-#endif
-	MojAllocCheck(engine.get());
-	MojRefCountedPtr<MojDbTestStorageEngine> testEngine(new MojDbTestStorageEngine(engine.get()));
-	MojAllocCheck(testEngine.get());
-	MojErr err = testEngine->open(MojDbTestDir);
-	MojTestErrCheck(err);
+
+	MojRefCountedPtr<MojDbEnv> testEnv(new MojDbTestStorageEnv(env()));
 
 	MojDb db;
-	err = db.open(MojDbTestDir, testEngine.get());
+	err = db.open(MojDbTestDir, testEnv);
 	MojTestErrCheck(err);
+
+	MojDbTestStorageEngine* testEngine = dynamic_cast<MojDbTestStorageEngine*> (db.storageEngine());
+	MojAllocCheck(testEngine);
 
 	// test that failed put does not affect quota
 	MojInt64 quotaUsage1 = 0;

@@ -106,7 +106,7 @@ MojErr MojDbLevelDatabase::close()
 MojErr MojDbLevelDatabase::drop(MojDbStorageTxn* txn)
 {
     // TODO: implement this
-    return MojErrNone;
+    return MojErrNotImpl;
 }
 
 // not supported in levelDB

@@ -28,6 +28,8 @@ option(BUILD_ENGINE_SANDWICH "Build sandwich engine"     ON )
 option(BUILD_ENGINE_LEVELDB  "Build leveldb  engine"     OFF)
 option(BUILD_ENGINE_BERKELEY "Build berkeley engine"     OFF)
 
+add_definitions(-DMOJ_VERSION_STRING="2.0.2")
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 include(FindPkgConfig)
@@ -62,17 +64,6 @@ if (BUILD_LS2)
 	include_directories(${LS2_INCLUDE_DIRS})
 	add_definitions(${LS2_CFLAGS_OTHER})
 endif()
-
-if (BUILD_ENGINE_SANDWICH)
-	add_definitions(-DMOJ_USE_SANDWICH)
-endif()
-if (BUILD_ENGINE_LEVELDB)
-	add_definitions(-DMOJ_USE_LDB)
-endif()
-if (BUILD_ENGINE_BERKELEY)
-	add_definitions(-DMOJ_USE_BDB)
-endif()
-
 
 #add_definitions("-std=c++11"
 #                "-fno-elide-constructors"
@@ -113,23 +104,7 @@ endif()
 if (BUILD_TESTING)
 	enable_testing()
 
-	add_subdirectory(test/core)
-	add_subdirectory(test/db)
-	add_subdirectory(test/gtest-core)
-	add_subdirectory(test/gtest-db)
-	if (WEBOS_ENGINE_LEVELDB)
-		add_subdirectory(test/gtest-leveldb)
-	endif ()
-	if (BUILD_LS2)
-		add_subdirectory(test/luna-service)
-
-		install_ls2_roles("test/files/sysbus" "prv")
-		install_ls2_roles("test/files/sysbus" "pub")
-		install_ls2_service("test/files/sysbus" "prv")
-		install_ls2_service("test/files/sysbus" "pub")
-
-		add_subdirectory(test/dbclient)
-	endif()
+	add_subdirectory(test)
 endif()
 
 install(FILES files/conf/maindb.conf DESTINATION etc/indb8)

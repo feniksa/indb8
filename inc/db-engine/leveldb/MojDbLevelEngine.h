@@ -34,6 +34,7 @@ public:
     static MojLogger s_log;
 
     MojDbLevelEngine();
+	MojDbLevelEngine(MojRefCountedPtr<MojDbLevelEnv>& env);
     ~MojDbLevelEngine();
 
     virtual MojErr configure(const MojObject& config);

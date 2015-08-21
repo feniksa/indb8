@@ -28,6 +28,7 @@
 #include "db/MojDbStorageSeq.h"
 #include "db/MojDbObjectHeader.h"
 #include "db/MojDbStorageDatabase.h"
+#include <db/MojDbEnv.h>
 #include "core/MojJson.h"
 #include "core/MojObject.h"
 #include "core/MojObjectBuilder.h"
@@ -131,15 +132,16 @@ MojErr MojDb::drop(const MojChar* path)
 	return MojErrNone;
 }
 
-MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
+MojErr MojDb::open(const MojChar* path, MojRefCountedPtr<MojDbEnv>& env)
 {
 	MojAssert(path);
+	MojAssert(env.get());
 	MojLogTrace(s_log);
 
 	MojErr err = requireNotOpen();
 	MojErrCheck(err);
 
-    MojLogDebug(s_log, _T("opening: '%s'..."), path);
+	MojLogDebug(s_log, _T("opening: '%s'..."), path);
 
 	MojAutoCloser<MojDb> closer(this);
 	m_isOpen = true;
@@ -148,48 +150,46 @@ MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
 	err = checkDbVersion(path);
 	MojErrCheck(err);
 
-	// engine
-	if (engine == NULL) {
-		err = createEngine();
-		MojErrCheck(err);
-		MojAssert(m_storageEngine.get());
-		err = m_storageEngine->configure(m_conf);
-		MojErrCheck(err);
-		err = m_storageEngine->open(path);
-		MojErrCheck(err);
-	} else {
-		m_storageEngine.reset(engine);
-	}
+	err = env->openStorage(m_storageEngine);
+	MojErrCheck(err);
+
+	MojAssert(m_storageEngine.get());
+
+	err = m_storageEngine->configure(m_conf);
+	MojErrCheck(err);
+
+	err = m_storageEngine->open(path);
+	MojErrCheck(err);
 
 	MojDbReq req;
 	err = req.begin(this, true);
 	MojErrCheck(err);
 
 	// db
-    MojLogDebug(s_log, _T("Open Database: '%s'"), ObjDbName);
+	MojLogDebug(s_log, _T("Open Database: '%s'"), ObjDbName);
 	err = m_storageEngine->openDatabase(ObjDbName, req.txn(), m_objDb);
 	MojErrCheck(err);
 	MojAssert(m_objDb.get());
 
 	// seq
-    MojLogDebug(s_log, _T("Open Database: '%s'"), IdSeqName);
+	MojLogDebug(s_log, _T("Open Database: '%s'"), IdSeqName);
 	err = m_storageEngine->openSequence(IdSeqName, req.txn(), m_idSeq);
 	MojErrCheck(err);
 	MojAssert(m_idSeq.get());
 
 	// kinds
-    MojLogDebug(s_log, _T("Open Kind Engine"));
+	MojLogDebug(s_log, _T("Open Kind Engine"));
 	err = m_kindEngine.open(this, req);
-    MojLogDebug(s_log, _T("Kind Opened..."));
+	MojLogDebug(s_log, _T("Kind Opened..."));
 	MojErrCheck(err);
 
 	// perms
-    MojLogDebug(s_log, _T("Open Permissions"));
+	MojLogDebug(s_log, _T("Open Permissions"));
 	err = m_permissionEngine.open(m_conf, this, req);
 	MojErrCheck(err);
 
 	// quota
-    MojLogDebug(s_log, _T("Open Quota engine"));
+	MojLogDebug(s_log, _T("Open Quota engine"));
 	err = m_quotaEngine.open(m_conf, this, req);
 	MojErrCheck(err);
 
@@ -199,15 +199,16 @@ MojErr MojDb::open(const MojChar* path, MojDbStorageEngine* engine)
 	err = m_idGenerator.init();
 	MojErrCheck(err);
 
-    // explicitly finish request
-    err = req.end();
-    MojErrCheck(err);
+	// explicitly finish request
+	err = req.end();
+	MojErrCheck(err);
 
 	closer.release();
-    MojLogDebug(s_log, _T("open completed"));
+	MojLogDebug(s_log, _T("open completed"));
 
 	return MojErrNone;
 }
+
 
 MojErr MojDb::close()
 {
@@ -241,6 +242,7 @@ MojErr MojDb::close()
 			MojErrAccumulate(err, errClose);
 			m_storageEngine.reset();
 		}
+
 		m_isOpen = false;
         MojLogDebug(s_log, _T("close completed"));
 	}
@@ -667,18 +669,6 @@ MojErr MojDb::watch(const MojDbQuery& query, MojDbCursor& cursor, WatchSignal::S
 	err = req->end(false);
 	MojErrCheck(err);
 
-	return MojErrNone;
-}
-
-MojErr MojDb::createEngine()
-{
-	if (m_engineName.empty()) {
-		MojErr err = MojDbStorageEngine::createDefaultEngine(m_storageEngine);
-		MojErrCheck(err);
-	} else {
-		MojErr err = MojDbStorageEngine::createEngine(m_engineName, m_storageEngine);
-		MojErrCheck(err);
-	}
 	return MojErrNone;
 }
 

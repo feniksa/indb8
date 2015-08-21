@@ -1,6 +1,6 @@
 # @@@LICENSE
 #
-# Copyright (c) 2013 LG Electronics
+# Copyright (c) 2013-2015 LG Electronics
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,38 +16,40 @@
 #
 # LICENSE@@@
 
-set (CORE_TEST_SOURCES
-     MojCoreTestRunner.cpp
-     MojAtomicIntTest.cpp
-     MojAutoPtrTest.cpp
-     MojBufferTest.cpp
-     MojDataSerializationTest.cpp
-     MojDecimalTest.cpp
-     MojErrTest.cpp
-     MojHashMapTest.cpp
-     MojJsonTest.cpp
-     MojListTest.cpp
-     MojLogTest.cpp
-     MojMapTest.cpp
-     MojMessageDispatcherTest.cpp
-     MojObjectFilterTest.cpp
-     MojObjectSerializationTest.cpp
-     MojObjectTest.cpp
-     MojReactorTest.cpp
-     MojRefCountTest.cpp
-     MojSchemaTest.cpp
-     MojSetTest.cpp
-     MojSignalTest.cpp
-     MojStringTest.cpp
-     MojThreadTest.cpp
-     MojTimeTest.cpp
-     MojUtilTest.cpp
-     MojVectorTest.cpp
+foreach(test
+     MojAtomicInt
+     MojAutoPtr
+     MojBuffer
+     MojDataSerialization
+     MojDecimal
+     MojErr
+     MojHashMap
+     MojJson
+     MojList
+     MojLog
+     MojMap
+     MojMessageDispatcher
+     MojObjectFilter
+     MojObjectSerialization
+     MojObject
+     MojReactor
+     MojRefCount
+     MojSchema
+     MojSet
+     MojSignal
+     MojString
+     MojThread
+     MojTime
+     MojUtil
+     MojVector
 )
 
-add_executable(test_core ${CORE_TEST_SOURCES})
+    add_test(NAME "core/${test}" COMMAND test_core ${test})
+    set(TEST_SOURCES ${TEST_SOURCES} ${test}Test.cpp)
+endforeach()
+
+add_executable(test_core ${TEST_SOURCES} MojCoreTestRunner.cpp)
 target_link_libraries(test_core mojocore)
-add_test(test_core test_core)
 
 install( TARGETS test_core
     RUNTIME DESTINATION usr/share/indb8/tests

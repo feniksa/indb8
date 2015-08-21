@@ -31,14 +31,19 @@ static const MojChar* const MojTestObjStr1 =
 
 
 MojDbPurgeTest::MojDbPurgeTest()
-: MojTestCase(_T("MojDbPurge"))
+: MojDbTestEnv(_T("MojDbPurge"))
 {
 }
 
 MojErr MojDbPurgeTest::run()
 {
+	MojErr err;
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// put type

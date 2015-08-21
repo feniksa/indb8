@@ -1,6 +1,6 @@
 /* @@@LICENSE
  *
- *      Copyright (c) 2009-2013 LG Electronics, Inc.
+ *      Copyright (c) 2009-2015 LG Electronics, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,24 +27,30 @@
 #include "luna/MojLunaService.h"
 #include "db-luna/MojDbServiceHandlerInternal.h"
 #include "db-luna/MojDbServiceHandler.h"
+#include "db-engine/MojDbEngineFactory.h"
 
 class MojDbLunaServiceDb
 {
 public:
     MojDbLunaServiceDb(MojMessageDispatcher& dispatcher);
     MojErr init(MojReactor& reactor);
-    MojErr open(MojGmainReactor& reactor, MojDbEnv* env,
-                const MojChar* serviceName, const MojChar* dir, const MojObject& conf);
-    MojErr openDb(MojDbEnv* env, const MojChar* dir, const MojObject& conf);
+	MojErr configure(const MojObject& conf);
+    MojErr open(MojGmainReactor& reactor, const MojChar* serviceName);
+    MojErr openDb();
     MojErr close();
 
     MojDb& db() { return m_db; }
     MojLunaService& service() { return m_service; }
 
 private:
+	MojRefCountedPtr<MojDbEnv> m_env;
     MojDb m_db;
     MojLunaService m_service;
     MojRefCountedPtr<MojDbServiceHandler> m_handler;
+	MojString m_databaseDir;
+	MojString m_engineName;
+	MojObject m_envConf;
+	MojDbEngineFactory m_engineFactory;
 
     static MojLogger s_log;
 };

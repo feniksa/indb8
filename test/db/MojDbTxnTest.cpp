@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2013 LG Electronics, Inc.
+*      Copyright (c) 2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -29,16 +29,20 @@ const char* const MojKindStr =
 
 
 MojDbTxnTest::MojDbTxnTest()
-: MojTestCase(_T("MojDbTxn"))
+: MojDbTestEnv(_T("MojDbTxn"))
 {
 }
 
 MojErr MojDbTxnTest::run()
 {
+	MojErr err;
     MojDb db;
 
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck(err);
+
     // open
-    MojErr err = db.open(MojDbTestDir);
+    err = db.open(MojDbTestDir, env());
     MojTestErrCheck(err);
 
     // add type
@@ -121,10 +125,11 @@ MojErr MojDbTxnTest::run()
             MojTestAssert(count == 50);
         }
 
-#ifdef MOJ_USE_LDB
+
         // With BerkeleyDB parallel transaction is locked
 
         // invisible outside of transaction
+        if (engineName().compare(_T("leveldb")) == 0)
         {
             MojDbQuery query;
             err = query.from(_T("Test:1"));
@@ -141,7 +146,6 @@ MojErr MojDbTxnTest::run()
             MojTestErrCheck(err);
             MojTestAssert(count == 0);
         }
-#endif
     }
 
     // invisible after aborted transaction
@@ -199,10 +203,11 @@ MojErr MojDbTxnTest::run()
             MojTestAssert(count == 33);
         }
 
-#ifdef MOJ_USE_LDB
+
         // With BerkeleyDB parallel transaction is locked
 
         // invisible outside of transaction
+        if (engineName().compare(_T("leveldb")) == 0)
         {
             MojDbQuery query;
             err = query.from(_T("Test:1"));
@@ -219,7 +224,6 @@ MojErr MojDbTxnTest::run()
             MojTestErrCheck(err);
             MojTestAssert(count == 83);
         }
-#endif
     }
 
     // invisible after aborted transaction

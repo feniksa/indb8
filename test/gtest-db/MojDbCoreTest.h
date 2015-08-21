@@ -1,7 +1,7 @@
 /****************************************************************
  * @@@LICENSE
  *
- * Copyright (c) 2013 LG Electronics, Inc.
+ * Copyright (c) 2013-2015 LG Electronics, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,56 +22,22 @@
  *  @file MojDbCoreTest.h
  ****************************************************************/
 
-#ifndef __MOJDBCORETEST_H
-#define __MOJDBCORETEST_H
+#pragma once
 
 #include "db/MojDb.h"
+#include "db/MojDbEnv.h"
+#include "db-engine/MojDbEngineFactory.h"
 
 #include "Runner.h"
 
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelFactory.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichFactory.h"
-#else
-#error "Set database type"
-#endif
-
 struct MojDbCoreTest : public ::testing::Test
 {
+	MojDbEngineFactory factory;
+	MojRefCountedPtr<MojDbEnv> env;
     MojDb db;
     std::string path;
 
-    void SetUp()
-    {
-		// set up db first
-		#ifdef MOJ_USE_BDB
-		MojDbStorageEngine::setEngineFactory(new MojDbBerkeleyFactory());
-		#elif MOJ_USE_LDB
-		MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
-		#elif MOJ_USE_SANDWICH
-		MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
-		#else
-		#error "Database not set"
-		#endif
-
-        const ::testing::TestInfo* const test_info =
-          ::testing::UnitTest::GetInstance()->current_test_info();
-
-        path = std::string(tempFolder) + '/'
-             + test_info->test_case_name() + '-' + test_info->name();
-
-        // open
-        MojAssertNoErr( db.open(path.c_str()) );
-    }
-
-    void TearDown()
-    {
-        // TODO: clean DB
-        MojExpectNoErr( db.close() );
-    }
+    void SetUp();
+    void TearDown();
 };
 
-#endif

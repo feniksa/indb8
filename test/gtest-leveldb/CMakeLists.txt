@@ -21,7 +21,7 @@ project(gtest_leveldb C CXX)
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-add_definitions(-Wall -ansi -Wno-deprecated -pthread)
+add_definitions(-Wall -ansi -Wno-deprecated -pthread -std=c++11)
 
 add_executable(gtest_leveldb
                Runner.cpp

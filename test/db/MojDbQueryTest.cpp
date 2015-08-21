@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*      Copyright (c) 2009-2013 LG Electronics, Inc.
+*      Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ struct TestPrefix
 };
 
 MojDbQueryTest::MojDbQueryTest()
-: MojTestCase(_T("MojDbQuery"))
+: MojDbTestEnv(_T("MojDbQuery"))
 {
 }
 
@@ -136,8 +136,13 @@ MojErr MojDbQueryTest::run()
 
 MojErr MojDbQueryTest::basicTest()
 {
+	MojErr err;
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// add kind

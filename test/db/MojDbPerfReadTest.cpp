@@ -30,6 +30,7 @@ static const MojUInt64 numRepetitionsForFind = 20;
 static MojTime totalTestTime;
 static MojFile file;
 const MojChar* const ReadTestFileName = _T("MojDbPerfReadTest.csv");
+extern const MojChar* const MojDbTestDir;
 
 MojDbPerfReadTest::MojDbPerfReadTest()
 : MojDbPerfTest(_T("MojDbPerfRead"))
@@ -48,7 +49,11 @@ MojErr MojDbPerfReadTest::run()
 	MojTestErrCheck(err);
 
 	MojDb db;
-	err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	err = testGet(db);

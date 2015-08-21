@@ -111,7 +111,7 @@ static const MojChar* const MojCollatorTestObjects2[] = {
 };
 
 MojDbTextCollatorTest::MojDbTextCollatorTest()
-: MojTestCase(_T("MojDbTextCollator"))
+: MojDbTestEnv(_T("MojDbTextCollator"))
 {
 }
 
@@ -121,7 +121,12 @@ MojDbTextCollatorTest::~MojDbTextCollatorTest()
 
 MojErr MojDbTextCollatorTest::run()
 {
-    MojErr err = simpleTest1();
+    MojErr err;
+
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojErrCheck(err);
+
+	err = simpleTest1();
 	MojErrCheck(err);
     err = queryTest1();
 	MojErrCheck(err);
@@ -335,7 +340,7 @@ MojErr MojDbTextCollatorTest::simpleTest2()
 MojErr MojDbTextCollatorTest::queryTest1()
 {
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+	MojErr err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// put type
@@ -412,7 +417,7 @@ MojErr MojDbTextCollatorTest::queryTest1()
 MojErr MojDbTextCollatorTest::queryTest2()
 {
     MojDb db;
-    MojErr err = db.open(MojDbTestDir);
+    MojErr err = db.open(MojDbTestDir, env());
     MojTestErrCheck(err);
 
     // put type

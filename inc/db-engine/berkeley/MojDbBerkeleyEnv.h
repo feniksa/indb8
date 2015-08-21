@@ -16,9 +16,11 @@ public:
 	MojDbBerkeleyEnv();
 	~MojDbBerkeleyEnv();
 
-	MojErr configure(const MojObject& conf);
-	MojErr open(const MojChar* path);
-	MojErr close();
+	MojErr configure(const MojObject& conf) override;
+	MojErr open(const MojChar* path) override;
+	MojErr close() override;
+	MojErr openStorage(MojRefCountedPtr<MojDbStorageEngine>& storage) override;
+
 	MojErr postCommit(MojSize updateSize);
 	MojErr checkpoint(MojUInt32 minKB);
 

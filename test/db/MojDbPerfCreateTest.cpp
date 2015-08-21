@@ -22,25 +22,13 @@
 #include "db/MojDb.h"
 #include "core/MojTime.h"
 
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
-#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelFactory.h"
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichFactory.h"
-#include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else
-    #error "Doesn't specified database type. See macro MOJ_USE_BDB and MOJ_USE_LDB"
-#endif
-
 static const MojUInt64 numInsert = 1000;
 static const int numRepetitions = 5;
 
 static MojTime totalTestTime;
 static MojFile file;
 const MojChar* const CreateTestFileName = _T("MojDbPerfCreateTest.csv");
+extern const MojChar* const MojDbTestDir;
 
 MojDbPerfCreateTest::MojDbPerfCreateTest()
 : MojDbPerfTest(_T("MojDbPerfCreate"))
@@ -49,7 +37,13 @@ MojDbPerfCreateTest::MojDbPerfCreateTest()
 
 MojErr MojDbPerfCreateTest::run()
 {
-	MojErr err = file.open(CreateTestFileName, MOJ_O_RDWR | MOJ_O_CREAT | MOJ_O_TRUNC, MOJ_S_IRUSR | MOJ_S_IWUSR);
+	MojErr err;
+
+	err = file.open(CreateTestFileName, MOJ_O_RDWR | MOJ_O_CREAT | MOJ_O_TRUNC, MOJ_S_IRUSR | MOJ_S_IWUSR);
+	MojTestErrCheck(err);
+
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck(err);
 
 	MojString buf;
 	err = buf.format("MojoDb Create Performance Test,,,,,\n\nOperation,Kind,Total Time,Time Per Iteration,Time Per Object\n");
@@ -78,19 +72,9 @@ MojErr MojDbPerfCreateTest::run()
 
 MojErr MojDbPerfCreateTest::testCreate()
 {
-	//setup the test storage engine
-#ifdef MOJ_USE_BDB
-    MojDbStorageEngine::setEngineFactory (new MojDbBerkeleyFactory);
-#elif MOJ_USE_LDB
-    MojDbStorageEngine::setEngineFactory (new MojDbLevelFactory);
-#elif MOJ_USE_SANDWICH
-	MojDbStorageEngine::setEngineFactory (new MojDbSandwichFactory);
-#else
-    #error "Not defined engine type"
-#endif
 	MojDb db;
 
-	MojErr err = db.open(MojDbTestDir);
+	MojErr err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// time put kind

@@ -38,14 +38,20 @@ static const MojChar* const JsonObj3_3 = _T("{\"_kind\":\"RevSetTest:1\",\"_rev\
 
 
 MojDbRevisionSetTest::MojDbRevisionSetTest()
-: MojTestCase("MojDbRevisionSet")
+: MojDbTestEnv("MojDbRevisionSet")
 {
 }
 
 MojErr MojDbRevisionSetTest::run()
 {
-	MojErr err = standAloneTest();
+	MojErr err;
+
+	err = MojDbTestEnv::run(MojDbTestDir);
 	MojTestErrCheck(err);
+
+	err = standAloneTest();
+	MojTestErrCheck(err);
+
 	err = dbTest();
 	MojTestErrCheck(err);
 
@@ -175,7 +181,7 @@ MojErr MojDbRevisionSetTest::standAloneTest()
 MojErr MojDbRevisionSetTest::dbTest()
 {
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+	MojErr err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 
 	// create one prop rs

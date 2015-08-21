@@ -43,41 +43,27 @@
 #include "MojDbWatchTest.h"
 #include "MojDbTxnTest.h"
 #include "MojDbCursorTxnTest.h"
-
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelFactory.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichFactory.h"
-#else
-#error "Database Engine doesn't set. See README.txt"
-#endif
+#include <sstream>
 
 std::string getTestDir()
 {
-    char buf[128];
-    size_t n = snprintf(buf, sizeof(buf)-1, "/tmp/mojodb-test-dir-%d", time(0));
-    if (n < 0) return "/tmp/mojodb-test-dir"; // fallback
-    else return std::string(buf, n);
-}
-const std::string mojDbTestDirString = getTestDir();
+	struct timespec spec;
 
+	if (clock_gettime(CLOCK_REALTIME, &spec) != 0)
+		throw std::exception();
+
+	std::stringstream stream;
+	stream << "/tmp/mojodb-test-dir-" << spec.tv_sec << "-" << spec.tv_nsec;
+
+	return stream.str();
+}
+
+const std::string mojDbTestDirString = getTestDir();
 const MojChar* const MojDbTestDir = mojDbTestDirString.c_str();
 
 int main(int argc, char** argv)
 {
 	MojDbTestRunner runner;
-   // set up bdb first
-#ifdef MOJ_USE_BDB
-   MojDbStorageEngine::setEngineFactory(new MojDbBerkeleyFactory());
-#elif MOJ_USE_LDB
-   MojDbStorageEngine::setEngineFactory(new MojDbLevelFactory());
-#elif MOJ_USE_SANDWICH
-   MojDbStorageEngine::setEngineFactory(new MojDbSandwichFactory());
-#else
-	#error "Not set engine"
-#endif
 
 	return runner.main(argc, argv);
 }

@@ -43,6 +43,13 @@ MojDbBerkeleyEngine::MojDbBerkeleyEngine()
 	MojLogTrace(s_log);
 }
 
+MojDbBerkeleyEngine::MojDbBerkeleyEngine(MojRefCountedPtr<MojDbBerkeleyEnv>& env)
+: m_env(env),
+  m_isOpen(false)
+{
+	MojLogTrace(s_log);
+}
+
 MojDbBerkeleyEngine::~MojDbBerkeleyEngine()
 {
 	MojLogTrace(s_log);
@@ -86,15 +93,26 @@ MojErr MojDbBerkeleyEngine::drop(const MojChar* path, MojDbStorageTxn* txn)
 MojErr MojDbBerkeleyEngine::open(const MojChar* path)
 {
 	MojAssert(path);
-	MojAssert(!m_env.get() && !m_isOpen);
+	MojAssert(m_env.get());
+	MojAssert(!m_isOpen);
 	MojLogTrace(s_log);
 
-	MojRefCountedPtr<MojDbBerkeleyEnv> env(new MojDbBerkeleyEnv);
-	MojAllocCheck(env.get());
-	MojErr err = env->open(path);
+	MojErr err;
+
+	err = m_path.assign(path);
 	MojErrCheck(err);
-	err = open(NULL, env.get());
+
+	bool created = false;
+	m_seqDb.reset(new MojDbBerkeleyDatabase);
+	MojAllocCheck(m_seqDb.get());
+	err = m_seqDb->open(defs::MojEnvSeqDbName, this, created, NULL);
 	MojErrCheck(err);
+	// open index db
+	m_indexDb.reset(new MojDbBerkeleyDatabase);
+	MojAllocCheck(m_indexDb.get());
+	err = m_indexDb->open(defs::MojEnvIndexDbName, this, created, NULL);
+	MojErrCheck(err);
+	m_isOpen = true;
 
 	return MojErrNone;
 }
@@ -103,12 +121,10 @@ MojErr MojDbBerkeleyEngine::open(const MojChar* path, MojDbEnv* env)
 {
     MojDbBerkeleyEnv* bEnv = static_cast<MojDbBerkeleyEnv *> (env);
     MojAssert(bEnv);
-	MojAssert(!m_env.get() && !m_isOpen);
 	MojLogTrace(s_log);
 
-
 	m_env.reset(bEnv);
-	if (path) {
+	/*if (path) {
 		MojErr err = m_path.assign(path);
 		MojErrCheck(err);
 		// create dir
@@ -126,7 +142,11 @@ MojErr MojDbBerkeleyEngine::open(const MojChar* path, MojDbEnv* env)
 	MojAllocCheck(m_indexDb.get());
 	err = m_indexDb->open(defs::MojEnvIndexDbName, this, created, NULL);
 	MojErrCheck(err);
-	m_isOpen = true;
+	m_isOpen = true;*/
+
+	MojErr err;
+	err = open(path);
+	MojErrCheck(err);
 
 	return MojErrNone;
 }

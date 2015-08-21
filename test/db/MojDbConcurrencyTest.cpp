@@ -85,7 +85,7 @@ static MojErr queryThread(void* arg)
 }
 
 MojDbConcurrencyTest::MojDbConcurrencyTest()
-: MojTestCase(_T("MojDbConcurrency"))
+: MojDbTestEnv(_T("MojDbConcurrency"))
 {
 }
 /**
@@ -100,8 +100,13 @@ MojDbConcurrencyTest::MojDbConcurrencyTest()
 **/
 MojErr MojDbConcurrencyTest::run()
 {
+	MojErr err;
 	MojDb db;
-	MojErr err = db.open(MojDbTestDir);
+
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck(err);
+
+	err = db.open(MojDbTestDir, env());
 	MojTestErrCheck(err);
 	MojObject kind;
 	err = kind.fromJson(TestKind);

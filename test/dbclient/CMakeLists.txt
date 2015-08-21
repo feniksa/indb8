@@ -31,4 +31,4 @@ install( TARGETS test_dbclient
     RUNTIME DESTINATION usr/share/indb8/tests
 )
 
-add_test(test_dbclient test_dbclient)
+add_test("dbclient/test_dbclient" test_dbclient)

@@ -18,38 +18,3 @@
 
 
 #include "db/MojDbStorageEngine.h"
-#include "core/MojObjectBuilder.h"
-#include "core/MojJson.h"
-
-MojRefCountedPtr<MojDbStorageEngineFactory> MojDbStorageEngine::m_factory;
-
-MojErr MojDbStorageEngine::createDefaultEngine(MojRefCountedPtr<MojDbStorageEngine>& engineOut)
-{
-   if(m_factory.get() == 0)
-      MojErrThrowMsg(MojErrDbStorageEngineNotFound, _T("Storage engine is not set"));
-   MojErr err = m_factory->create(engineOut);
-   MojErrCheck(err);
-   return MojErrNone;
-}
-
-MojErr MojDbStorageEngine::createEngine(const MojChar* name, MojRefCountedPtr<MojDbStorageEngine>& engineOut)
-{
-	MojAssert(name);
-
-	if (MojStrCmp(name, m_factory->name()) == 0) {
-		MojErr err = m_factory->create(engineOut);
-		MojErrCheck(err);
-		return MojErrNone;
-	}
-	MojErrThrowMsg(MojErrDbStorageEngineNotFound, _T("Storage engine not found: '%s'"), name);
-}
-MojErr MojDbStorageEngine::setEngineFactory(MojDbStorageEngineFactory* factory)
-{
-   m_factory.reset(factory);
-   return MojErrNone;
-}
-
-
-MojDbStorageEngine::MojDbStorageEngine()
-{
-}

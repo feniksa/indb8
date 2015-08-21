@@ -246,7 +246,7 @@ MojErr MojApp::displayVersion()
 		err = version.format(_T("%d.%d"), m_majorVersion, m_minorVersion);
 		MojErrCheck(err);
 	}
-	err = displayMessage(_T("%s %s\nCopyright (c) 2009-2013 LG Electronics, Inc.\n"), name().data(), version.data());
+	err = displayMessage(_T("%s %s\nCopyright (c) 2009-2015 LG Electronics, Inc.\nUpstream developer Maksym Sditanov <msditanov@200volts.com>\n"), name().data(), version.data());
 	MojErrCheck(err);
 
 	return MojErrNone;

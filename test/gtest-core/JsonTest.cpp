@@ -34,7 +34,7 @@ static const MojChar* const MojDefaultSettingsFileName = DEFAULT_SETTINGS_PATH;
 #include <list>
 using namespace std;
 
-struct JsonSuite : public ::testing::Test
+struct JsonTest : public ::testing::Test
 {
 	void SetUp()
 	{
@@ -51,7 +51,7 @@ struct JsonSuite : public ::testing::Test
 /**
  * Load MojDefaultSettingsFileName and just parse it.
  */
-TEST_F(JsonSuite, paser_json_withoutobj)
+TEST_F(JsonTest, paser_json_withoutobj)
 {
 	MojErr err;
 	MojFile file;
@@ -89,7 +89,7 @@ TEST_F(JsonSuite, paser_json_withoutobj)
 /**
  * Load MojDefaultSettingsFileName, parse json file and build MojObject
  */
-TEST_F(JsonSuite, paser_json_withobj)
+TEST_F(JsonTest, paser_json_withobj)
 {
 	MojErr err;
 	MojFile file;

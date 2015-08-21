@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2009-2013 LG Electronics, Inc.
+* Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -22,19 +22,6 @@
 #include "MojDbCursorTxnTest.h"
 #include "db/MojDb.h"
 
-#ifdef MOJ_USE_BDB
-#include "db-engine/berkeley/MojDbBerkeleyFactory.h"
-#include "db-engine/berkeley/MojDbBerkeleyEngine.h"
-#elif MOJ_USE_LDB
-#include "db-engine/leveldb/MojDbLevelFactory.h"
-#include "db-engine/leveldb/MojDbLevelEngine.h"
-#elif MOJ_USE_SANDWICH
-#include "db-engine/sandwich/MojDbSandwichFactory.h"
-#include "db-engine/sandwich/MojDbSandwichEngine.h"
-#else
-#error "Doesn't specified database type. See macro MOJ_USE_BDB and MOJ_USE_LDB"
-#endif
-
 static const MojChar* const TestKind1Str =
     _T ( "{\"id\":\"Test1:1\"," )
     _T ( "\"owner\":\"mojodb.admin\"," )
@@ -51,24 +38,20 @@ static const MojChar* const TestKind3Str =
     _T ( "\"indexes\":[{\"name\":\"idxtest3\",\"props\":[{\"name\":\"data1\"}]} ]}" );
 
 MojDbCursorTxnTest::MojDbCursorTxnTest()
-    : MojTestCase ( _T ( "MojDbCursorTxnTest" ) )
+: MojDbTestEnv(_T("MojDbCursorTxnTest"))
 {
 }
 
 MojErr MojDbCursorTxnTest::run()
 {
-#ifdef MOJ_USE_BDB
-    MojDbStorageEngine::setEngineFactory ( new MojDbBerkeleyFactory );
-#elif MOJ_USE_LDB
-    MojDbStorageEngine::setEngineFactory ( new MojDbLevelFactory );
-#elif MOJ_USE_SANDWICH
-	MojDbStorageEngine::setEngineFactory ( new MojDbSandwichFactory );
-#else
-#error "Not defined engine type"
-#endif
+	MojErr err;
     MojDb db;
+
+	err = MojDbTestEnv::run(MojDbTestDir);
+	MojTestErrCheck ( err );
+
     // open
-    MojErr err = db.open ( MojDbTestDir );
+    err = db.open(MojDbTestDir, env());
     MojTestErrCheck ( err );
 
     err = _execDbAndTxn ( db );

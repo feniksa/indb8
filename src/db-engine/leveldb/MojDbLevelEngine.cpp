@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*  Copyright (c) 2009-2013 LG Electronics, Inc.
+*  Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -58,6 +58,12 @@ MojDbLevelEngine::MojDbLevelEngine()
     MojLogTrace(s_log);
 }
 
+MojDbLevelEngine::MojDbLevelEngine(MojRefCountedPtr<MojDbLevelEnv>& env)
+: m_env(env),
+  m_isOpen(false)
+{
+	MojLogTrace(s_log);
+}
 
 MojDbLevelEngine::~MojDbLevelEngine()
 {
@@ -122,18 +128,26 @@ MojErr MojDbLevelEngine::drop(const MojChar* path, MojDbStorageTxn* txn)
 MojErr MojDbLevelEngine::open(const MojChar* path)
 {
     MojAssert(path);
-    MojAssert(!m_env.get() && !m_isOpen);
+    MojAssert(m_env.get());
+	MojAssert(!m_isOpen);
     MojLogTrace(s_log);
 
-    // this is more like a placeholder
-    MojRefCountedPtr<MojDbLevelEnv> env(new MojDbLevelEnv);
-    MojAllocCheck(env.get());
-    MojErr err = env->open(path);
-    MojErrCheck(err);
-    err = open(path, env.get());
-    MojErrCheck(err);
-    err = m_path.assign(path);
-    MojErrCheck(err);
+	MojErr err = m_path.assign(path);
+	MojErrCheck(err);
+
+	// open seqence db
+	bool created = false;
+	m_seqDb.reset(new MojDbLevelDatabase);
+	MojAllocCheck(m_seqDb.get());
+	err = m_seqDb->open(MojEnvSeqDbName, this, created, NULL);
+	MojErrCheck(err);
+
+	// open index db
+	m_indexDb.reset(new MojDbLevelDatabase);
+	MojAllocCheck(m_indexDb.get());
+	err = m_indexDb->open(MojEnvIndexDbName, this, created, NULL);
+	MojErrCheck(err);
+	m_isOpen = true;
 
     return MojErrNone;
 }
@@ -142,31 +156,13 @@ MojErr MojDbLevelEngine::open(const MojChar* path, MojDbEnv* env)
 {
     MojDbLevelEnv* bEnv = static_cast<MojDbLevelEnv *> (env);
     MojAssert(bEnv);
-    MojAssert(!m_env.get() && !m_isOpen);
     MojLogTrace(s_log);
 
+	MojErr err;
     m_env.reset(bEnv);
-    if (path) {
-        MojErr err = m_path.assign(path);
-        MojErrCheck(err);
-        // create dir
-        err = MojCreateDirIfNotPresent(path);
-        MojErrCheck(err);
-    }
 
-    // open seqence db
-    bool created = false;
-    m_seqDb.reset(new MojDbLevelDatabase);
-    MojAllocCheck(m_seqDb.get());
-    MojErr err = m_seqDb->open(MojEnvSeqDbName, this, created, NULL);
-    MojErrCheck(err);
-
-    // open index db
-    m_indexDb.reset(new MojDbLevelDatabase);
-    MojAllocCheck(m_indexDb.get());
-    err = m_indexDb->open(MojEnvIndexDbName, this, created, NULL);
-    MojErrCheck(err);
-    m_isOpen = true;
+	err = open(path);
+	MojErrCheck(err);
 
     return MojErrNone;
 }

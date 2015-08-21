@@ -21,8 +21,9 @@
 #define MOJDBPERFINDEXTEST_H_
 
 #include "MojDbPerfTest.h"
+#include "MojDbTestEnv.h"
 
-class MojDbPerfIndexTest: public MojTestCase
+class MojDbPerfIndexTest: public MojDbTestEnv
 {
 public:
 	MojDbPerfIndexTest();

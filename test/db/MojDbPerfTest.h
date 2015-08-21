@@ -22,8 +22,9 @@
 
 #include "MojDbPerfTestRunner.h"
 #include "core/MojFile.h"
+#include "MojDbTestEnv.h"
 
-class MojDbPerfTest : public MojTestCase {
+class MojDbPerfTest : public MojDbTestEnv {
 public:
 	MojDbPerfTest(const MojChar* name);
 
