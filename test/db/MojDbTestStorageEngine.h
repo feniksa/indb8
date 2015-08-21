@@ -71,8 +71,8 @@ public:
 	MojErr checkErrMap(const MojChar* methodName);
 
 private:
-	MojRefCountedPtr<MojDbStorageEngine> m_engine;
 	MojRefCountedPtr<MojDbTestStorageEnv> m_env;
+	MojRefCountedPtr<MojDbStorageEngine> m_engine;
 	ErrorMap m_errMap;
 };
 
