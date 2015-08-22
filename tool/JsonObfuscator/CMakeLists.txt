@@ -9,11 +9,9 @@ set (CXX_SOURCRES
 	main.cpp
 )
 
-add_executable(${PROJECT_NAME} ${CXX_SOURCRES})
-target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+add_executable(mojoobfuscate ${CXX_SOURCRES})
+target_link_libraries(mojoobfuscate ${Boost_LIBRARIES})
 
-install( TARGETS ${PROJECT_NAME}
+install( TARGETS mojoobfuscate
     RUNTIME DESTINATION usr/bin
 )
-
-add_test(NAME gtest_core COMMAND gtest_core)
