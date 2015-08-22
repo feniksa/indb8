@@ -27,6 +27,8 @@ option(BUILD_TOOL_JSONOBFUSCATE "Build obfuscate tool"   OFF)
 option(BUILD_ENGINE_SANDWICH "Build sandwich engine"     ON )
 option(BUILD_ENGINE_LEVELDB  "Build leveldb  engine"     OFF)
 option(BUILD_ENGINE_BERKELEY "Build berkeley engine"     OFF)
+option(WITH_UPSTART          "Add support of upstart"    OFF)
+option(WITH_OPENRC           "Add support of openrc"    OFF)
 
 add_definitions(-DMOJ_VERSION_STRING="2.0.2")
 
@@ -107,8 +109,26 @@ if (BUILD_TESTING)
 	add_subdirectory(test)
 endif()
 
+if (BUILD_TOOL_JSONOBFUSCATE)
+	add_subdirectory(tool/JsonObfuscator)
+endif()
+
 install(FILES files/conf/maindb.conf DESTINATION etc/indb8)
 install(FILES files/conf/tempdb.conf DESTINATION etc/indb8)
+
+if (WITH_UPSTART)
+	install(FILES files/launch/indb8-maindb.conf DESTINATION etc/init)
+	install(FILES files/launch/indb8-tempdb.conf DESTINATION etc/init)
+endif()
+if (WITH_OPENRC)
+	install(FILES files/launch/indb8-maindb
+	        DESTINATION etc/init.d
+	        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
+
+	install(FILES files/launch/indb8-tempdb
+	        DESTINATION etc/init.d
+	        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
+endif()
 
 configure_file(files/pkgconfig/indb8.pc.in
 	${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc @ONLY)
@@ -117,8 +137,3 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
 	    DESTINATION usr/lib/pkgconfig)
 
 install(DIRECTORY inc/ DESTINATION usr/include/mojodb)
-
-if (BUILD_TOOL_JSONOBFUSCATE)
-	message(STATUS "Build json obfuscate tool")
-	add_subdirectory(tool/JsonObfuscator)
-endif()
