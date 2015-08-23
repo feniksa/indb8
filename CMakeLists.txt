@@ -28,7 +28,8 @@ option(BUILD_ENGINE_SANDWICH "Build sandwich engine"     ON )
 option(BUILD_ENGINE_LEVELDB  "Build leveldb  engine"     OFF)
 option(BUILD_ENGINE_BERKELEY "Build berkeley engine"     OFF)
 option(WITH_UPSTART          "Add support of upstart"    OFF)
-option(WITH_OPENRC           "Add support of openrc"    OFF)
+option(WITH_OPENRC           "Add support of openrc"     OFF)
+option(WITH_CMAKE_MODULE     "Install cmake module"      OFF)
 
 set (MOJ_VERSION_STRING "2.0.2" CACHE STRING "Version of InDB8")
 
@@ -137,5 +138,9 @@ configure_file(files/pkgconfig/indb8.pc.in
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
 	    DESTINATION usr/lib/pkgconfig)
+
+if (WITH_CMAKE_MODULE)
+	install(FILES files/cmake/FindInDB8.cmake DESTINATION usr/share/cmake)
+endif()
 
 install(DIRECTORY inc/ DESTINATION usr/include/mojodb)
