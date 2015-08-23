@@ -140,7 +140,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
 	    DESTINATION usr/lib/pkgconfig)
 
 if (WITH_CMAKE_MODULE)
-	install(FILES files/cmake/FindInDB8.cmake DESTINATION usr/share/cmake)
+	install(FILES files/cmake/FindInDB8.cmake DESTINATION
+		usr/share/cmake/Modules)
 endif()
 
 install(DIRECTORY inc/ DESTINATION usr/include/mojodb)
