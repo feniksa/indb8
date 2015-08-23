@@ -25,5 +25,5 @@ Name: @CMAKE_PROJECT_NAME@
 Description: InDB8 Database
 Version: @MOJ_VERSION_STRING@
 Libs: -L${libdir} -lmojocore -lmojodb -lmojoluna -lmojoengine
-Cflags: -I${includedir}
+Cflags: -I${includedir} -DMOJ_LINUX -DMOJ_INTERNAL
 Requires: glib-2.0
