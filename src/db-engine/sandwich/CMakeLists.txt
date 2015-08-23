@@ -18,7 +18,6 @@ set(CXX_SOURCES
 	MojDbSandwichEnv.cpp
 	MojDbSandwichIndex.cpp
 	MojDbSandwichItem.cpp
-	MojDbSandwichLazyUpdater.cpp
 )
 
 add_library(mojodbenginesandwich STATIC ${CXX_SOURCES})

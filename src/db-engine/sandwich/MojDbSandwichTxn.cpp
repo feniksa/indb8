@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-* Copyright (c) 2013-2014 LG Electronics, Inc.
+* Copyright (c) 2013-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@
 #include "db-engine/sandwich/MojDbSandwichEngine.h"
 #include "db-engine/sandwich/MojDbSandwichTxn.h"
 
-#include "db-engine/sandwich/MojDbSandwichLazyUpdater.h"
-
 // class MojDbSandwichEnvTxn
 MojErr MojDbSandwichEnvTxn::abort()
 {
@@ -32,9 +30,6 @@ MojErr MojDbSandwichEnvTxn::abort()
 MojErr MojDbSandwichEnvTxn::commitImpl()
 {
     m_txn->commit();
-
-    if (m_engine.lazySync())
-        m_engine.getUpdater()->sendEvent( (*m_db).get() );
 
     return MojErrNone;
 }
