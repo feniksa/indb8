@@ -1,6 +1,6 @@
 /* @@@LICENSE
 *
-*  Copyright (c) 2009-2014 LG Electronics, Inc.
+*  Copyright (c) 2009-2015 LG Electronics, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@
 #include "db-engine/sandwich/MojDbSandwichTxn.h"
 #include "db-engine/sandwich/MojDbSandwichEnv.h"
 #include "db-engine/sandwich/defs.h"
-#include "db-engine/sandwich/MojDbSandwichLazyUpdater.h"
 
 #include "db/MojDbObjectHeader.h"
 #include "db/MojDbQueryPlan.h"
@@ -54,19 +53,14 @@ leveldb::Options MojDbSandwichEngine::OpenOptions;
 ////////////////////MojDbSandwichEngine////////////////////////////////////////////
 
 MojDbSandwichEngine::MojDbSandwichEngine()
-: m_isOpen(false), m_lazySync(false), m_updater(NULL)
+: m_isOpen(false)
 {
-    m_updater = new MojDbSandwichLazyUpdater;
 }
 
 MojDbSandwichEngine::MojDbSandwichEngine(MojRefCountedPtr<MojDbSandwichEnv>& env)
 :m_env(env),
- m_isOpen(false),
- m_lazySync(false),
- m_updater(NULL)
-
+ m_isOpen(false)
 {
-	m_updater = new MojDbSandwichLazyUpdater;
 }
 
 
@@ -74,32 +68,13 @@ MojDbSandwichEngine::~MojDbSandwichEngine()
 {
     MojErr err =  close();
     MojErrCatchAll(err);
-
-    if (m_updater)
-        delete m_updater;
 }
 
 MojErr MojDbSandwichEngine::configure(const MojObject& config)
 {
-    bool found=false;
-    MojInt32 syncOption=0;
-    MojErr err = config.get("sync", syncOption, found);
-    MojErrCheck(err);
-    if (false == found) {
-        WriteOptions.sync = true;
-    } else {
-        switch(syncOption) {
-            case 2:
-                WriteOptions.sync = false;
-                m_lazySync = true;
-                break;
-
-            case 1:
-            case 0:
-                WriteOptions.sync = !!syncOption;
-                break;
-        }
-    }
+	if (!config.get("sync", WriteOptions.sync)) {
+		WriteOptions.sync = true;
+	}
 
     if (!config.get("fill_cache", ReadOptions.fill_cache)) {
         ReadOptions.fill_cache = true;
@@ -134,8 +109,9 @@ MojErr MojDbSandwichEngine::drop(const MojChar* path, MojDbStorageTxn* txn)
     m_seqs.clear();
 
     // TODO: drop transaction
+	// Must drop database by path! Throw as not implemented error
 
-    return MojErrNone;
+	MojErrThrowMsg(MojErrNotImplemented, _T("Not fully implemented")) ;
 }
 MojErr MojDbSandwichEngine::open(const MojChar* path)
 {
@@ -171,9 +147,6 @@ MojErr MojDbSandwichEngine::open(const MojChar* path)
 	MojErrCheck(err);
 
 	m_isOpen = true;
-
-	if (lazySync())
-		m_updater->start();
 
     return MojErrNone;
 }
@@ -217,9 +190,6 @@ MojErr MojDbSandwichEngine::close()
     m_env.reset();
     m_isOpen = false;
 
-    if (lazySync())
-        m_updater->stop();
-
     return err;
 }
 
@@ -227,7 +197,7 @@ MojErr MojDbSandwichEngine::beginTxn(MojRefCountedPtr<MojDbStorageTxn>& txnOut)
 {
     MojAssert(!txnOut.get());
 
-    MojRefCountedPtr<MojDbSandwichEnvTxn> txn(new MojDbSandwichEnvTxn(m_db, *this));
+    MojRefCountedPtr<MojDbSandwichEnvTxn> txn(new MojDbSandwichEnvTxn(m_db));
     MojAllocCheck(txn.get());
     txnOut = txn;
 

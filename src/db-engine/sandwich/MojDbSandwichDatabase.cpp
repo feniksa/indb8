@@ -23,8 +23,6 @@
 #include "db-engine/sandwich/MojDbSandwichIndex.h"
 #include "db-engine/sandwich/defs.h"
 
-#include "db-engine/sandwich/MojDbSandwichLazyUpdater.h"
-
 ////////////////////MojDbSandwichDatabase////////////////////////////////////////////
 
 MojDbSandwichDatabase::MojDbSandwichDatabase(const MojDbSandwichEngine::BackendDb::Part& part)
@@ -47,9 +45,6 @@ MojErr MojDbSandwichDatabase::open(const MojChar* dbName, MojDbSandwichEngine* e
     MojErr err = m_name.assign(dbName);
     MojErrCheck(err);
 
-    if (engine()->lazySync())
-        engine()->getUpdater()->open( getDb() );
-
     return MojErrNone;
 }
 
@@ -66,8 +61,7 @@ MojErr MojDbSandwichDatabase::close()
     MojErr err = MojErrNone;
     if (m_db.Valid()) {
         err = closeImpl();
-        if (engine()->lazySync())
-            engine()->getUpdater()->close( getDb() );
+		MojErrCheck(err);
     }
     return err;
 }
@@ -266,7 +260,7 @@ MojErr MojDbSandwichDatabase::get(MojDbSandwichItem& key, MojDbStorageTxn* txn, 
 MojErr MojDbSandwichDatabase::beginTxn(MojRefCountedPtr<MojDbStorageTxn>& txnOut)
 {
     //MojAssert( m_db );
-   MojRefCountedPtr<MojDbSandwichEnvTxn> txn(new MojDbSandwichEnvTxn(m_engine->impl(), *engine()));
+   MojRefCountedPtr<MojDbSandwichEnvTxn> txn(new MojDbSandwichEnvTxn(m_engine->impl()));
    MojAllocCheck(txn.get());
 
    txnOut = txn;
@@ -402,9 +396,6 @@ void MojDbSandwichDatabase::postUpdate(MojDbStorageTxn* txn, MojSize size)
     if (txn) {
         // TODO: implement quotas
         // XXX: static_cast<MojDbSandwichTxn*>(txn)->didUpdate(size);
-    } else {
-        if (engine()->lazySync())
-            engine()->getUpdater()->sendEvent( getDb() );
     }
 }
 
