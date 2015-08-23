@@ -16,11 +16,14 @@
 #
 # LICENSE@@@
 
-libdir=@CMAKE_INSTALL_PREFIX@/usr/lib
-includedir=@CMAKE_INSTALL_PREFIX@/usr/include
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}/sbin
+libdir=${prefix}/usr/lib
+includedir=${prefix}/usr/include
 
 Name: @CMAKE_PROJECT_NAME@
-Description: Mojo Database
-Version: @VERSION@
-Libs: -L${libdir} -lmojocore -lmojodb -lmojoluna
+Description: InDB8 Database
+Version: @MOJ_VERSION_STRING@
+Libs: -L${libdir} -lmojocore -lmojodb -lmojoluna -lmojoengine
 Cflags: -I${includedir}/mojodb
+Requires: glib-2.0

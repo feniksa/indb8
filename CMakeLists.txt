@@ -30,7 +30,9 @@ option(BUILD_ENGINE_BERKELEY "Build berkeley engine"     OFF)
 option(WITH_UPSTART          "Add support of upstart"    OFF)
 option(WITH_OPENRC           "Add support of openrc"    OFF)
 
-add_definitions(-DMOJ_VERSION_STRING="2.0.2")
+set (MOJ_VERSION_STRING "2.0.2" CACHE STRING "Version of InDB8")
+
+add_definitions(-DMOJ_VERSION_STRING="${MOJ_VERSION_STRING}")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
