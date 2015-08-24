@@ -65,35 +65,28 @@ public:
 
 	MojDbServiceClient(MojService* service, const MojChar* serviceName = "com.palm.db");
 
-	virtual MojErr putKind(Signal::SlotRef handler, const MojObject& obj);
-	virtual MojErr delKind(Signal::SlotRef handler, const MojChar* id);
+	MojErr putKind(Signal::SlotRef handler, const MojObject& obj) override;
+	MojErr delKind(Signal::SlotRef handler, const MojChar* id) override;
 
-	virtual MojErr putPermissions(Signal::SlotRef handler, const MojObject* begin,const MojObject* end);
-	virtual MojErr getPermissions(Signal::SlotRef handler, const MojChar* type, const MojChar* object);
+	MojErr putPermissions(Signal::SlotRef handler, const MojObject* begin,const MojObject* end) override;
+	MojErr getPermissions(Signal::SlotRef handler, const MojChar* type, const MojChar* object) override;
 
-	virtual MojErr put(Signal::SlotRef handler, const MojObject* begin,
-					   const MojObject* end, MojUInt32 flags = MojDb::FlagNone);
-	virtual MojErr get(Signal::SlotRef handler, const MojObject* idsBegin,
-					   const MojObject* idsEnd);
-	virtual MojErr del(Signal::SlotRef handler, const MojObject* idsBegin,
-					   const MojObject* idsEnd, MojUInt32 flags = MojDb::FlagNone);
-	virtual MojErr del(Signal::SlotRef handler, const MojDbQuery& query,
-					   MojUInt32 flags = MojDb::FlagNone);
-	virtual MojErr merge(Signal::SlotRef handler, const MojObject* begin,
-						 const MojObject* end, MojUInt32 flags = MojDb::FlagNone);
-	virtual MojErr merge(Signal::SlotRef handler, const MojDbQuery& query,
-						 const MojObject& props, MojUInt32 flags = MojDb::FlagNone);
-	virtual MojErr find(Signal::SlotRef handler, const MojDbQuery& query,
-						bool watch = false, bool returnCount = false);
-	virtual MojErr search(Signal::SlotRef handler, const MojDbQuery& query,
-						  bool watch = false, bool returnCount = false);
-	virtual MojErr watch(Signal::SlotRef handler, const MojDbQuery& query);
+	MojErr put(Signal::SlotRef handler, const MojObject* begin, const MojObject* end, MojUInt32 flags = MojDb::FlagNone) override;
+	MojErr get(Signal::SlotRef handler, const MojObject* idsBegin, const MojObject* idsEnd) override;
+	MojErr del(Signal::SlotRef handler, const MojObject* idsBegin,
+				       const MojObject* idsEnd, MojUInt32 flags = MojDb::FlagNone) override;
+	MojErr del(Signal::SlotRef handler, const MojDbQuery& query, MojUInt32 flags = MojDb::FlagNone) override;
+	MojErr merge(Signal::SlotRef handler, const MojObject* begin, const MojObject* end, MojUInt32 flags = MojDb::FlagNone) override;
+	MojErr merge(Signal::SlotRef handler, const MojDbQuery& query, const MojObject& props, MojUInt32 flags = MojDb::FlagNone) override;
+	MojErr find(Signal::SlotRef handler, const MojDbQuery& query, bool watch = false, bool returnCount = false) override;
+	MojErr search(Signal::SlotRef handler, const MojDbQuery& query, bool watch = false, bool returnCount = false) override;
+	MojErr watch(Signal::SlotRef handler, const MojDbQuery& query) override;
 
-	virtual MojErr compact(Signal::SlotRef handler);
-	virtual MojErr createBatch(MojAutoPtr<MojDbBatch>& batchOut);
-	virtual MojErr purge(Signal::SlotRef handler, MojUInt32 window);
-	virtual MojErr purgeStatus(Signal::SlotRef handler);
-	virtual MojErr reserveIds(Signal::SlotRef handler, MojUInt32 count);
+	MojErr compact(Signal::SlotRef handler) override;
+	MojErr createBatch(MojAutoPtr<MojDbBatch>& batchOut) override;
+	MojErr purge(Signal::SlotRef handler, MojUInt32 window) override;
+	MojErr purgeStatus(Signal::SlotRef handler) override;
+	MojErr reserveIds(Signal::SlotRef handler, MojUInt32 count) override;
 
 	MojService* service() { return m_service; }
 
