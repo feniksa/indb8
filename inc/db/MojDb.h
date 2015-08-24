@@ -84,7 +84,7 @@ public:
 	MojErr get(const MojObject& id, MojObject& objOut, bool& foundOut, MojDbReqRef req = MojDbReq());
 	MojErr get(const MojObject* idsBegin, const MojObject* idsEnd, MojObjectVisitor& visitor, MojDbReqRef req = MojDbReq());
 	MojErr getKind(const MojString& kindName, MojObject& out, MojDbReqRef req = MojDbReq());
-	MojErr getKindList(MojObjectVisitor& visitor, MojDbReqRef req = MojDbReq());
+	MojErr getKindList(MojVector<MojObject>& list, MojDbReqRef req = MojDbReq());
 	MojErr find(const MojDbQuery& query, MojDbCursor& cursor, MojDbReqRef req = MojDbReq());
 	MojErr find(const MojDbQuery& query, MojDbCursor& cursor, WatchSignal::SlotRef watchHandler, MojDbReqRef req = MojDbReq());
 	MojErr merge(MojObject& obj, MojUInt32 flags = FlagNone, MojDbReqRef req = MojDbReq()) { return put(obj, flags | FlagMerge, req); }

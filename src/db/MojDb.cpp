@@ -425,18 +425,13 @@ MojErr MojDb::getKind(const MojString& kindName, MojObject& out, MojDbReqRef req
 	return MojErrNotImplemented;
 }
 
-MojErr MojDb::getKindList(MojObjectVisitor& visitor, MojDbReqRef req)
+MojErr MojDb::getKindList(MojVector<MojObject>& list, MojDbReqRef req)
 {
 	MojErr err = beginReq(req);
 	MojErrCheck(err);
 
-	MojVector<MojObject> list;
 	err = m_kindEngine.getKinds(list);
-
-	for (MojVector<MojObject>::ConstIterator iter = list.begin(); iter != list.end(); ++iter) {
-		err = iter->visit(visitor);
-		MojErrCheck(err);
-	}
+	MojErrCheck(err);
 
 	// commit txn
 	err = req->end();
@@ -933,8 +928,6 @@ MojErr MojDb::delImpl(const MojDbQuery& quer, MojUInt32& countOut, MojDbReq& req
 
     return MojErrNone;
 }
-
-
 
 MojErr MojDb::findImpl(const MojDbQuery& query, MojDbCursor& cursor, MojDbWatcher* watcher, MojDbReq& req, MojDbOp op)
 {

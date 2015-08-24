@@ -143,12 +143,14 @@ TEST_F(ReqTest, verifySample)
 
 TEST_F(ReqTest, visibility)
 {
+	MojErr err;
     buildSample();
     mark1();
 
     MojDbReq req;
     // start transaction
-    req.begin(&db, false);
+    err = req.begin(&db, false);
+	MojAssertNoErr(err);
 
     checkMarkWithUpdate(50ul, -1, req);
     checkMarkWithUpdate(0ul, -2, req);
@@ -160,13 +162,15 @@ TEST_F(ReqTest, visibility)
 
 TEST_F(ReqTest, updateRollback)
 {
+	MojErr err;
     buildSample();
     mark1();
 
     {
         MojDbReq req;
         // start transaction
-        req.begin(&db, false);
+        err = req.begin(&db, false);
+		MojAssertNoErr(err);
 
         checkMarkWithUpdate(50ul, -1, req);
         checkMarkWithUpdate(0ul, -2, req);
@@ -181,13 +185,15 @@ TEST_F(ReqTest, updateRollback)
 
 TEST_F(ReqTest, deleteRollback)
 {
+	MojErr err;
     buildSample();
     mark1();
 
     {
         MojDbReq req;
         // start transaction
-        req.begin(&db, false);
+        err = req.begin(&db, false);
+		MojAssertNoErr(err);
 
         checkMarkWithUpdate(50ul, -1, req);
 
@@ -200,13 +206,15 @@ TEST_F(ReqTest, deleteRollback)
 
 TEST_F(ReqTest, deleteUpdateRollback)
 {
+	MojErr err;
     buildSample();
     mark1();
 
     {
         MojDbReq req;
         // start transaction
-        req.begin(&db, false);
+        err = req.begin(&db, false);
+		MojAssertNoErr(err);
 
         checkMarkWithUpdate(50ul, -1, req);
         checkMarkWithUpdate(0ul, -3, req);
@@ -228,6 +236,7 @@ TEST_F(ReqTest, deleteUpdateRollback)
 
 TEST_F(ReqTest, originalEq)
 {
+	MojErr err;
     buildSample();
     mark1();
 
@@ -236,7 +245,9 @@ TEST_F(ReqTest, originalEq)
         MojDbReq req;
 
         // start transaction
-        req.begin(&db, false);
+        err = req.begin(&db, false);
+		MojAssertNoErr(err);
+
         mark2(req);
 
         // visible within transaction
@@ -251,7 +262,8 @@ TEST_F(ReqTest, originalEq)
     {
         MojDbReq req;
         // start transaction
-        req.begin(&db, false);
+        err = req.begin(&db, false);
+		MojAssertNoErr(err);
 
         deleteMark(50ul, -1, req);
         // visible within transaction
@@ -265,6 +277,8 @@ TEST_F(ReqTest, originalEq)
 
 TEST_F(ReqTest, original)
 {
+	MojErr err;
+
     buildSample();
     mark1();
 
@@ -273,7 +287,8 @@ TEST_F(ReqTest, original)
         MojDbReq req;
 
         // start transaction
-        req.begin(&db, false);
+        err = req.begin(&db, false);
+		MojAssertNoErr(err);
         mark2(req);
 
         // visible within transaction
@@ -288,7 +303,8 @@ TEST_F(ReqTest, original)
     {
         MojDbReq req;
         // start transaction
-        req.begin(&db, false);
+        err = req.begin(&db, false);
+		MojAssertNoErr(err);
 
         deleteMark(50ul, -1, req);
 

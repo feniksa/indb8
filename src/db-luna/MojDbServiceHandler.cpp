@@ -289,6 +289,10 @@ MojErr MojDbServiceHandler::handleKinds(MojServiceMessage* msg, MojObject& paylo
 
 	MojErr err;
 
+	MojVector<MojObject> list;
+	err = m_db.getKindList(list, req);
+	MojErrCheck(err);
+
 	MojObjectVisitor& writer = msg->writer();
 	err = writer.beginObject();
 	MojErrCheck(err);
@@ -298,8 +302,12 @@ MojErr MojDbServiceHandler::handleKinds(MojServiceMessage* msg, MojObject& paylo
 	MojErrCheck(err);
 	err = writer.beginArray();
 	MojErrCheck(err);
-	err = m_db.getKindList(writer, req);
-	MojErrCheck(err);
+
+	for (MojVector<MojObject>::ConstIterator i = list.begin(); i != list.end(); ++i) {
+		err = i->visit(writer);
+		MojErrCheck(err);
+	}
+
 	err = writer.endArray();
 	MojErrCheck(err);
 	err = writer.endObject();
