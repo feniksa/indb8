@@ -47,7 +47,7 @@ MojErr MojDbLunaServiceDb::configure(const MojObject& conf)
 	err = dbConf.getRequired(_T("path"), m_databaseDir);
 	MojErrCheck(err);
 
-	err = m_db.configure(dbConf);
+	err = m_db.configure(conf);
 	MojErrCheck(err);
 
 	return MojErrNone;

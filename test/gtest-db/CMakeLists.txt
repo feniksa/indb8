@@ -31,6 +31,7 @@ foreach(test
 		Quota
 		Search
 		TextCollator
+		Kinds
 	)
 	foreach (engine ${MOJO_ENGINES})
 		add_test(NAME "${engine}/gtest-db/${test}"
