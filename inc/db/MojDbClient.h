@@ -58,6 +58,7 @@ public:
 
 	virtual MojErr putKind(Signal::SlotRef handler, const MojObject& obj) = 0;
 	virtual MojErr delKind(Signal::SlotRef handler, const MojChar* id) = 0;
+	virtual MojErr kinds(Signal::SlotRef handler) = 0;
 
 	virtual MojErr putPermissions(Signal::SlotRef handler, const MojObject* begin,const MojObject* end) = 0;
 	virtual MojErr getPermissions(Signal::SlotRef handler, const MojChar* type, const MojChar* object) = 0;

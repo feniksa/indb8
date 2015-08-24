@@ -6,4 +6,7 @@
 * Check if watch works fine
 * Remove MojErrCheck, switch to C++ exceptions
 * See, why MojLunaTest segfaults (same for db8)
-* Develop for DB8 Admin tool
+
+--
+* Fix permissions unit tests
+

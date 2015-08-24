@@ -67,6 +67,7 @@ public:
 
 	MojErr putKind(Signal::SlotRef handler, const MojObject& obj) override;
 	MojErr delKind(Signal::SlotRef handler, const MojChar* id) override;
+	MojErr kinds(Signal::SlotRef handler) override;
 
 	MojErr putPermissions(Signal::SlotRef handler, const MojObject* begin,const MojObject* end) override;
 	MojErr getPermissions(Signal::SlotRef handler, const MojChar* type, const MojChar* object) override;

@@ -61,6 +61,14 @@ MojErr MojDbServiceClient::delKind(Signal::SlotRef handler, const MojChar* id)
 	return MojErrNone;
 }
 
+MojErr MojDbServiceClient::kinds(Signal::SlotRef handler)
+{
+	MojErr err = emptyRequest(handler, MojDbServiceDefs::KindsMethod);
+	MojErrCheck(err);
+
+	return MojErrNone;
+}
+
 MojErr MojDbServiceClient::putPermissions(Signal::SlotRef handler, const MojObject* begin,const MojObject* end)
 {
 	MojErr err = arrayRequest(handler, MojDbServiceDefs::PutPermissionsMethod, MojDbServiceDefs::PermissionsKey, begin, end);
@@ -457,7 +465,7 @@ MojErr MojDbServiceClientBatch::merge(const MojDbQuery& query, const MojObject& 
 	MojErrCheck(err);
 	err = writer.endObject();
 	MojErrCheck(err);
-	
+
 	return MojErrNone;
 }
 
