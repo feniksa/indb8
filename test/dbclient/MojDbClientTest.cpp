@@ -204,6 +204,9 @@ MojErr MojDbClientTest::run()
 	err = testPermissions();
 	MojTestErrCheck(err);
 
+	err = testKinds();
+	MojTestErrCheck(err);
+
 	return MojErrNone;
 }
 
@@ -1902,6 +1905,36 @@ MojErr MojDbClientTest::testPermissions()
 	err = handler->wait(m_dbClient->service());
 	MojTestErrCheck(err);
 	MojTestErrCheck(handler->m_dbErr);
+
+	return MojErrNone;
+}
+
+MojErr MojDbClientTest::testKinds()
+{
+	MojErr err;
+	MojRefCountedPtr<MojDbClientTestResultHandler> handler(new MojDbClientTestResultHandler);
+	MojAllocCheck(handler.get());
+
+	err = m_dbClient->kinds(handler->m_slot);
+	MojTestErrCheck(err);
+
+	// block until response received
+	err = handler->wait(m_dbClient->service());
+	MojTestErrCheck(err);
+	MojTestErrCheck(handler->m_dbErr);
+
+	MojObject result;
+	handler->m_result.getRequired(_T("results"), result);
+
+	// should return ONLY one object, as we have permissions only to read our own kinds.
+	// this test register only one kind, so loop should execute only once
+	for (MojObject::ConstArrayIterator i = result.arrayBegin(); i != result.arrayEnd(); ++i) {
+		MojString id;
+		err = i->getRequired(_T("id"), id);
+		MojTestErrCheck(err);
+
+		MojTestAssert(id.compare(_T("LunaDbClientTest:1")) == 0);
+	}
 
 	return MojErrNone;
 }

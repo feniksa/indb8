@@ -67,6 +67,7 @@ private:
 	MojErr testDeleteKind();
 	MojErr testBatch();
 	MojErr testPermissions();
+	MojErr testKinds();
 
 	MojErr writeTestObj(const MojChar* json, MojObject* idOut = NULL);
 	MojErr writeTestObj(const MojChar* json, bool kind, MojObject* idOut = NULL);
