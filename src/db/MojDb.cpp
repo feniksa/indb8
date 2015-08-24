@@ -427,11 +427,28 @@ MojErr MojDb::getKind(const MojString& kindName, MojObject& out, MojDbReqRef req
 
 MojErr MojDb::getKindList(MojVector<MojObject>& list, MojDbReqRef req)
 {
-	MojErr err = beginReq(req);
+	MojErr err = beginReq(req, true);
 	MojErrCheck(err);
 
-	err = m_kindEngine.getKinds(list);
+	MojVector<MojObject> kinds;
+	err = m_kindEngine.getKinds(kinds);
 	MojErrCheck(err);
+
+	for (MojVector<MojObject>::ConstIterator i = kinds.begin(); i != kinds.end(); ++i) {
+		MojString id;
+
+		err = i->getRequired(_T("id"), id);
+		MojErrCheck(err);
+
+		err = kindEngine()->checkPermission(id, MojDbOp::OpRead, req);
+		MojErrCatch(err, MojErrDbPermissionDenied) {
+			MojLogDebug(s_log, "Client %s haven't permissions to read kind %s", req->domain().data(), id.data());
+			continue;
+		}
+		MojErrCheck(err);
+
+		list.push(*i);
+	}
 
 	// commit txn
 	err = req->end();
