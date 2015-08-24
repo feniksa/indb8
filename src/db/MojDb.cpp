@@ -96,8 +96,6 @@ MojErr MojDb::configure(const MojObject& conf)
 	bool found = false;
 	MojObject dbConf;
 	if (conf.get(ConfKey, dbConf)) {
-		err = dbConf.get(_T("storageEngine"), m_engineName, found);
-		MojErrCheck(err);
 		found = dbConf.get(_T("purgeWindow"), m_purgeWindow);
 		if (!found) {
 			m_purgeWindow = PurgeNumDaysDefault;

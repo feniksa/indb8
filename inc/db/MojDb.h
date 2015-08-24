@@ -174,7 +174,6 @@ private:
 	MojDbPermissionEngine m_permissionEngine;
     MojDbQuotaEngine m_quotaEngine;
 	MojThreadRwLock m_schemaLock;
-	MojString m_engineName;
 	MojObject m_conf;
 	MojInt64 m_purgeWindow;
 	MojInt64 m_loadStepSize;
