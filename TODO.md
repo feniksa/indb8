@@ -9,4 +9,5 @@
 
 --
 * Fix permissions unit tests
+* Add configuration for engines in unit tests
 
