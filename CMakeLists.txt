@@ -31,7 +31,7 @@ option(WITH_UPSTART          "Add support of upstart"    OFF)
 option(WITH_OPENRC           "Add support of openrc"     OFF)
 option(WITH_CMAKE_MODULE     "Install cmake module"      OFF)
 
-set (MOJ_VERSION_STRING "2.0.3" CACHE STRING "Version of InDB8")
+set (MOJ_VERSION_STRING "2.0.4" CACHE STRING "Version of InDB8")
 
 add_definitions(-DMOJ_VERSION_STRING="${MOJ_VERSION_STRING}")
 
@@ -122,7 +122,8 @@ install(FILES files/conf/tempdb.conf DESTINATION etc/indb8)
 if (WITH_UPSTART)
 	install(FILES files/launch/indb8-maindb.conf DESTINATION etc/init)
 	install(FILES files/launch/indb8-tempdb.conf DESTINATION etc/init)
-endif()
+endif(WITH_UPSTART)
+
 if (WITH_OPENRC)
 	install(FILES files/launch/indb8-maindb
 	        DESTINATION etc/init.d
@@ -131,13 +132,16 @@ if (WITH_OPENRC)
 	install(FILES files/launch/indb8-tempdb
 	        DESTINATION etc/init.d
 	        PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
-endif()
+endif(WITH_OPENRC)
 
-configure_file(files/pkgconfig/indb8.pc.in
-	${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc @ONLY)
+configure_file(files/pkgconfig/indb8.pc.in ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc DESTINATION usr/lib/pkgconfig)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/indb8.pc
-	    DESTINATION usr/lib/pkgconfig)
+configure_file(files/pkgconfig/db8.pc.in ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/db8.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/db8.pc DESTINATION usr/lib/pkgconfig)
+
+configure_file(files/pkgconfig/mojodb.pc.in ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/mojodb.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/usr/lib/pkgconfig/mojodb.pc DESTINATION usr/lib/pkgconfig)
 
 if (WITH_CMAKE_MODULE)
 	install(FILES files/cmake/FindInDB8.cmake DESTINATION
