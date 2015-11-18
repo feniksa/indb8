@@ -1,7 +1,10 @@
 #pragma once
 
-#include "core/MojCoreDefs.h"
+//#include "core/MojCoreDefs.h"
 #include "db/MojDbStorageSeq.h"
+#include <db.h>
+
+class MojDbBerkeleyDatabase;
 
 class MojDbBerkeleySeq : public MojDbStorageSeq
 {

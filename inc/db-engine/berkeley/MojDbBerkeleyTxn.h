@@ -5,6 +5,8 @@
 #include "db-engine/berkeley/MojDbBerkeleyDefs.h"
 #include <db.h>
 
+class MojDbBerkeleyEngine;
+
 class MojDbBerkeleyTxn : public MojDbStorageTxn
 {
 public:

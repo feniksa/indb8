@@ -1,6 +1,5 @@
 #pragma once
 
-#include "core/MojCoreDefs.h"
 #include "core/MojRefCount.h"
 
 class MojDbStorageSeq : public MojRefCounted
