@@ -31,7 +31,7 @@ option(WITH_UPSTART          "Add support of upstart"    OFF)
 option(WITH_OPENRC           "Add support of openrc"     OFF)
 option(WITH_CMAKE_MODULE     "Install cmake module"      OFF)
 
-set (MOJ_VERSION_STRING "3.1.0" CACHE STRING "Version of InDB8")
+set (MOJ_VERSION_STRING "3.1.1" CACHE STRING "Version of InDB8")
 
 add_definitions(-DMOJ_VERSION_STRING="${MOJ_VERSION_STRING}")
 
