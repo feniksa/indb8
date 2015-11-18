@@ -10,7 +10,6 @@ set(MOJ_DB_SOURCES
     MojDbKey.cpp
     MojDbKind.cpp
     MojDbKindEngine.cpp
-    MojDbKindIdList.cpp
     MojDbKindState.cpp
     MojDbMultiExtractor.cpp
     MojDbObjectHeader.cpp
