@@ -121,12 +121,9 @@ public:
 	static const MojChar* const ScheduledSpaceCheckMethod;
 	static const MojChar* const StatsMethod;
 	static const MojChar* const WatchMethod;
-	static const MojChar* const ListActiveMediaMethod;
 	// service names
 	static const MojChar* const Category;
 	static const MojChar* const InternalCategory;
-    // other
-    static const MojChar* const DefaultMediaLinkPath;
 };
 
 #endif /* MOJDBSERVICEDEFS_H_ */

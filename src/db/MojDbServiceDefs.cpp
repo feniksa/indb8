@@ -116,7 +116,6 @@ const MojChar* const MojDbServiceDefs::SpaceCheckMethod = _T("spaceCheck");
 const MojChar* const MojDbServiceDefs::ScheduledSpaceCheckMethod = _T("scheduledSpaceCheck");
 const MojChar* const MojDbServiceDefs::StatsMethod = _T("stats");
 const MojChar* const MojDbServiceDefs::WatchMethod = _T("watch");
-const MojChar* const MojDbServiceDefs::ListActiveMediaMethod = _T("listActiveMedia");
 // service name
 const MojChar* const MojDbServiceDefs::Category = MojService::DefaultCategory;
 const MojChar* const MojDbServiceDefs::InternalCategory = _T("/internal");
